@@ -102,6 +102,7 @@ string sqlQuery = @"
     WHERE name = 'ElementId'
     ";
 //read query data legacy
+var dbReader = new PropDbReader("<urn>","<token>");
 DataTable dataTable = DbReader.ExecuteQuery(sqlQuery);
  ```
 
