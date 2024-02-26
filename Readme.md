@@ -31,6 +31,11 @@ APS Toolkit (Former is Forge) is powerful for you to explore `Autodesk Platform 
 - [x] Export Data to Excel
 - [x] Export Data to Parquet
 
+## Installation
+
+```bash
+<PackageReference Include="APSToolkit" Version="1.*" />
+```
 
 Before start you need setup your environment:
 
@@ -40,7 +45,7 @@ APS_CLIENT_SECRET = <your client secret>
 APS_REFRESH_TOKEN = <your refresh token>
 ```
 
-## Tutorials 
+## Tutorials
 
 - WORKING IN PROGRESS
 
