@@ -121,6 +121,13 @@ DataTable dataTable = RevitPropDbReader.GetAllDataByParameter(parameters);
 dataTable.ExportToCsv("result.csv");
 ```
 
+## Export Data ACC To Excel 
+
+```csharp
+BIM360 bim360 = new BIM360();
+bim360.ExportRevitDataToExcel("<token>", "<filePath>","<versionId>");
+```
+
 ## Download SVF Model
 
 ```csharp
@@ -215,6 +222,8 @@ string geometryMetadata = @"<yourpath>\GeometryMetadata.pf";
 byte[] buffer = System.IO.File.ReadAllBytes(me);
 var geometries = Geometries.parseGeometries(buffer);
 ```
+
+NOTE : Please see repo [APSToolkitUnit](./APSToolkitUnit) to get more example.
 
 ## Dependencies
 
