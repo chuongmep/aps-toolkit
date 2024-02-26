@@ -9,6 +9,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <IsTestProject>true</IsTestProject>
     <TargetFramework>net6</TargetFramework>
+    <RootNamespace>ForgeToolkitUnit</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autodesk.Forge.DesignAutomation" Version="5.1.2" />

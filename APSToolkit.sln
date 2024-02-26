@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		CONTRIBUTING.md = CONTRIBUTING.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgeToolkitUnit", "ForgeToolkitUnit\ForgeToolkitUnit.csproj", "{44176454-3674-4C4B-8147-F7FE661E20D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APSToolkitUnit", "APSToolkitUnit\APSToolkitUnit.csproj", "{44176454-3674-4C4B-8147-F7FE661E20D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{E4533E04-5E9D-4D4E-813A-3BF38AF90013}"
 	ProjectSection(SolutionItems) = preProject

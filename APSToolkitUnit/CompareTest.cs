@@ -20,8 +20,8 @@ public class CompareTest
     [Test]
     public void CompareExecute()
     {
-        string path1 = @"D:\API\Forge\ExploreForgeGeometry\ForgeToolkitUnit\bin\Debug\net6\version9.json";
-        string path2 = @"D:\API\Forge\ExploreForgeGeometry\ForgeToolkitUnit\bin\Debug\net6\version10.json";
+        string path1 = @"D:\API\Forge\ExploreForgeGeometry\APSToolkitUnit\bin\Debug\net6\version9.json";
+        string path2 = @"D:\API\Forge\ExploreForgeGeometry\APSToolkitUnit\bin\Debug\net6\version10.json";
         // get string json path1
         var stringJsonPath1 = System.IO.File.ReadAllText(path1);
         // get string json path2
