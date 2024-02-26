@@ -25,7 +25,7 @@ public class RevitDataConfiguration
     /// <summary>
     /// True to get the bounding box of the object
     /// </summary>
-    public bool IsGetBBox { get; set; } = true;
+    public bool IsGetBBox { get; set; } = false;
 
     public string Urn { get; set; }
 
