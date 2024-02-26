@@ -33,6 +33,8 @@ APS Toolkit (Former is Forge) is powerful for you to explore `Autodesk Platform 
 
 ## Installation
 
+Please follow latest update at [APSToolkit Nuget](https://www.nuget.org/packages/APSToolkit)
+
 ```bash
 <PackageReference Include="APSToolkit" Version="1.*" />
 ```
