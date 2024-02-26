@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <RootNamespace>APSToolkit</RootNamespace>
+        <TargetFramework>net6</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Authors>chuongmep.com</Authors>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+        <PackageType>Dependency</PackageType>
+        <PackageId>APSToolkit</PackageId>
+        <AssemblyVersion>1.0.3</AssemblyVersion>
+        <PackageVersion>1.0.3</PackageVersion>
+        <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
+        <Deterministic>false</Deterministic>
+        <PackageTags>revit;bim360;acc;adsk;forgetoolkit;forge;autodesk;aps;</PackageTags>
+        <Description>The toolkit support imporve process Autodesk Forge Pipeline</Description>
+        <RepositoryUrl>https://github.com/chuongmep/aps-toolkit</RepositoryUrl>
+        <PackageLicenseFile>License.md</PackageLicenseFile>
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
+        <!--        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
+        <NoWarn>CS8632;CS7035</NoWarn>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Autodesk.Forge" Version="1.9.9"/>
+        <PackageReference Include="Autodesk.Forge.DesignAutomation" Version="5.1.2"/>
+        <PackageReference Include="CsvHelper" Version="30.0.1"/>
+        <!--      <PackageReference Include="dotbim" Version="1.1.2" />-->
+        <PackageReference Include="EPPlus" Version="7.0.4"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="ConsoleTables" Version="2.6.1"/>
+        <PackageReference Include="Serilog" Version="3.1.2-dev-02097"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00972"/>
+        <PackageReference Include="SharpZipLib" Version="1.4.2"/>
+        <!--      <PackageReference Include="Speckle.Objects" Version="2.16.0" />-->
+        <!--        <PackageReference Include="ChoETL.JSON" Version="1.2.1.62" />-->
+        <PackageReference Include="ChoETL.Parquet" Version="1.0.1.30"/>
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118"/>
+        <PackageReference Include="System.IO" Version="4.3.0"/>
+        <PackageReference Include="System.Numerics.Vectors" Version="4.5.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="Resources\units.json"/>
+        <None Include="../License.md" Pack="true" Visible="false" PackagePath=""/>
+        <None Include="../Readme.md" Pack="true" Visible="false" PackagePath=""/>
+        <EmbeddedResource Include="Resources\units.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Database\PropDbReader.cs">
+        <DependentUpon>DbReaderRevit.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+</Project>

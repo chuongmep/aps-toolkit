@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{C122216E-D1A3-4975-8DC5-C25BA6397CF2}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+		docs\Nuget.md = docs\Nuget.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForgeToolkitUnit", "ForgeToolkitUnit\ForgeToolkitUnit.csproj", "{44176454-3674-4C4B-8147-F7FE661E20D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{E4533E04-5E9D-4D4E-813A-3BF38AF90013}"
+	ProjectSection(SolutionItems) = preProject
+		sql\GetallData.sql = sql\GetallData.sql
+		sql\GetElementId.sql = sql\GetElementId.sql
+		sql\GetRevitCategories.sql = sql\GetRevitCategories.sql
+		sql\QueryByElementId.sql = sql\QueryByElementId.sql
+		sql\QueryRevitFamily.sql = sql\QueryRevitFamily.sql
+		sql\QueryRevitFamilyType.sql = sql\QueryRevitFamilyType.sql
+		sql\QueryByDbId.sql = sql\QueryByDbId.sql
+		sql\GetPrototype.sql = sql\GetPrototype.sql
+		sql\QueryRevitLikeCategory.sql = sql\QueryRevitLikeCategory.sql
+		sql\QueryInternalProperty.sql = sql\QueryInternalProperty.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{67D0BB28-04CE-40AC-B183-61176D39F7B7}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportUnitAddin", "ExportUnitAddin\ExportUnitAddin.csproj", "{35D0DD6C-A551-4EDA-9506-A0701DFAA24D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{91186ACB-7A58-4C63-8A3B-EB5DC671211F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APSToolkit", "APSToolkit\APSToolkit.csproj", "{33BEA9F0-FC3A-4207-9735-9F5BCD913AF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APSToolkitApp", "APSToolkitApp\APSToolkitApp.csproj", "{2BFFD7F5-CFA6-45A0-BF9E-66B307F28A6B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91186ACB-7A58-4C63-8A3B-EB5DC671211F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91186ACB-7A58-4C63-8A3B-EB5DC671211F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44176454-3674-4C4B-8147-F7FE661E20D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44176454-3674-4C4B-8147-F7FE661E20D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44176454-3674-4C4B-8147-F7FE661E20D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35D0DD6C-A551-4EDA-9506-A0701DFAA24D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35D0DD6C-A551-4EDA-9506-A0701DFAA24D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35D0DD6C-A551-4EDA-9506-A0701DFAA24D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33BEA9F0-FC3A-4207-9735-9F5BCD913AF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33BEA9F0-FC3A-4207-9735-9F5BCD913AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33BEA9F0-FC3A-4207-9735-9F5BCD913AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33BEA9F0-FC3A-4207-9735-9F5BCD913AF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BFFD7F5-CFA6-45A0-BF9E-66B307F28A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BFFD7F5-CFA6-45A0-BF9E-66B307F28A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BFFD7F5-CFA6-45A0-BF9E-66B307F28A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BFFD7F5-CFA6-45A0-BF9E-66B307F28A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E4533E04-5E9D-4D4E-813A-3BF38AF90013} = {C122216E-D1A3-4975-8DC5-C25BA6397CF2}
+		{67D0BB28-04CE-40AC-B183-61176D39F7B7} = {C122216E-D1A3-4975-8DC5-C25BA6397CF2}
+	EndGlobalSection
+EndGlobal
