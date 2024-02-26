@@ -82,10 +82,8 @@ dynamic token = twoLeggedApi.Authenticate(ClientID, ClientSecret, "client_creden
     Scope.BucketUpdate, Scope.BucketDelete
   });
 var access_token = token.access_token;
-PropDbReader probReader = await Derivatives.ReadPropertyRemoteAsync(urn, access_token);
-Dictionary<string,string> properties = probReader.GetProperties(3528);
-
-Console.WriteLine("Done with ReadPropertyRemoteAsync");
+PropDbReader probReader = new PropDbReader(urn, access_token);
+Dictionary<string,string> properties = probReader.ExportDataToExcel("<filePath>","result.xlsx");
 ```
 
 ## Read Metadata By Query SQLite
@@ -144,9 +142,7 @@ dynamic token = twoLeggedApi.Authenticate(ClientID, ClientSecret, "client_creden
         Scope.BucketUpdate, Scope.BucketDelete
     });
 var access_token = token.access_token;
-Console.WriteLine("Start check data process export svf");
-await Derivatives.SaveFileSVFAsync(dowloadFolder, urn, access_token);
-Console.WriteLine("Done process save data svf");
+await Derivatives.SaveFileSvfAsync("<folder>", urn, access_token);
 
 ```
 ## Read SVF Model Local

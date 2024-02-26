@@ -26,7 +26,7 @@ public class ProbDbReaderTest
         string avs = "Resources/objects_avs.json.gz";
         string attrs = "Resources/objects_attrs.json.gz";
         string values = "Resources/objects_vals.json.gz";
-        PropDbReader = new PropDbReaderRevit(ids,offsets,avs,attrs,values);
+        PropDbReader = new PropDbReader(ids,offsets,avs,attrs,values);
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         Console.WriteLine($"Time elapsed seconds: {elapsedMs / 1000}");
