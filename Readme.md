@@ -50,7 +50,7 @@ APS_REFRESH_TOKEN = <your refresh token>
 
 All Tutorials are available under Jupyter Notebook at [Turorials](./docs/Turorials)
 
-- [00.Explore Revit Data With APSToolkit](./docs/Turorials/00.Explore Revit Data With APSToolkit.ipynb)
+- [00.Explore Revit Data With APSToolkit](https://github.com/chuongmep/aps-toolkit/blob/dev/docs/Turorials/00.Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
 
 ## Read Properties From Local
 
