@@ -52,6 +52,9 @@ All Tutorials are available under Jupyter Notebook at [Turorials](./docs/Turoria
 
 - [00.Explore Revit Data With APSToolkit](https://github.com/chuongmep/aps-toolkit/blob/dev/docs/Turorials/00.Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
 
+
+**WIP** : Working in progress, please collaborate with me to complete this.
+
 ## Read Properties From Local
 
 ```csharp
