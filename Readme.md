@@ -3,9 +3,8 @@
 ![ReSharper](https://img.shields.io/badge/ReSharper-2023-yellow) ![Rider](https://img.shields.io/badge/Rider-2023-yellow) ![Visual Studio 2022](https://img.shields.io/badge/Visual_Studio_2022-yellow) ![.NET Framework](https://img.shields.io/badge/.NET_6-yellow)
 
 [![Publish](../../actions/workflows/dotnet.yml/badge.svg)](../../actions)
-[![Nuget](https://img.shields.io/nuget/v/APSToolkit)](https://www.nuget.org/packages/APSToolkit)
-[![Github All Releases](https://img.shields.io/github/downloads/chuongmep/aps-toolkit/total?color=blue&label=Download)]()
-[![HitCount](https://hits.dwyl.com/chuongmep/aps-toolkit.svg?style=flat-square)](http://hits.dwyl.com/chuongmep/aps-toolkit)
+[![Nuget Version](https://img.shields.io/nuget/v/APSToolkit)](https://www.nuget.org/packages/APSToolkit)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/APSToolkit.svg)](https://www.nuget.org/packages/APSToolkit/)
 
 <a href="https://twitter.com/intent/follow?screen_name=chuongmep">
 <img src="https://img.shields.io/twitter/follow/chuongmep?style=social&logo=twitter"
