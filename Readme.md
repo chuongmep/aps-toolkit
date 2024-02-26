@@ -126,6 +126,13 @@ BIM360 bim360 = new BIM360();
 bim360.ExportRevitDataToExcel("<token>", "<filePath>","<versionId>");
 ```
 
+## Export All Revit Data to Excel 
+
+```csharp
+RevitPropDbReader = new PropDbReaderRevit("<urn>", "<token>");
+RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
+```
+
 ## Download SVF Model
 
 ```csharp
