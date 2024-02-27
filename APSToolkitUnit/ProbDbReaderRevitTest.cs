@@ -154,7 +154,7 @@ public class ProbDbReaderRevitTest
     public void GetDataByCategoryParquetTest(string category)
 
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitRealUrn, Settings.Token2Leg);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         DataTable dataTable = RevitPropDbReader.GetAllDataByCategory(category);
         dataTable.ExportToParquet("result.parquet");
         Assert.AreNotEqual(0, dataTable.Rows);

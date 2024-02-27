@@ -204,9 +204,9 @@ public static class DataTableUtils
     /// </summary>
     /// <param name="dataTable">The DataTable to be converted.</param>
     /// <returns>A DataFrame with the same columns and data as the input DataTable.</returns>
-    public static DataFrame ToDataFrame(this DataTable dataTable)
+    public static Microsoft.Data.Analysis.DataFrame ToDataFrame(this DataTable dataTable)
     {
-        DataFrame dataFrame = new DataFrame();
+        Microsoft.Data.Analysis.DataFrame dataFrame = new Microsoft.Data.Analysis.DataFrame();
 
         foreach (DataColumn column in dataTable.Columns)
         {
