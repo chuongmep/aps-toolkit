@@ -10,13 +10,13 @@
 <img src="https://img.shields.io/twitter/follow/chuongmep?style=social&logo=twitter"
 alt="follow on Twitter"></a>
 
-## APS Toolkit
+## 🔩 APS Toolkit 
 
 APS Toolkit (Former is Forge) is powerful for you to explore `Autodesk Platform Services`(APS). It's built on top of [Autodesk.Forge](https://www.nuget.org/packages/Autodesk.Forge/) and [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/). Forge Toolkit includes some features allow you to read, download and write data from `Autodesk Platform Services` and export to CSV, Excel, JSON, XML, etc.
 
 ![APSToolkit](docs/APSToolkit.png)
 
-## Features
+## ⚡ Features
 
 - [x] Read/Download SVF Model
 - [x] Read/Query Properties Database SQLite
@@ -30,7 +30,7 @@ APS Toolkit (Former is Forge) is powerful for you to explore `Autodesk Platform 
 - [x] Export Data to Excel
 - [x] Export Data to Parquet
 
-## Installation
+## ⚙ Installation
 
 Please follow latest update at [APSToolkit Nuget](https://www.nuget.org/packages/APSToolkit)
 
@@ -46,7 +46,22 @@ APS_CLIENT_SECRET = <your client secret>
 APS_REFRESH_TOKEN = <your refresh token>
 ```
 
-## Tutorials
+## ⭐ Getting Started
+
+I want export Revit Data To Csv 👇
+
+```csharp
+using APSToolkit;
+using Autodesk.Forge;
+using APSToolkit.Database;
+using APSToolkit.Auth;
+var token = Authentication.Get2LeggedToken().Result;
+string urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0z";
+var RevitPropDbReader = new PropDbReaderRevit(urn, token);
+RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
+```
+
+## 📚 Tutorials
 
 All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutorials)
 
@@ -77,7 +92,7 @@ Many thanks some repos:
 - [UnityForgeImporter](https://github.com/chuongmep/UnityForgeImporter)
 - [forge-bucketsmanager-desktop](https://github.com/Autodesk-Forge/forge-bucketsmanager-desktop)
 
-## Contributing
+## 👨‍🏫 Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
