@@ -50,25 +50,23 @@ APS_REFRESH_TOKEN = <your refresh token>
 
 All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutorials)
 
-- [00. Jupyter Notebook And .NET Interactive](./docs/Tutorials/00.Jupyter%20Notebook%20And%20.NET%20Interactive.ipynb)
-- [01. Setup And Authentication](./docs/Tutorials/01.Setup%20And%20Authentication.ipynb)
-- [02. Explore Hubs - Projects - Items - URN](./docs/Tutorials/02.Explore%20Hubs%20-%20Projects%20-%20Items%20-%20URN.ipynb)
-- [03. Explore Versions Item and Derivative Urn](./docs/Tutorials/03.Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
-- [04. Explore Revit Data With APSToolkit](./docs/Tutorials/04.Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
+- [00. Jupyter Notebook And .NET Interactive](./docs/Tutorials/00.%20Jupyter%20Notebook%20And%20.NET%20Interactive.ipynb)
+- [01. Setup And Authentication](./docs/Tutorials/01.%20Setup%20And%20Authentication.ipynb)
+- [02. Explore Hubs - Projects - Items - URN](./docs/Tutorials/02.%20Explore%20Hubs%20-%20Projects%20-%20Items%20-%20URN.ipynb)
+- [03. Explore Versions Item and Derivative Urn](./docs/Tutorials/03.%20Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
+- [04.Explore General Metdadata With APSToolkit](./docs/Tutorials/04.%20Explore%20General%20Metdadata%20With%20APSToolkit.ipynb)
+- [04.01. Explore Revit Data With APSToolkit](./docs/Tutorials/04.01.%20Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
 - [05. Explore Access APS Database And Execute Query](./docs/Tutorials/05.%20Explore%20Access%20Database%20And%20Query%20Items.ipynb)
-- [06. Explore SVF Format - Export SVF Viewer](./docs/Tutorials/06.Explore%20SVF%20-%20Export%20SVF%20Viewer.ipynb)
+- [06. Explore SVF Format - Export SVF Viewer](./docs/Tutorials/06.%20Explore%20SVF%20-%20Export%20SVF%20Viewer.ipynb)
 - [07. Explore Update Revit Data Back To ACC](./docs/Tutorials/07.%20Explore%20Update%20Revit%20Data%20Back%20To%20ACC.ipynb)
 - [08. Explore Pull Data From ACC BIM360 API](./docs/Tutorials/08.%20Explore%20Pull%20Data%20From%20ACC%20BIM360%20API.ipynb)
 - [09. Explore Data Knowledge Use LLM Agent](./docs/Tutorials/09.%20Explore%20Data%20Knowledge%20Use%20LLM%20Agent.ipynb)
-- [10. Build Pipeline Data Process with APSToolkit](./docs//Tutorials/10.%20Build%20Pipeline%20Data%20Process%20with%20APSToolkit.ipynb)
-
+- [10. Build Pipeline Data Process with APSToolkit](./docs/Tutorials/10.%20Build%20Pipeline%20Data%20Process%20with%20APSToolkit.ipynb)
+- [11. Visualization Data - Data Analyst](./docs/Tutorials/11.%20Visualization%20Data%20-%20Data%20Analyst.ipynb)
+- [12. Custom Python In .NET Interactive](./docs/Tutorials/12.%20Custom%20Python%20In%20.NET%20Interactive.ipynb)
+- [13. Custom Metadata Export](./docs/Tutorials/13.%20Custom%20Metadata%20Export.ipynb) 
 
 **WIP** : Working in progress, please collaborate with me to complete this.
-
-## Dependencies
-
-- [Autodesk.Forge](https://www.nuget.org/packages/Autodesk.Forge/)
-- [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/)
 
 ## License
 Thís project is licensed under the terms of the [MIT](LICENSE).
