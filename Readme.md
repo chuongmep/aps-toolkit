@@ -50,14 +50,14 @@ APS_REFRESH_TOKEN = <your refresh token>
 
 All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutorials)
 
-- [00.Setup And Authentication](./docs/Tutorials/00.Setup%20And%20Authentication.ipynb)
-- [01.Jyputer Notebook And .NET Interactive](./docs/Tutorials/01.Jyputer%20Notebook%20And%20.NET%20Interactive.ipynb)
-- [02.Explore Hubs - Projects - Items](./docs/Tutorials/02.Explore%20Hubs%20-%20Projects%20-%20Items.ipynb)
-- [03.Explore Versions Item and Derivative Urn](./docs/Tutorials/03.Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
-- [04.Explore Revit Data With APSToolkit](./docs/Tutorials/04.Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
+- [00. Setup And Authentication](./docs/Tutorials/00.Setup%20And%20Authentication.ipynb)
+- [01. Jupyter Notebook And .NET Interactive](./docs/Tutorials/01.Jupyter%20Notebook%20And%20.NET%20Interactive.ipynb)
+- [02. Explore Hubs - Projects - Items](./docs/Tutorials/02.Explore%20Hubs%20-%20Projects%20-%20Items.ipynb)
+- [03. Explore Versions Item and Derivative Urn](./docs/Tutorials/03.Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
+- [04. Explore Revit Data With APSToolkit](./docs/Tutorials/04.Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
 - [05. Explore Access APS Database And Execute Query](./docs/Tutorials/05.%20Explore%20Access%20Database%20And%20Query%20Items.ipynb)
-- [06.Explore SVF Format - Export SVF Viewer](./docs/Tutorials/06.Explore%20SVF%20-%20Export%20SVF%20Viewer.ipynb)
-- [07.Explore Update Revit Data Back To ACC](./docs/Tutorials/07.%20Explore%20Update%20Revit%20Data%20Back%20To%20ACC.ipynb)
+- [06. Explore SVF Format - Export SVF Viewer](./docs/Tutorials/06.Explore%20SVF%20-%20Export%20SVF%20Viewer.ipynb)
+- [07. Explore Update Revit Data Back To ACC](./docs/Tutorials/07.%20Explore%20Update%20Revit%20Data%20Back%20To%20ACC.ipynb)
 - [08. Explore Pull Data From ACC BIM360 API](./docs/Tutorials/08.%20Explore%20Pull%20Data%20From%20ACC%20BIM360%20API.ipynb)
 
 **WIP** : Working in progress, please collaborate with me to complete this.
