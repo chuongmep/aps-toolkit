@@ -4,6 +4,7 @@ using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using ChoETL;
+using Microsoft.Data.Analysis;
 using Newtonsoft.Json;
 using Parquet;
 
@@ -196,5 +197,24 @@ public static class DataTableUtils
         }
 
         return dt;
+    }
+
+    /// <summary>
+    /// Converts a DataTable to a DataFrame.
+    /// </summary>
+    /// <param name="dataTable">The DataTable to be converted.</param>
+    /// <returns>A DataFrame with the same columns and data as the input DataTable.</returns>
+    public static DataFrame ToDataFrame(this DataTable dataTable)
+    {
+        DataFrame dataFrame = new DataFrame();
+
+        foreach (DataColumn column in dataTable.Columns)
+        {
+            // get values from column cast as string
+            string[] values = dataTable.AsEnumerable().Select(r => r.Field<object>(column.ColumnName)?.ToString()).ToArray();
+            DataFrameColumn dataFrameColumn = DataFrameColumn.Create(column.ColumnName, values);
+            dataFrame.Columns.Add(dataFrameColumn);
+        }
+        return dataFrame;
     }
 }
