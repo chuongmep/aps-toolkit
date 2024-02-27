@@ -54,7 +54,7 @@ All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutoria
 - [01. Setup And Authentication](./docs/Tutorials/01.%20Setup%20And%20Authentication.ipynb)
 - [02. Explore Hubs - Projects - Items - URN](./docs/Tutorials/02.%20Explore%20Hubs%20-%20Projects%20-%20Items%20-%20URN.ipynb)
 - [03. Explore Versions Item and Derivative Urn](./docs/Tutorials/03.%20Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
-- [04.Explore General Metdadata With APSToolkit](./docs/Tutorials/04.%20Explore%20General%20Metdadata%20With%20APSToolkit.ipynb)
+- [04. Explore General Metdadata With APSToolkit](./docs/Tutorials/04.%20Explore%20General%20Metdadata%20With%20APSToolkit.ipynb)
 - [04.01. Explore Revit Data With APSToolkit](./docs/Tutorials/04.01.%20Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
 - [05. Explore Access APS Database And Execute Query](./docs/Tutorials/05.%20Explore%20Access%20Database%20And%20Query%20Items.ipynb)
 - [06. Explore SVF Format - Export SVF Viewer](./docs/Tutorials/06.%20Explore%20SVF%20-%20Export%20SVF%20Viewer.ipynb)
