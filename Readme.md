@@ -260,3 +260,11 @@ Many thanks some repos:
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## 🎁 Sponsors
+
+![](https://upload.wikimedia.org/wikipedia/en/thumb/0/08/JetBrains_beam_logo.svg/220px-JetBrains_beam_logo.svg.png)
+
+Thanks [JetBrains](https://www.jetbrains.com/) for providing a free All product IDE for this project.
+
+---
