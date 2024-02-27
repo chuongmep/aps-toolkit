@@ -52,7 +52,7 @@ All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutoria
 
 - [00.Setup And Authentication](./docs/Tutorials/00.Setup%20And%20Authentication.ipynb)
 - [01.Jyputer Notebook And .NET Interactive](./docs/Tutorials/01.Jyputer%20Notebook%20And%20.NET%20Interactive.ipynb)
-- [02.Explore Hubs - Projects - Items.ipynb](./docs/Tutorials/02.Explore%20Hubs%20-%20Projects%20-%20Items.ipynb)
+- [02.Explore Hubs - Projects - Items](./docs/Tutorials/02.Explore%20Hubs%20-%20Projects%20-%20Items.ipynb)
 - [03.Explore Versions Item and Derivative Urn](./docs/Tutorials/03.Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
 - [04.Explore Revit Data With APSToolkit](./docs/Tutorials/04.Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
 
