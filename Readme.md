@@ -59,6 +59,7 @@ All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutoria
 - [06. Explore SVF Format - Export SVF Viewer](./docs/Tutorials/06.Explore%20SVF%20-%20Export%20SVF%20Viewer.ipynb)
 - [07. Explore Update Revit Data Back To ACC](./docs/Tutorials/07.%20Explore%20Update%20Revit%20Data%20Back%20To%20ACC.ipynb)
 - [08. Explore Pull Data From ACC BIM360 API](./docs/Tutorials/08.%20Explore%20Pull%20Data%20From%20ACC%20BIM360%20API.ipynb)
+- [09. Explore Data Knowledge Use LLM Agent](./docs/Tutorials/09.%20Explore%20Data%20Knowledge%20Use%20LLM%20Agent.ipynb)
 
 **WIP** : Working in progress, please collaborate with me to complete this.
 
