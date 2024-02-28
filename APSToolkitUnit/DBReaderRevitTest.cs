@@ -22,7 +22,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb")]
     public Task GetAllCategories(string urn)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(urn);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(urn);
         var categories = dbReaderRevit.GetAllCategories();
         categories.ExportToCsv("result.csv");
         Assert.AreNotEqual(0, categories.Count);
@@ -32,7 +32,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb","IFC Parameters")]
     public Task GetValueByPropertyCategoryTest(string urn,string category)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(urn);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(urn);
         List<Property> properties = dbReaderRevit.GetPropertyByCategory(category);
         Assert.AreNotEqual(0, properties.Count);
         properties.ExportToCsv("result.csv");
@@ -42,7 +42,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb","Comments")]
     public Task GetElementByParameterNameTest(string urn,string praName)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(urn);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(urn);
         var properties = dbReaderRevit.GetPropertyByName(praName);
         Assert.AreNotEqual(0, properties.Count);
         properties.ExportToCsv("result.csv");
@@ -52,7 +52,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb","Doors")]
     public Task GetElementsIdByRevitCategoryTest(string urn,string revitCategory)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(urn);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(urn);
         IEnumerable<string> properties = dbReaderRevit.GetExternalIdByRevitCategory(revitCategory);
         var enumerable = properties as string[] ?? properties.ToArray();
         enumerable.ExportToCsv("result.csv");
@@ -63,7 +63,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb","Furniture")]
     public Task GetPropertiesByRevitCategoryTest(string urn,string revitCategory)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(urn);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(urn);
         IEnumerable<Property> properties = dbReaderRevit.GetPropertiesByRevitCategory(revitCategory,true);
         var enumerable = properties as Property[] ?? properties.ToArray();
         Assert.AreNotEqual(0, enumerable.Count());
@@ -74,7 +74,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb","Furniture")]
     public Task GetPublicPropertiesByRevitCategoryTest(string urn,string revitCategory)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(urn);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(urn);
         IEnumerable<Property> properties = dbReaderRevit.GetPublicPropertiesByRevitCategory(revitCategory,true);
         var enumerable = properties as Property[] ?? properties.ToArray();
         Assert.AreNotEqual(0, enumerable.Count());
@@ -103,7 +103,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb","Walls")] // 2 second
     public Task ExportDataToCsvTest(string dbPath,string revitCategory)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(dbPath);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(dbPath);
         dbReaderRevit.ExportDataToCsv(revitCategory,"result.csv",true);
         return Task.CompletedTask;
     }
@@ -112,7 +112,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb","Walls")] // 2 second
     public Task ExportDataToExcelTest(string dbPath,string revitCategory)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(dbPath);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(dbPath);
         dbReaderRevit.ExportDataToExcel(revitCategory,"result.xlsx",revitCategory,true);
         return Task.CompletedTask;
     }
@@ -121,7 +121,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb")]
     public Task ExportAllDataToExcelTest(string dbPath)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(dbPath);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(dbPath);
         dbReaderRevit.ExportAllDataToExcel("result.xlsx",true);
         return Task.CompletedTask;
     }
@@ -130,7 +130,7 @@ public class DBReaderRevitTest
     [TestCase("Resources/model_rvt.sdb")]
     public Task GetAllDataGroupByRevitCategoryTest(string dbPath)
     {
-        DBReaderRevit dbReaderRevit = new DBReaderRevit(dbPath);
+        DbReaderRevit dbReaderRevit = new DbReaderRevit(dbPath);
         dbReaderRevit.GetAllDataGroupByRevitCategory(true);
         return Task.CompletedTask;
     }

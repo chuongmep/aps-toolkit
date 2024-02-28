@@ -17,7 +17,7 @@ public class DbReaderTest
     public void Setup()
     {
         Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
-        DbReader = new DbReader(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        DbReader = new DbReader(Settings._RevitTestUrn, Settings.Token2Leg);
     }
 
     [Test]

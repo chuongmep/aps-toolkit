@@ -58,10 +58,4 @@
         <None Include="../Readme.md" Pack="true" Visible="false" PackagePath=""/>
         <EmbeddedResource Include="Resources\units.json"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Database\PropDbReader.cs">
-        <DependentUpon>DbReaderRevit.cs</DependentUpon>
-      </Compile>
-    </ItemGroup>
 </Project>

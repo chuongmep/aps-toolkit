@@ -25,6 +25,8 @@ public class DbReader
     /// </summary>
     private string dbPath { get; set; }
 
+    private Token Token { get; set; }
+
     public DbReader(List<_object_id> objectIds, List<_objects_attr> objectAttrs, List<_objects_eav> objectsEavs,
         List<_object_val> objectVals)
     {
@@ -50,14 +52,14 @@ public class DbReader
     /// <param name="urn"></param>
     /// <param name="token"></param>
     /// <param name="isClearCache"></param>
-    public DbReader(string? urn, string token,bool isClearCache=true)
+    public DbReader(string? urn, Token token,bool isClearCache=true)
     {
         // check if input urn is path, throw exception
         if (urn.Contains(@"\"))
         {
             throw new Exception("urn require is derivative urn, not path");
         }
-        ReadData(urn, token).Wait();
+        ReadData(urn,token.access_token).Wait();
         IsClearCache = isClearCache;
     }
 
