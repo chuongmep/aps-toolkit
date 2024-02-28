@@ -1756,9 +1756,12 @@ public class BIM360
         dataTable.Columns.Add("ItemName", typeof(string));
         dataTable.Columns.Add("ItemId", typeof(string));
         dataTable.Columns.Add("LatestVersion", typeof(long));
+        dataTable.Columns.Add("LatestURN", typeof(string));
+        dataTable.Columns.Add("LastModifiedTime", typeof(DateTime));
         BatchReportItemVersionRecursive(projectId, folderId,extenstion,ref dataTable,isRecursive);
         return dataTable;
     }
+
     private void BatchReportItemVersionRecursive(string projectId,string folderId,string extension, ref DataTable dt,bool isRecursive)
     {
         var foldersApi = new FoldersApi();
@@ -1773,16 +1776,22 @@ public class BIM360
             string id = (string)itemInfo.Value.id;
             if (itemInfo.Value.type == "items" && name.EndsWith(extension))
             {
+                string urn = string.Empty;
                 dynamic? item = GetLatestVersionItem(get2LeggedToken, projectId, id);
                 string fileName = item?.attributes.displayName;
+                DateTime lastModifiedTime = item?.attributes.lastModifiedTime;
                 long versionNumber = item?.attributes.versionNumber;
                 string itemId = item?.relationships.item.data.id;
+                bool flag = item?.relationships.ContainsKey("derivatives");
+                if(flag) urn = item?.relationships.derivatives.data.id;
                 DataRow row = dt.NewRow();
                 row["ProjectId"] = projectId;
                 row["FolderId"] = folderId;
                 row["ItemName"] = fileName??string.Empty;
                 row["ItemId"] = itemId??string.Empty;
                 row["LatestVersion"] = versionNumber;
+                row["LatestURN"] = urn??string.Empty;
+                row["LastModifiedTime"] = lastModifiedTime;
                 dt.Rows.Add(row);
             }
             else if (itemInfo.Value.type == "folders" && isRecursive)
@@ -1790,6 +1799,39 @@ public class BIM360
                 BatchReportItemVersionRecursive(projectId,id, extension,ref dt,isRecursive);
             }
         }
+    }
+    public DataTable BatchReportItem(string projectId, string itemId)
+    {
+        DataTable dataTable = new DataTable();
+        dataTable.Columns.Add("ItemId", typeof(string));
+        dataTable.Columns.Add("Version", typeof(long));
+        dataTable.Columns.Add("URN", typeof(string));
+        dataTable.Columns.Add("LastModifiedTime", typeof(DateTime));
+        var itemsApi = new ItemsApi();
+        // refresh token
+        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
+        itemsApi.Configuration.AccessToken = get2LeggedToken;
+        dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
+        foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
+        {
+            string urn = string.Empty;
+            long version = itemInfo.Value.attributes.versionNumber;
+            DateTime lastModifiedTime = itemInfo.Value.attributes.lastModifiedTime;
+            // check DynamicDictionary contains derivatives, fix does not contain a definition for 'derivatives'
+            bool flag = itemInfo.Value.relationships.ContainsKey("derivatives");
+            if (flag)
+            {
+                urn = itemInfo.Value.relationships.derivatives.data.id;
+            }
+            DataRow row = dataTable.NewRow();
+            row["ItemId"] = itemId;
+            row["Version"] = version;
+            row["URN"] = urn;
+            row["LastModifiedTime"] = lastModifiedTime;
+            dataTable.Rows.Add(row);
+
+        }
+        return dataTable;
     }
     public void BatchExportAllRevitToExcel(string token2Leg,string directory,string hubId,string projectId,bool isRecursive)
     {
@@ -1802,7 +1844,7 @@ public class BIM360
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, TopFolderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
-            string name = (string)itemInfo.Value.attributes.displayName;
+            // string name = (string)itemInfo.Value.attributes.displayName;
             string id = (string)itemInfo.Value.id;
             // if type folder, recursive
             if (itemInfo.Value.type == "folders")

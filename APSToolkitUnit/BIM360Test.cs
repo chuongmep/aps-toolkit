@@ -460,6 +460,14 @@ public class BIM360Test
     {
         BIM360 bim360 = new BIM360();
         DataTable dataTable = bim360.BatchReportItemVersion(projectId,folderId,".rvt",true);
-        dataTable.ExportDataToExcel("result.xlsx");
+        dataTable.ExportToCsv(@"result.csv");
+    }
+    [Test]
+    [TestCase("b.1f7aa830-c6ef-48be-8a2d-bd554779e74b","urn:adsk.wipprod:dm.lineage:NxImvLT2T0yiFi0yZW_cKw")]
+    public void BatchReportItemTest(string projectId,string itemId)
+    {
+        BIM360 bim360 = new BIM360();
+        DataTable dataTable = bim360.BatchReportItem(projectId,itemId);
+        dataTable.ExportToCsv(@"result.csv");
     }
 }
