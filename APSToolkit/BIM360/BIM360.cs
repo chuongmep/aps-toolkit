@@ -1738,7 +1738,7 @@ public class BIM360
     }
 
     /// <summary>
-    /// Generates a report of item versions in a specified folder within a project.
+    /// Generates a report of items versions in a specified folder within a project.
     /// </summary>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="folderId">The unique identifier of the folder within the project.</param>
@@ -1748,7 +1748,7 @@ public class BIM360
     /// A DataTable containing the report data. Each row represents an item in the folder (and subfolders if isRecursive is true),
     /// and includes the project ID, folder ID, item ID, item name, and latest version number.
     /// </returns>
-    public DataTable BatchReportItemVersion(string projectId, string folderId,string extenstion=".rvt",bool isRecursive =false)
+    public DataTable BatchReportItems(string projectId, string folderId,string extenstion=".rvt",bool isRecursive =false)
     {
         DataTable dataTable = new DataTable();
         dataTable.Columns.Add("ProjectId", typeof(string));
@@ -1800,7 +1800,23 @@ public class BIM360
             }
         }
     }
-    public DataTable BatchReportItem(string projectId, string itemId)
+
+    /// <summary>
+    /// Generates a report of all versions of a specific item within a project. The report is returned as a DataTable.
+    /// </summary>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="itemId">The unique identifier of the item.</param>
+    /// <returns>A DataTable where each row represents a version of the item and includes the item ID, version number, URN (Uniform Resource Name), and the last modified time.</returns>
+    /// <remarks>
+    /// This method initializes a new DataTable and adds four columns to it: "ItemId", "Version", "URN", and "LastModifiedTime".
+    /// It creates an instance of ItemsApi and retrieves an access token which is set as the AccessToken for the ItemsApi instance.
+    /// It calls the GetItemVersionsAsync method of the ItemsApi instance to retrieve all versions of the specified item in the specified project.
+    /// It iterates over each item version in the result. For each item version, it retrieves the version number and the last modified time.
+    /// It also checks if the item version has a "derivatives" relationship and if so, it retrieves the URN of the derivatives.
+    /// It creates a new row in the DataTable, populates it with the item ID, version number, URN, and last modified time, and adds the row to the DataTable.
+    /// Finally, it returns the populated DataTable.
+    /// </remarks>
+    public DataTable BatchReportItemVersions(string projectId, string itemId)
     {
         DataTable dataTable = new DataTable();
         dataTable.Columns.Add("ItemId", typeof(string));
