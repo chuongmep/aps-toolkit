@@ -1732,10 +1732,69 @@ public class BIM360
     public void BatchExportAllRevitToExcelByFolder(string directory, string projectId, string folderId,
         bool isRecursive)
     {
+        DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+        if(!directoryInfo.Exists) directoryInfo.Create();
         ExportRevitExcelRecursive(directory, projectId, folderId,isRecursive);
+    }
+
+    /// <summary>
+    /// Generates a report of item versions in a specified folder within a project.
+    /// </summary>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="folderId">The unique identifier of the folder within the project.</param>
+    /// <param name="extenstion">The file extension to filter items by. Default is ".rvt".</param>
+    /// <param name="isRecursive">A boolean value indicating whether to recursively search subfolders. Default is false.</param>
+    /// <returns>
+    /// A DataTable containing the report data. Each row represents an item in the folder (and subfolders if isRecursive is true),
+    /// and includes the project ID, folder ID, item ID, item name, and latest version number.
+    /// </returns>
+    public DataTable BatchReportItemVersion(string projectId, string folderId,string extenstion=".rvt",bool isRecursive =false)
+    {
+        DataTable dataTable = new DataTable();
+        dataTable.Columns.Add("ProjectId", typeof(string));
+        dataTable.Columns.Add("FolderId", typeof(string));
+        dataTable.Columns.Add("ItemName", typeof(string));
+        dataTable.Columns.Add("ItemId", typeof(string));
+        dataTable.Columns.Add("LatestVersion", typeof(long));
+        BatchReportItemVersionRecursive(projectId, folderId,extenstion,ref dataTable,isRecursive);
+        return dataTable;
+    }
+    private void BatchReportItemVersionRecursive(string projectId,string folderId,string extension, ref DataTable dt,bool isRecursive)
+    {
+        var foldersApi = new FoldersApi();
+        // refresh token
+        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
+        foldersApi.Configuration.AccessToken = get2LeggedToken;
+        dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
+        get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
+        foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
+        {
+            string name = (string)itemInfo.Value.attributes.displayName;
+            string id = (string)itemInfo.Value.id;
+            if (itemInfo.Value.type == "items" && name.EndsWith(extension))
+            {
+                dynamic? item = GetLatestVersionItem(get2LeggedToken, projectId, id);
+                string fileName = item?.attributes.displayName;
+                long versionNumber = item?.attributes.versionNumber;
+                string itemId = item?.relationships.item.data.id;
+                DataRow row = dt.NewRow();
+                row["ProjectId"] = projectId;
+                row["FolderId"] = folderId;
+                row["ItemName"] = fileName??string.Empty;
+                row["ItemId"] = itemId??string.Empty;
+                row["LatestVersion"] = versionNumber;
+                dt.Rows.Add(row);
+            }
+            else if (itemInfo.Value.type == "folders" && isRecursive)
+            {
+                BatchReportItemVersionRecursive(projectId,id, extension,ref dt,isRecursive);
+            }
+        }
     }
     public void BatchExportAllRevitToExcel(string token2Leg,string directory,string hubId,string projectId,bool isRecursive)
     {
+        DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+        if(!directoryInfo.Exists) directoryInfo.Create();
         (string, string) projectFilesFolder = GetTopProjectFilesFolder(token2Leg, hubId, projectId);
         string TopFolderId = projectFilesFolder.Item1;
         var foldersApi = new FoldersApi();
@@ -1767,8 +1826,6 @@ public class BIM360
     }
     private void ExportRevitExcelRecursive(string directory, string projectId, string folderId,bool isRecursive)
     {
-        DirectoryInfo directoryInfo = new DirectoryInfo(directory);
-        if(!directoryInfo.Exists) directoryInfo.Create();
         var foldersApi = new FoldersApi();
         // refresh token
         string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
@@ -1778,11 +1835,7 @@ public class BIM360
         {
             string name = (string)itemInfo.Value.attributes.displayName;
             string id = (string)itemInfo.Value.id;
-            if (itemInfo.Value.type == "folders" && isRecursive)
-            {
-                ExportRevitExcelRecursive(directory, projectId, id,isRecursive);
-            }
-            else if (itemInfo.Value.type == "items" && name.EndsWith(".rvt"))
+            if (itemInfo.Value.type == "items" && name.EndsWith(".rvt"))
             {
                 get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
                 dynamic? item = GetLatestVersionItem(get2LeggedToken, projectId, id);
@@ -1808,6 +1861,10 @@ public class BIM360
                 var TotalTime = endtimestamp - startTime;
                 LogUtils.Info("Export " + fileName + " done in " + TotalTime.TotalMinutes + " minutes");
 
+            }
+            else if (itemInfo.Value.type == "folders" && isRecursive)
+            {
+                ExportRevitExcelRecursive(directory, projectId, id,isRecursive);
             }
         }
     }
