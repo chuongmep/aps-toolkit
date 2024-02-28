@@ -456,11 +456,18 @@ public class BIM360Test
 
     [Test]
     [TestCase("b.1f7aa830-c6ef-48be-8a2d-bd554779e74b","urn:adsk.wipprod:fs.folder:co.dEsE_6gCT6q0Kz7cRSGx0w")]
-    // [TestCase("b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d","urn:adsk.wipprod:fs.folder:co.OyLhAc9PSoymP-_yAb3YoQ")]
     public void BatchReportItemVersionTest(string projectId,string folderId)
     {
         BIM360 bim360 = new BIM360();
         DataTable dataTable = bim360.BatchReportItemVersion(projectId,folderId,".rvt",true);
-        dataTable.ExportDataToExcel("result.xlsx");
+        dataTable.ExportToCsv(@"D:/_WIP/Forge/Earth-Demo.csv");
+    }
+    [Test]
+    [TestCase("b.1f7aa830-c6ef-48be-8a2d-bd554779e74b","urn:adsk.wipprod:dm.lineage:NxImvLT2T0yiFi0yZW_cKw")]
+    public void BatchReportItemTest(string projectId,string itemId)
+    {
+        BIM360 bim360 = new BIM360();
+        DataTable dataTable = bim360.BatchReportItem(projectId,itemId);
+        dataTable.ExportToCsv(@"D:/_WIP/Forge/ItemId_Report.csv");
     }
 }
