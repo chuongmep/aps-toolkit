@@ -274,11 +274,11 @@ public class BIM360Test
     [TestCase("ec0f8261-aeca-4ab9-a1a5-5845f952b17d","W0cQMm5bZyq9ngSyO5IMOA")]
     public void TestGetAllDataOriginalProperties(string projectId,string indexVersionId)
     {
-        BIM360 bim360 = new BIM360();
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
         var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
-        List<BIMObject> allProperties = bim360.GetAllDataOriginalProperties(token3Leg,projectId,indexVersionId);
+        BIM360 bim360 = new BIM360(token3Leg);
+        List<BIMObject> allProperties = bim360.GetAllDataOriginalProperties(projectId,indexVersionId);
         Assert.IsNotEmpty(allProperties);
     }
     [Test]
@@ -331,7 +331,8 @@ public class BIM360Test
         BIM360 bim360 = new BIM360(token3Leg);
         List<string> versions = new List<string>() { urnVersionId };
         var result = bim360.BuildPropertyIndexesAsync(projectId,versions).Result;
-        Assert.IsNotEmpty(result);
+        var indexs = result?.indexes;
+        Assert.IsNotNull(indexs);
     }
     [Test]
     [TestCase("ec0f8261-aeca-4ab9-a1a5-5845f952b17d","urn:adsk.wipprod:fs.file:vf.Od8txDbKSSelToVg1oc1VA?version=13")]

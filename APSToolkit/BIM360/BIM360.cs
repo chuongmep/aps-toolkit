@@ -1022,7 +1022,7 @@ public class BIM360
     /// </remarks>
     /// <seealso cref="BIMField"/>
     /// <seealso cref="BIMObject"/>
-    public List<BIMObject?> GetAllDataOriginalProperties(Token token3Leg, string projectId, string indexVersionId)
+    public List<BIMObject?> GetAllDataOriginalProperties(string projectId, string indexVersionId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1035,6 +1035,7 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
+        string token3Leg = Token.access_token;
         request.AddHeader("Authorization", $"Bearer {token3Leg}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
@@ -1188,7 +1189,8 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes:batchStatus",
             RestSharp.Method.Post);
-        request.AddHeader("Authorization", "Bearer " + Token);
+        string accessToken = Token.access_token;
+        request.AddHeader("Authorization", $"Bearer {accessToken}");
 
         var data = versionIds.Select(versionId => new
         {
@@ -1574,7 +1576,8 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        request.AddHeader("Authorization", $"Bearer {Token}");
+        string accessToken = Token.access_token;
+        request.AddHeader("Authorization", $"Bearer {accessToken}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
@@ -1584,7 +1587,7 @@ public class BIM360
         var client2 = new RestClient(fieldsUrl);
         var request2 = new RestRequest();
         request2.Method = Method.Get;
-        request2.AddHeader("Authorization", $"Bearer {Token}");
+        request2.AddHeader("Authorization", $"Bearer {accessToken}");
         var response2 = client2.Execute(request2);
         //DeserializeObject to list feilds
         string? content = response2.Content;
@@ -1604,7 +1607,7 @@ public class BIM360
         var client3 = new RestClient(propertiesUrl);
         var request3 = new RestRequest();
         request3.Method = Method.Get;
-        request3.AddHeader("Authorization", $"Bearer {Token}");
+        request3.AddHeader("Authorization", $"Bearer {accessToken}");
         var response3 = client3.Execute(request3);
         string? content3 = response3.Content;
         //read content3 by \n to fix to json format before deserialize
