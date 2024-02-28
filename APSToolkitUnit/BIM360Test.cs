@@ -283,13 +283,13 @@ public class BIM360Test
     }
     [Test]
     [TestCase("ec0f8261-aeca-4ab9-a1a5-5845f952b17d","W0cQMm5bZyq9ngSyO5IMOA")]
-    public void TestGetAllDataByIndexVersionId(string projectId,string versionId)
+    public void TestGetAllDataByIndexVersionId(string projectId,string indexId)
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
         var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
-        BIMData[] allProperties = bim360.GetAllDataByIndexVersionId(projectId,versionId);
+        BIMData[] allProperties = bim360.GetAllDataByIndexVersionId(projectId,indexId);
         Assert.IsNotEmpty(allProperties);
     }
     [Test]
