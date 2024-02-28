@@ -8,18 +8,19 @@ namespace ForgeToolkitUnit;
 
 public class AuthenticationTest
 {
-    private static string Token { get; set; }
+    private static Token Token { get; set; }
 
     [SetUp]
     public void Setup()
     {
-        Token = Authentication.Get2LeggedToken().Result;
+
     }
 
     [Test]
     public void TestAuthentication2Leg()
     {
-        Assert.IsNotNull(Token);
+        Token = Authentication.Get2LeggedToken().Result;
+        Assert.IsNotEmpty(Token.access_token);
     }
 
     [Test]
@@ -36,5 +37,12 @@ public class AuthenticationTest
         var Leg3Token = Authentication.Refresh3LeggedToken(clientID, clientSecret, scope).Result;
         Assert.IsNotNull(Leg3Token);
         return Task.CompletedTask;
+    }
+
+    [Test]
+    public void TestTokenExpired()
+    {
+        Token = Authentication.Get2LeggedToken().Result;
+        Assert.IsFalse(Token.IsExpired());
     }
 }

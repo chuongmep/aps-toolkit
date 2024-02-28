@@ -29,7 +29,7 @@ public class RevitDataConfiguration
 
     public string Urn { get; set; }
 
-    public string Token { get; set; }
+    public Token Token { get; set; }
 
     public Dictionary<string, string> Units = new Dictionary<string, string>();
 
@@ -38,12 +38,19 @@ public class RevitDataConfiguration
     {
 
     }
-    public RevitDataConfiguration(string urn,string token) : this()
+    public RevitDataConfiguration(string urn,Token token) : this()
     {
         this.Urn = urn;
         this.Token = token;
         InitConfiguration();
     }
+    public RevitDataConfiguration(string urn) : this()
+    {
+        this.Urn = urn;
+        this.Token = Authentication.Get2LeggedToken().Result;
+        InitConfiguration();
+    }
+
 
     private async void InitConfiguration()
     {
@@ -54,15 +61,15 @@ public class RevitDataConfiguration
 
         if (IsGetBBox)
         {
-            Dictionary<int,ISvfFragment> svfFragments = await GetFragments(Token);
+            Dictionary<int,ISvfFragment> svfFragments = await GetFragments(Token.access_token);
             Fragments = svfFragments;
         }
     }
 
-    private async Task<Dictionary<int, ISvfFragment>> GetFragments(string token)
+    private async Task<Dictionary<int, ISvfFragment>> GetFragments(string accessToken)
     {
         Dictionary<string, ISvfFragment[]> fragments =
-            await Derivatives.ReadFragmentsRemoteAsync(Urn, token).ConfigureAwait(false);
+            await Derivatives.ReadFragmentsRemoteAsync(Urn, accessToken).ConfigureAwait(false);
         // flatten the fragments to list of svf fragments
         List<ISvfFragment> svfFragments = fragments.Values.SelectMany(x => x).ToList();
         // save to location with unique dbid and value

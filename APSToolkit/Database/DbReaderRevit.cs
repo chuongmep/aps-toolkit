@@ -2,11 +2,12 @@
 
 using System.Data;
 using System.Text.RegularExpressions;
+using APSToolkit.Auth;
 using APSToolkit.Utils;
 
 namespace APSToolkit.Database;
 
-public class DBReaderRevit : DbReader
+public class DbReaderRevit : DbReader
 {
     /// <summary>
     /// Retrieves a list of all categories present in the model.
@@ -500,16 +501,17 @@ public class DBReaderRevit : DbReader
     }
 
 
-    public DBReaderRevit(List<_object_id> objectIds, List<_objects_attr> objectAttrs, List<_objects_eav> objectsEavs,
+    public DbReaderRevit(List<_object_id> objectIds, List<_objects_attr> objectAttrs, List<_objects_eav> objectsEavs,
         List<_object_val> objectVals) : base(objectIds, objectAttrs, objectsEavs, objectVals)
     {
     }
 
-    public DBReaderRevit(string databasePath) : base(databasePath)
+    public DbReaderRevit(string databasePath) : base(databasePath)
     {
     }
 
-    public DBReaderRevit(string? urn, string token) : base(urn, token)
+    public DbReaderRevit(string? urn, Token token) : base(urn, token)
     {
+
     }
 }

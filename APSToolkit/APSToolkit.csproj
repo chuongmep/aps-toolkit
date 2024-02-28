@@ -10,8 +10,8 @@
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <PackageType>Dependency</PackageType>
         <PackageId>APSToolkit</PackageId>
-        <AssemblyVersion>1.0.7</AssemblyVersion>
-        <PackageVersion>1.0.7</PackageVersion>
+        <AssemblyVersion>1.0.8</AssemblyVersion>
+        <PackageVersion>1.0.8</PackageVersion>
         <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
         <Deterministic>false</Deterministic>
         <PackageTags>revit;bim360;acc;adsk;forgetoolkit;forge;autodesk;aps;</PackageTags>
@@ -57,11 +57,5 @@
         <None Include="../License.md" Pack="true" Visible="false" PackagePath=""/>
         <None Include="../Readme.md" Pack="true" Visible="false" PackagePath=""/>
         <EmbeddedResource Include="Resources\units.json"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Database\PropDbReader.cs">
-        <DependentUpon>DbReaderRevit.cs</DependentUpon>
-      </Compile>
     </ItemGroup>
 </Project>

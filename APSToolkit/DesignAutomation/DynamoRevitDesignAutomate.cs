@@ -332,7 +332,7 @@ public class DynamoRevitDesignAutomate
         string projectId, string versionId)
     {
         VersionsApi versionApi = new VersionsApi();
-        versionApi.Configuration.AccessToken = await Authentication.Get2LeggedToken().ConfigureAwait(false);
+        versionApi.Configuration.AccessToken = Authentication.Get2LeggedToken().Result.access_token;
         dynamic version = await versionApi.GetVersionAsync(projectId, versionId).ConfigureAwait(false);
         dynamic versionItem = await versionApi.GetVersionItemAsync(projectId, versionId).ConfigureAwait(false);
         string modelName = version.data.attributes.name;
@@ -376,8 +376,8 @@ public class DynamoRevitDesignAutomate
         // post url to upload zip file
         BucketStorage bucketStorage = new BucketStorage();
         string bucketName = "test_data";
-        bucketStorage.UploadFileToBucket(token, bucketName,inputZipPath);
-        var url = bucketStorage.GetFileSignedUrl(token, bucketName,"input.zip");
+        bucketStorage.UploadFileToBucket(bucketName,inputZipPath);
+        var url = bucketStorage.GetFileSignedUrl(bucketName,"input.zip");
         XrefTreeArgument treeArgument = new XrefTreeArgument()
         {
             Url = url,

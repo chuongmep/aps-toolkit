@@ -1,5 +1,7 @@
 ﻿// Copyright (c) chuongmep.com. All rights reserved
+
 using Autodesk.Forge;
+
 namespace APSToolkit.Auth;
 
 public static class Authentication
@@ -70,7 +72,7 @@ public static class Authentication
     /// </summary>
     /// <returns>The 2-legged access token.</returns>
     /// <exception cref="Exception">Thrown when APS_CLIENT_ID or APS_CLIENT_SECRET environment variables are missing.</exception>
-    public static async Task<string> Get2LeggedToken()
+    public static async Task<Token> Get2LeggedToken()
     {
         Autodesk.Forge.TwoLeggedApi twoLeggedApi = new Autodesk.Forge.TwoLeggedApi();
         var ClientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID");
@@ -87,13 +89,18 @@ public static class Authentication
                 Scope.BucketRead, Scope.CodeAll,
                 Scope.BucketUpdate, Scope.BucketDelete
             }).ConfigureAwait(false);
-        var access_token = token.access_token;
-        if (string.IsNullOrEmpty(access_token))
+        Token newToken = new Token()
+        {
+            access_token = token.access_token,
+            token_type = token.token_type,
+            expires_in = token.expires_in
+        };
+        if (string.IsNullOrEmpty(newToken.access_token))
         {
             throw new Exception("can't get access_token, please check again value APS_CLIENT_ID and APS_CLIENT_SECRET");
         }
 
-        return access_token;
+        return newToken;
     }
 
     /// <summary>
@@ -103,7 +110,7 @@ public static class Authentication
     /// <param name="clientSecret">The client secret for authentication.</param>
     /// <returns>The 2-legged access token.</returns>
     /// <exception cref="Exception">Thrown when clientId or clientSecret is null or empty.</exception>
-    public static async Task<string> Get2LeggedToken(string clientId, string clientSecret)
+    public static async Task<Token> Get2LeggedToken(string clientId, string clientSecret)
     {
         Autodesk.Forge.TwoLeggedApi twoLeggedApi = new Autodesk.Forge.TwoLeggedApi();
         if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
@@ -118,8 +125,13 @@ public static class Authentication
                 Scope.BucketRead,
                 Scope.BucketUpdate, Scope.BucketDelete
             }).ConfigureAwait(false);
-        var access_token = token.access_token;
-        return access_token;
+        Token newToken = new Token()
+        {
+            access_token = token.access_token,
+            token_type = token.token_type,
+            expires_in = token.expires_in
+        };
+        return newToken;
     }
 
     /// <summary>
@@ -178,7 +190,7 @@ public static class Authentication
     /// <param name="scope">The array of scopes specifying the access permissions for the refreshed token.</param>
     /// <returns>The refreshed 3-legged access token.</returns>
     /// <exception cref="Exception">Thrown when clientId, clientSecret, or refreshToken is null or empty.</exception>
-    public static async Task<string> Refresh3LeggedToken(string clientId, string clientSecret, string refreshToken,
+    public static async Task<Token> Refresh3LeggedToken(string clientId, string clientSecret, string refreshToken,
         Scope[] scope)
     {
         Autodesk.Forge.ThreeLeggedApi threeLeggedApi = new Autodesk.Forge.ThreeLeggedApi();
@@ -187,7 +199,7 @@ public static class Authentication
             throw new Exception("Missing required parameters: clientId, clientSecret, or refreshToken.");
         }
 
-        threeLeggedApi.Configuration.AccessToken = await Get2LeggedToken(clientId, clientSecret).ConfigureAwait(false);
+        threeLeggedApi.Configuration.AccessToken = Get2LeggedToken(clientId, clientSecret).Result.access_token;
         dynamic token = await threeLeggedApi
             .RefreshtokenAsync(clientId, clientSecret, "refresh_token", refreshToken, scope).ConfigureAwait(false);
         var accessToken = token.access_token;
@@ -195,7 +207,14 @@ public static class Authentication
         var newRefreshToken = token.refresh_token;
         // set value to environment variable
         Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", newRefreshToken, EnvironmentVariableTarget.User);
-        return accessToken;
+        Token newToken = new Token()
+        {
+            access_token = accessToken,
+            token_type = token.token_type,
+            expires_in = token.expires_in,
+            refresh_token = newRefreshToken
+        };
+        return newToken;
     }
 
     /// <summary>
@@ -206,14 +225,14 @@ public static class Authentication
     /// <param name="scope">The array of scopes specifying the access permissions for the refreshed token.</param>
     /// <returns>The refreshed 3-legged access token.</returns>
     /// <exception cref="Exception">Thrown when clientId, clientSecret, or APS_REFRESH_TOKEN is null or empty.</exception>
-    public static async Task<string> Refresh3LeggedToken(string clientId, string clientSecret, Scope[] scope)
+    public static async Task<Token> Refresh3LeggedToken(string clientId, string clientSecret, Scope[] scope)
     {
         var refreshToken = Environment.GetEnvironmentVariable("APS_REFRESH_TOKEN", EnvironmentVariableTarget.User);
         if (string.IsNullOrEmpty(refreshToken)) throw new Exception("Missing APS_REFRESH_TOKEN environment variable.");
         Autodesk.Forge.ThreeLeggedApi threeLeggedApi = new Autodesk.Forge.ThreeLeggedApi();
         if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
             throw new Exception("Missing required parameters: clientId, clientSecret.");
-        threeLeggedApi.Configuration.AccessToken = await Get2LeggedToken(clientId, clientSecret).ConfigureAwait(false);
+        threeLeggedApi.Configuration.AccessToken = Get2LeggedToken(clientId, clientSecret).Result.access_token;
         dynamic token = await threeLeggedApi
             .RefreshtokenAsync(clientId, clientSecret, "refresh_token", refreshToken, scope).ConfigureAwait(false);
         var accessToken = token.access_token;
@@ -221,10 +240,17 @@ public static class Authentication
         var newRefreshToken = token.refresh_token;
         // set value to environment variable
         Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", newRefreshToken, EnvironmentVariableTarget.User);
-        return accessToken;
+        Token newToken = new Token()
+        {
+            access_token = accessToken,
+            token_type = token.token_type,
+            expires_in = token.expires_in,
+            refresh_token = newRefreshToken
+        };
+        return newToken;
     }
 
-    public static Task<string> Refresh3LeggedToken(Scope[] scope)
+    public static Task<Token> Refresh3LeggedToken(Scope[] scope)
     {
         var clientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
         var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);

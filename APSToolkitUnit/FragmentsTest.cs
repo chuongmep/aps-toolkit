@@ -26,7 +26,7 @@ public class FragmentsTest
     [TestCase(Settings._RevitTestUrn)]
     public async Task TestGetFragments(string urn)
     {
-        var fragments = await Derivatives.ReadFragmentsRemoteAsync(urn, Settings.Token2Leg);
+        var fragments = await Derivatives.ReadFragmentsRemoteAsync(urn, Settings.Token2Leg.access_token);
         Assert.AreNotEqual(0, fragments.Count);
     }
 
@@ -34,7 +34,7 @@ public class FragmentsTest
     [TestCase(Settings._RevitTestUrn)]
     public async Task GetElementLocation(string urn)
     {
-        Dictionary<string, ISvfFragment[]> fragments = await Derivatives.ReadFragmentsRemoteAsync(urn, Settings.Token2Leg);
+        Dictionary<string, ISvfFragment[]> fragments = await Derivatives.ReadFragmentsRemoteAsync(urn, Settings.Token2Leg.access_token);
         // flatten the fragments to list of svf fragments
         List<ISvfFragment> svfFragments = fragments.Values.SelectMany(x => x).ToList();
         // save to location with unique dbid and value
@@ -55,7 +55,7 @@ public class FragmentsTest
     [TestCase(Settings._RevitTestUrn)]
     public async Task GetElementGeometry(string urn)
     {
-        Dictionary<string, ISvfGeometryMetadata[]> fragments = await Derivatives.ReadGeometriesRemoteAsync(urn, Settings.Token2Leg);
+        Dictionary<string, ISvfGeometryMetadata[]> fragments = await Derivatives.ReadGeometriesRemoteAsync(urn, Settings.Token2Leg.access_token);
         // flatten the fragments to list of svf fragments
         List<ISvfGeometryMetadata> svfFragments = fragments.Values.SelectMany(x => x).ToList();
         // save to location with unique dbid and value
@@ -76,7 +76,7 @@ public class FragmentsTest
     [TestCase("dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLm84d0tfSUNjUlphcHlhbUp5MmtFVmc_dmVyc2lvbj03")]
     public async Task TestGetBoundingBoxByFragment(string urn)
     {
-        Dictionary<string, ISvfFragment[]> fragments = await Derivatives.ReadFragmentsRemoteAsync(urn,Settings. Token2Leg);
+        Dictionary<string, ISvfFragment[]> fragments = await Derivatives.ReadFragmentsRemoteAsync(urn,Settings. Token2Leg.access_token);
         string phase = fragments.Keys.FirstOrDefault(x => x.Contains("New Construction"));
         ISvfFragment[] svfFragments = fragments[phase];
         ISvfFragment[] array = svfFragments.Where(x => x.dbID == 17778).ToArray();

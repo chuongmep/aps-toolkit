@@ -46,7 +46,7 @@ public class ProbDbReaderRevitTest
         RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
     }
     [Test]
-    [TestCaseSource(typeof(Settings), nameof(Settings.RevitRealUrn))]
+    [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
     public void TestExportAllDataToParquet(string urn)
     {
         RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);

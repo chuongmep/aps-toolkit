@@ -65,17 +65,4 @@ public class DesignAutomateConfiguration
 
         return string.Empty;
     }
-
-    public string Get2LeggedToken()
-    {
-        return Authentication.Get2LeggedToken(ClientId, ClientSecret).Result;
-    }
-    public string Get3LeggedToken(string code,string callback)
-    {
-        return Authentication.Get3LeggedToken(ClientId, ClientSecret,code,callback).Result;
-    }
-    public string Refresh3LeggedToken(string refreshToken,Scope[] scope)
-    {
-        return Authentication.Refresh3LeggedToken(ClientId, ClientSecret, refreshToken,scope).Result;
-    }
 }

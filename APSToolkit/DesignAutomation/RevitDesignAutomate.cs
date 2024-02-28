@@ -72,8 +72,9 @@ public class RevitDesignAutomate
     public async Task<Status> ExecuteJob(string projectId, string versionId, string callBackUrl)
     {
         // access Token
-        string userAccessToken = await Authentication
-            .Get2LeggedToken(_configuration.ClientId, _configuration.ClientSecret).ConfigureAwait(false);
+        Token token = Authentication
+            .Get2LeggedToken(_configuration.ClientId, _configuration.ClientSecret).Result;
+        string userAccessToken = token.access_token;
         bool isCompositeDesign = DAUtils.IsCompositeDesign(userAccessToken, projectId, versionId).Result;
         Console.WriteLine("Is Composite Design: " + isCompositeDesign);
         _configuration.Version = DAUtils.GetRevitVersionByVersionId(userAccessToken, projectId, versionId).Result;
@@ -345,7 +346,7 @@ public class RevitDesignAutomate
         string projectId, string versionId)
     {
         VersionsApi versionApi = new VersionsApi();
-        versionApi.Configuration.AccessToken = await Authentication.Get2LeggedToken().ConfigureAwait(false);
+        versionApi.Configuration.AccessToken = Authentication.Get2LeggedToken().Result.access_token;
         dynamic version = await versionApi.GetVersionAsync(projectId, versionId).ConfigureAwait(false);
         dynamic versionItem = await versionApi.GetVersionItemAsync(projectId, versionId).ConfigureAwait(false);
         string modelName = version.data.attributes.name;

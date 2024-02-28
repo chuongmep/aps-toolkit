@@ -16,7 +16,7 @@ namespace ForgeToolkitUnit;
 [TestFixture]
 public class DesignAutomationTest
 {
-    private static string Token { get; set; }
+    private static Token Token { get; set; }
 
     [SetUp]
     public void Setup()
@@ -92,13 +92,14 @@ public class DesignAutomationTest
             ModelGuid = modelGuid,
         };
 
-        string forgeToken2Leg =
-            await Authentication.Get2LeggedToken(configuration.ClientId, configuration.ClientSecret);
+        Token token =
+            Authentication.Get2LeggedToken(configuration.ClientId, configuration.ClientSecret).Result;
+        string forgeToken2Leg = token.access_token;
         var clientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
         var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        string forgeToken3Leg = await Authentication.Refresh3LeggedToken(clientID, clientSecret, scope);
+        string forgeToken3Leg = Authentication.Refresh3LeggedToken(clientID, clientSecret, scope).Result.access_token;
         if (string.IsNullOrEmpty(forgeToken3Leg)) Assert.Fail("Can't use forgeToken3Leg .");
         Status executeJob =
             await revitExtractDataAutomate.ExecuteJob(forgeToken2Leg, forgeToken3Leg, paramsList, inputParams,
@@ -129,13 +130,14 @@ public class DesignAutomationTest
             ResultFileExt = ".zip"
         };
         DynamoRevitDesignAutomate dynamoRevitDesignAutomate = new DynamoRevitDesignAutomate(configuration);
-        string forgeToken2Leg =
-            await Authentication.Get2LeggedToken(configuration.ClientId, configuration.ClientSecret);
+        Token token =
+            Authentication.Get2LeggedToken(configuration.ClientId, configuration.ClientSecret).Result;
+        string forgeToken2Leg = token.access_token;
         var clientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
         var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        string forgeToken3Leg = await Authentication.Refresh3LeggedToken(clientID, clientSecret, scope);
+        string forgeToken3Leg = Authentication.Refresh3LeggedToken(clientID, clientSecret, scope).Result.access_token;
         if (string.IsNullOrEmpty(forgeToken3Leg)) Assert.Fail("Can't use forgeToken3Leg .");
         Status executeJob =
             await dynamoRevitDesignAutomate.ExecuteJob(forgeToken2Leg, projectId, versionId,

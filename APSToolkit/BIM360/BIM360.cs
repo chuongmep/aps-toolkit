@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Net;
+using APSToolkit.Auth;
 using APSToolkit.Database;
 using APSToolkit.Utils;
 using Autodesk.Forge;
@@ -15,11 +16,20 @@ namespace APSToolkit.BIM360;
 public class BIM360
 {
     private static string Host = "https://developer.api.autodesk.com";
+    private Token Token { get; set; }
+
+    public BIM360()
+    {
+        this.Token = Authentication.Get2LeggedToken().Result;
+    }
+    public BIM360(Token token)
+    {
+        Token = token;
+    }
 
     /// <summary>
     /// Retrieves the hubs available for the specified access token in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <returns>
     /// A <see cref="DynamicDictionaryItems"/> containing information about the available hubs.
     /// </returns>
@@ -42,17 +52,17 @@ public class BIM360
     /// </example>
     /// <seealso cref="HubsApi"/>
     /// <seealso cref="DynamicDictionaryItems"/>
-    public DynamicDictionaryItems GetHubs(string AccessToken)
+    public DynamicDictionaryItems GetHubs()
     {
         var hubsApi = new HubsApi();
-        hubsApi.Configuration.AccessToken = AccessToken;
+        hubsApi.Configuration.AccessToken = Token.access_token;
         dynamic result = hubsApi.GetHubsAsync().Result;
         return new DynamicDictionaryItems(result.data);
     }
+
     /// <summary>
     /// Retrieves the projects within a specified hub in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="hubId">The unique identifier of the hub.</param>
     /// <returns>
     /// A <see cref="DynamicDictionaryItems"/> containing information about the projects within the specified hub.
@@ -77,10 +87,10 @@ public class BIM360
     /// </example>
     /// <seealso cref="ProjectsApi"/>
     /// <seealso cref="DynamicDictionaryItems"/>
-    public DynamicDictionaryItems GetProjects(string AccessToken, string hubId)
+    public DynamicDictionaryItems GetProjects(string hubId)
     {
         var projectsApi = new ProjectsApi();
-        projectsApi.Configuration.AccessToken = AccessToken;
+        projectsApi.Configuration.AccessToken = Token.access_token;
         dynamic result = projectsApi.GetHubProjectsAsync(hubId).Result;
         return new DynamicDictionaryItems(result.data);
     }
@@ -88,7 +98,6 @@ public class BIM360
     /// <summary>
     /// Retrieves the top-level folders within a specified project in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="hubId">The unique identifier of the hub.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <returns>
@@ -115,11 +124,11 @@ public class BIM360
     /// </example>
     /// <seealso cref="ProjectsApi"/>
     /// <seealso cref="Dictionary{TKey, TValue}"/>
-    public Dictionary<string, string> GetTopFolders(string AccessToken, string hubId, string projectId)
+    public Dictionary<string, string> GetTopFolders(string hubId, string projectId)
     {
         var folders = new Dictionary<string, string>();
         var projectsApi = new ProjectsApi();
-        projectsApi.Configuration.AccessToken = AccessToken;
+        projectsApi.Configuration.AccessToken = Token.access_token;
         dynamic result = projectsApi.GetProjectTopFoldersAsync(hubId, projectId).Result;
         foreach (KeyValuePair<string, dynamic> folderInfo in new DynamicDictionaryItems(result.data))
         {
@@ -130,10 +139,10 @@ public class BIM360
 
         return folders;
     }
-    public (string,string) GetTopProjectFilesFolder(string AccessToken, string hubId, string projectId)
+    public (string,string) GetTopProjectFilesFolder(string hubId, string projectId)
     {
         var projectsApi = new ProjectsApi();
-        projectsApi.Configuration.AccessToken = AccessToken;
+        projectsApi.Configuration.AccessToken = Token.access_token;
         dynamic result = projectsApi.GetProjectTopFoldersAsync(hubId, projectId).Result;
         foreach (KeyValuePair<string, dynamic> folderInfo in new DynamicDictionaryItems(result.data))
         {
@@ -150,7 +159,6 @@ public class BIM360
     /// <summary>
     /// Retrieves information about a specific item within a specified folder in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="folderId">The unique identifier of the folder within the project.</param>
     /// <param name="fileName">The name of the file for which information is being retrieved.</param>
@@ -183,10 +191,10 @@ public class BIM360
     /// </example>
     /// <seealso cref="FoldersApi"/>
     /// <seealso cref="DynamicDictionaryItems"/>
-    public dynamic? GetItemByFolder(string AccessToken, string projectId, string folderId, string fileName)
+    public dynamic? GetItemByFolder(string projectId, string folderId, string fileName)
     {
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = AccessToken;
+        foldersApi.Configuration.AccessToken = Token.access_token;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
@@ -203,7 +211,6 @@ public class BIM360
     /// <summary>
     /// Retrieves a list of items within a specified folder in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="folderId">The unique identifier of the folder within the project.</param>
     /// <returns>
@@ -230,10 +237,10 @@ public class BIM360
     /// </example>
     /// <seealso cref="FoldersApi"/>
     /// <seealso cref="DynamicDictionaryItems"/>
-    public DynamicDictionaryItems GetItemsByFolder(string AccessToken, string projectId, string folderId)
+    public DynamicDictionaryItems GetItemsByFolder(string projectId, string folderId)
     {
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = AccessToken;
+        foldersApi.Configuration.AccessToken = Token.access_token;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         return new DynamicDictionaryItems(result.data);
     }
@@ -241,7 +248,6 @@ public class BIM360
     /// <summary>
     /// Retrieves a list of items with a specified file name in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="hubId">The unique identifier of the hub.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="fileName">The name of the file to search for.</param>
@@ -272,14 +278,14 @@ public class BIM360
     /// </code>
     /// </example>
     /// <seealso cref="FoldersApi"/>
-    public List<dynamic?> GetItemsByFileName(string AccessToken, string hubId, string projectId,
+    public List<dynamic?> GetItemsByFileName(string hubId, string projectId,
         string fileName, bool stopFirstFind = true)
     {
         var files = new List<dynamic?>();
-        string TopFolderId = GetTopFolders(AccessToken, hubId, projectId)
+        string TopFolderId = GetTopFolders(hubId, projectId)
             .FirstOrDefault(x => x.Value == "Project Files").Key;
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = AccessToken;
+        foldersApi.Configuration.AccessToken = Token.access_token;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, TopFolderId).Result;
         bool isFounded = false;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
@@ -289,7 +295,7 @@ public class BIM360
             // if type folder, recursive
             if (itemInfo.Value.type == "folders")
             {
-                RecursiveFileInFolder(AccessToken, projectId, id, fileName, stopFirstFind, ref files, ref isFounded);
+                RecursiveFileInFolder(projectId, id, fileName, stopFirstFind, ref files, ref isFounded);
             }
             else if (name == fileName)
             {
@@ -300,13 +306,17 @@ public class BIM360
         return files;
     }
 
-    private void RecursiveFileInFolder(string AccessToken, string projectId, string folderId, string fileName,
+    private void RecursiveFileInFolder(string projectId, string folderId, string fileName,
         bool isStopFirstFind,
         ref List<dynamic?> files, ref bool IsFounded)
     {
         if (IsFounded && isStopFirstFind) return;
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = AccessToken;
+        if(Token.expires_in <=0)
+        {
+            Token = Authentication.Get2LeggedToken().Result;
+        }
+        foldersApi.Configuration.AccessToken = Token.access_token;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
@@ -314,7 +324,7 @@ public class BIM360
             string id = (string)itemInfo.Value.id;
             if (itemInfo.Value.type == "folders")
             {
-                RecursiveFileInFolder(AccessToken, projectId, id, fileName, isStopFirstFind, ref files, ref IsFounded);
+                RecursiveFileInFolder(projectId, id, fileName, isStopFirstFind, ref files, ref IsFounded);
             }
             else if (itemInfo.Value.type == "items" && name == fileName)
             {
@@ -327,7 +337,6 @@ public class BIM360
     /// <summary>
     /// Retrieves the versions of a specific item in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="itemId">The unique identifier of the item.</param>
     /// <returns>
@@ -354,10 +363,10 @@ public class BIM360
     /// </example>
     /// <seealso cref="ItemsApi"/>
     /// <seealso cref="DynamicDictionaryItems"/>
-    public DynamicDictionaryItems GetItemVersions(string AccessToken, string projectId, string itemId)
+    public DynamicDictionaryItems GetItemVersions(string projectId, string itemId)
     {
         var itemsApi = new ItemsApi();
-        itemsApi.Configuration.AccessToken = AccessToken;
+        itemsApi.Configuration.AccessToken = Token.access_token;
         dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
         DynamicDictionaryItems dictionaryItems = new DynamicDictionaryItems(result.data);
         return dictionaryItems;
@@ -366,7 +375,6 @@ public class BIM360
     /// <summary>
     /// Retrieves the latest version number of an item in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="itemId">The unique identifier of the item.</param>
     /// <returns>
@@ -377,10 +385,10 @@ public class BIM360
     /// It then counts the number of versions to determine the latest version of the item.
     /// </remarks>
     /// <seealso cref="ItemsApi"/>
-    public dynamic? GetLatestVersionItem(string AccessToken, string projectId, string itemId)
+    public dynamic? GetLatestVersionItem( string projectId, string itemId)
     {
         var itemsApi = new ItemsApi();
-        itemsApi.Configuration.AccessToken = AccessToken;
+        itemsApi.Configuration.AccessToken = Token.access_token;
         dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
         if(result==null) return null;
         return result.data[0];
@@ -389,13 +397,12 @@ public class BIM360
     /// <summary>
     /// Returns the status of processing data by urn model
     /// </summary>
-    /// <param name="AccessToken"></param>
     /// <param name="urn"></param>
     /// <returns></returns>
-    public string CheckStatusProcessingData(string AccessToken, string urn)
+    public string CheckStatusProcessingData(string urn)
     {
         var derivativeApi = new DerivativesApi();
-        derivativeApi.Configuration.AccessToken = AccessToken;
+        derivativeApi.Configuration.AccessToken = Token.access_token;
         dynamic manifest = derivativeApi.GetManifestAsync(urn).Result;
         string status = manifest.progress;
         return status;
@@ -404,23 +411,19 @@ public class BIM360
     /// <summary>
     /// Return the status of processing data by itemid and version
     /// </summary>
-    /// <param name="AccessToken"></param>
     /// <param name="projectId"></param>
     /// <param name="itemId"></param>
     /// <param name="version"></param>
     /// <returns></returns>
-    public string CheckStatusProcessingData(string AccessToken,string projectId, string itemId,int version)
+    public string CheckStatusProcessingData(string projectId, string itemId,int version)
     {
-        var derivativeApi = new DerivativesApi();
-        derivativeApi.Configuration.AccessToken = AccessToken;
-        string urn =  GetDerivativesUrn(AccessToken, projectId,itemId,version);
-        return CheckStatusProcessingData(AccessToken,urn);
+        string urn =  GetDerivativesUrn(projectId,itemId,version);
+        return CheckStatusProcessingData(urn);
     }
 
     /// <summary>
     /// Retrieves the unique identifier (URN) of derivatives for a specific version of an item in Autodesk BIM 360.
     /// </summary>
-    /// <param name="AccessToken">The access token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="itemId">The unique identifier of the item.</param>
     /// <param name="version">The version number for which derivatives URN is requested.</param>
@@ -433,9 +436,9 @@ public class BIM360
     /// If the version is found, it returns the derivatives URN associated with that version.
     /// </remarks>
     /// <seealso cref="GetItemVersions"/>
-    public string? GetDerivativesUrn(string AccessToken, string projectId, string itemId, int version)
+    public string? GetDerivativesUrn(string projectId, string itemId, int version)
     {
-        var versions = GetItemVersions(AccessToken, projectId, itemId);
+        var versions = GetItemVersions(projectId, itemId);
         foreach (KeyValuePair<string, dynamic> itemInfo in versions)
         {
             if (itemInfo.Value.attributes.versionNumber == version)
@@ -451,7 +454,6 @@ public class BIM360
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="folderUrn">The unique identifier (URN) of the folder to upload the file to.</param>
     /// <param name="filePath">The local file path of the file to be uploaded.</param>
-    /// <param name="accessToken">The access token for authentication.</param>
     /// <returns>
     /// A task representing the asynchronous operation. The task result is a FileInfoInDocs
     /// representing the details of the uploaded file in Autodesk BIM 360.
@@ -467,11 +469,11 @@ public class BIM360
     /// <seealso cref="UploadFileAsync"/>
     /// <seealso cref="CreateFileItemOrAppendVersionAsync"/>
     /// <seealso cref="FileInfoInDocs"/>
-    public async Task<FileInfoInDocs> UploadFileToBIM360(string projectId, string folderUrn, string filePath,
-        string accessToken)
+    public async Task<FileInfoInDocs> UploadFileToBIM360(string projectId, string folderUrn, string filePath)
     {
         string filename = Path.GetFileName(filePath);
         var fileMemoryStream = new MemoryStream(File.ReadAllBytes(filePath));
+        string accessToken = Token.access_token;
         string objectStorageId =
             await CreateFileStorage(projectId, folderUrn, filename, accessToken).ConfigureAwait(false);
         ObjectDetails objectDetails =
@@ -1020,7 +1022,7 @@ public class BIM360
     /// </remarks>
     /// <seealso cref="BIMField"/>
     /// <seealso cref="BIMObject"/>
-    public List<BIMObject?> GetAllDataOriginalProperties(string token3Leg, string projectId, string indexVersionId)
+    public List<BIMObject?> GetAllDataOriginalProperties(string projectId, string indexVersionId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1033,8 +1035,13 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
+        string token3Leg = Token.access_token;
         request.AddHeader("Authorization", $"Bearer {token3Leg}");
         var response = client.Execute(request);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new Exception($"{nameof(indexVersionId)} not found");
+        }
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
         string fieldsUrl = version.fieldsUrl;
@@ -1094,20 +1101,20 @@ public class BIM360
 
         return properties;
     }
-    public void ExportRevitDataToParquet(string token3Leg, string projectId, string indexVersionId,string filePath)
+
+    public void ExportRevitDataToParquet(string projectId, string indexVersionId,string filePath)
     {
         if (projectId.StartsWith("b."))
         {
             projectId = projectId.Substring(2);
         }
-
         string versionUrl = $"{Host}/construction/index/v2/projects/{projectId}/indexes/{indexVersionId}";
 
         // rest api get to get manifestUrl, fieldsUrl,propertiesUrl
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        request.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request.AddHeader("Authorization", $"Bearer + {Token.access_token}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
@@ -1119,7 +1126,7 @@ public class BIM360
         var client2 = new RestClient(fieldsUrl);
         var request2 = new RestRequest();
         request2.Method = Method.Get;
-        request2.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request2.AddHeader("Authorization", $"Bearer {Token}");
         var response2 = client2.Execute(request2);
         //DeserializeObject to list feilds
         string? content = response2.Content;
@@ -1138,7 +1145,7 @@ public class BIM360
         var client3 = new RestClient(propertiesUrl);
         var request3 = new RestRequest();
         request3.Method = Method.Get;
-        request3.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request3.AddHeader("Authorization", $"Bearer {Token}");
         var response3 = client3.Execute(request3);
         string? content3 = response3.Content;
         //read content3 by \n to fix to json format before deserialize
@@ -1158,7 +1165,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously initiates the building of property indexes for a given project and a list of version IDs.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="versionIds">A list of version IDs for which property indexes are to be built.</param>
     /// <returns>
@@ -1177,7 +1183,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<dynamic?> BuildPropertyIndexesAsync(string token3Leg, string projectId, List<string> versionIds)
+    public async Task<dynamic?> BuildPropertyIndexesAsync(string projectId, List<string> versionIds)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1187,7 +1193,8 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes:batchStatus",
             RestSharp.Method.Post);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        string accessToken = Token.access_token;
+        request.AddHeader("Authorization", $"Bearer {accessToken}");
 
         var data = versionIds.Select(versionId => new
         {
@@ -1212,7 +1219,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves the status of property indexes for a given project and index.
     /// </summary>
-    /// <param name="token3Leg">The authentication credentials, such as an access token.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1230,7 +1236,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<dynamic?> GetPropertyIndexesStatusAsync(string token3Leg, string projectId, string indexId)
+    public async Task<dynamic?> GetPropertyIndexesStatusAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         { projectId = projectId.Substring(2);
@@ -1238,7 +1244,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}",
             RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        request.AddHeader("Authorization", "Bearer " + Token);
 
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
@@ -1252,7 +1258,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves the property indexes manifest for a given project and index.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1270,7 +1275,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<dynamic?> GetPropertyIndexesManifestAsync(string token3Leg, string projectId, string indexId)
+    public async Task<dynamic?> GetPropertyIndexesManifestAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1280,7 +1285,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}/manifest",
             RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        request.AddHeader("Authorization", "Bearer " + Token);
 
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
@@ -1294,7 +1299,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves property fields for a given project and index.
     /// </summary>
-    /// <param name="credentials">The authentication credentials, such as an access token.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1312,7 +1316,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<List<JObject>?> GetPropertyFieldsAsync(string credentials, string projectId, string indexId)
+    public async Task<List<JObject>?> GetPropertyFieldsAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1322,7 +1326,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}/fields",
             RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + credentials);
+        request.AddHeader("Authorization", "Bearer " + Token);
 
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
@@ -1336,7 +1340,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves levels from AEC model data using the specified access token and URN.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="urn">The URN (Unique Resource Name) of the AEC model data.</param>
     /// <returns>
     /// A task representing the asynchronous operation. The task result is a list of Level instances
@@ -1354,10 +1357,10 @@ public class BIM360
     /// <seealso cref="DerivativesApi"/>
     /// <seealso cref="JsonSerializer"/>
     /// <seealso cref="JObject"/>
-    public async Task<List<Level>> GetLevelsFromAecModelData(string token3Leg, string urn)
+    public async Task<List<Level>> GetLevelsFromAecModelData(string urn)
     {
         var derivativeApi = new DerivativesApi();
-        derivativeApi.Configuration.AccessToken = token3Leg;
+        derivativeApi.Configuration.AccessToken = Token.access_token;
         string aecModelDataUrn = string.Empty;
         var data = await derivativeApi.GetManifestAsync(urn).ConfigureAwait(false);
         var result = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(data.ToString());
@@ -1445,7 +1448,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves property results for a given project and index.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1463,7 +1465,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<List<JObject>?> GetPropertiesResultsAsync(string token3Leg, string projectId, string indexId)
+    public async Task<List<JObject>?> GetPropertiesResultsAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1474,7 +1476,7 @@ public class BIM360
         RestRequest request =
             new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}/properties",
                 RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        request.AddHeader("Authorization", "Bearer " + Token);
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
         {
@@ -1541,23 +1543,22 @@ public class BIM360
     /// <summary>
     /// Retrieves all BIM (Building Information Modeling) data associated with a specific version of a project using the provided authentication token and project identifiers.
     /// </summary>
-    /// <param name="token3Leg">The authentication token required to access the project data.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="versionId">The identifier of the specific version of the project.</param>
     /// <returns>An array of BIMData objects containing the requested data.</returns>
-    public BIMData[] GetAllDataByVersionId(string token3Leg, string projectId, string versionId)
+    public BIMData[] GetAllDataByVersionId(string projectId, string versionId)
     {
-        dynamic? result = BuildPropertyIndexesAsync(token3Leg, projectId, new List<string>() { versionId }).Result;
+        dynamic? result = BuildPropertyIndexesAsync(projectId, new List<string>() { versionId }).Result;
         string? indexId;
         string? state = result?.indexes[0]?.state?.ToString() ?? result?.state?.ToString()?? null;
         while (!string.Equals(state, "FINISHED", StringComparison.Ordinal))
         {
             Thread.Sleep(1000);
-            result = BuildPropertyIndexesAsync(token3Leg, projectId, new List<string>() { versionId }).Result;
+            result = BuildPropertyIndexesAsync(projectId, new List<string>() { versionId }).Result;
             state = result?.indexes[0]?.state?.ToString() ?? result?.state?.ToString()?? null;
         }
         indexId = result?.indexes[0]?.indexId?.ToString() ?? result?.indexId?.ToString()?? null;
-        return GetAllDataByIndexVersionId(token3Leg, projectId, indexId);
+        return GetAllDataByIndexVersionId(projectId, indexId);
     }
     /// <summary>
     /// Retrieves BIM data properties for a given project and index version.
@@ -1571,7 +1572,7 @@ public class BIM360
     /// It then downloads and processes the fields and properties data, mapping them to the corresponding BIMObject properties.
     /// The resulting BIMData array includes information such as category, name, type, value, unit, bounding box, and external ID.
     /// </remarks>
-    public BIMData[] GetAllDataByIndexVersionId(string token3Leg, string projectId, string indexVersionId)
+    public BIMData[] GetAllDataByIndexVersionId(string projectId, string indexVersionId)
     {
         string versionUrl = $"{Host}/construction/index/v2/projects/{projectId}/indexes/{indexVersionId}";
 
@@ -1579,7 +1580,8 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        request.AddHeader("Authorization", $"Bearer {token3Leg}");
+        string accessToken = Token.access_token;
+        request.AddHeader("Authorization", $"Bearer {accessToken}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
@@ -1589,7 +1591,7 @@ public class BIM360
         var client2 = new RestClient(fieldsUrl);
         var request2 = new RestRequest();
         request2.Method = Method.Get;
-        request2.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request2.AddHeader("Authorization", $"Bearer {accessToken}");
         var response2 = client2.Execute(request2);
         //DeserializeObject to list feilds
         string? content = response2.Content;
@@ -1609,7 +1611,7 @@ public class BIM360
         var client3 = new RestClient(propertiesUrl);
         var request3 = new RestRequest();
         request3.Method = Method.Get;
-        request3.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request3.AddHeader("Authorization", $"Bearer {accessToken}");
         var response3 = client3.Execute(request3);
         string? content3 = response3.Content;
         //read content3 by \n to fix to json format before deserialize
@@ -1716,16 +1718,16 @@ public class BIM360
         }
         return dt;
     }
-    public PropDbReader GetPropDbReader(string token3Leg,string versionId)
+    public PropDbReader GetPropDbReader(string versionId)
     {
         string derivativeUrn = Base64Convert.ToBase64String(versionId);
-        PropDbReader propDbReader = new PropDbReader(derivativeUrn, token3Leg);
+        PropDbReader propDbReader = new PropDbReader(derivativeUrn, Token);
         return propDbReader;
     }
-    public PropDbReaderRevit GetPropDbReaderRevit(string token3Leg,string versionId)
+    public PropDbReaderRevit GetPropDbReaderRevit(string versionId)
     {
         string derivativeUrn = Base64Convert.ToBase64String(versionId);
-        PropDbReaderRevit propDbReader = new PropDbReaderRevit(derivativeUrn, token3Leg);
+        PropDbReaderRevit propDbReader = new PropDbReaderRevit(derivativeUrn, Token);
         return propDbReader;
     }
 
@@ -1738,7 +1740,7 @@ public class BIM360
     }
 
     /// <summary>
-    /// Generates a report of item versions in a specified folder within a project.
+    /// Generates a report of items versions in a specified folder within a project.
     /// </summary>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="folderId">The unique identifier of the folder within the project.</param>
@@ -1748,7 +1750,7 @@ public class BIM360
     /// A DataTable containing the report data. Each row represents an item in the folder (and subfolders if isRecursive is true),
     /// and includes the project ID, folder ID, item ID, item name, and latest version number.
     /// </returns>
-    public DataTable BatchReportItemVersion(string projectId, string folderId,string extenstion=".rvt",bool isRecursive =false)
+    public DataTable BatchReportItems(string projectId, string folderId,string extenstion=".rvt",bool isRecursive =false)
     {
         DataTable dataTable = new DataTable();
         dataTable.Columns.Add("ProjectId", typeof(string));
@@ -1766,10 +1768,9 @@ public class BIM360
     {
         var foldersApi = new FoldersApi();
         // refresh token
-        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
+        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result.access_token;
         foldersApi.Configuration.AccessToken = get2LeggedToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
-        get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
             string name = (string)itemInfo.Value.attributes.displayName;
@@ -1777,7 +1778,7 @@ public class BIM360
             if (itemInfo.Value.type == "items" && name.EndsWith(extension))
             {
                 string urn = string.Empty;
-                dynamic? item = GetLatestVersionItem(get2LeggedToken, projectId, id);
+                dynamic? item = GetLatestVersionItem(projectId, id);
                 string fileName = item?.attributes.displayName;
                 DateTime lastModifiedTime = item?.attributes.lastModifiedTime;
                 long versionNumber = item?.attributes.versionNumber;
@@ -1800,7 +1801,23 @@ public class BIM360
             }
         }
     }
-    public DataTable BatchReportItem(string projectId, string itemId)
+
+    /// <summary>
+    /// Generates a report of all versions of a specific item within a project. The report is returned as a DataTable.
+    /// </summary>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="itemId">The unique identifier of the item.</param>
+    /// <returns>A DataTable where each row represents a version of the item and includes the item ID, version number, URN (Uniform Resource Name), and the last modified time.</returns>
+    /// <remarks>
+    /// This method initializes a new DataTable and adds four columns to it: "ItemId", "Version", "URN", and "LastModifiedTime".
+    /// It creates an instance of ItemsApi and retrieves an access token which is set as the AccessToken for the ItemsApi instance.
+    /// It calls the GetItemVersionsAsync method of the ItemsApi instance to retrieve all versions of the specified item in the specified project.
+    /// It iterates over each item version in the result. For each item version, it retrieves the version number and the last modified time.
+    /// It also checks if the item version has a "derivatives" relationship and if so, it retrieves the URN of the derivatives.
+    /// It creates a new row in the DataTable, populates it with the item ID, version number, URN, and last modified time, and adds the row to the DataTable.
+    /// Finally, it returns the populated DataTable.
+    /// </remarks>
+    public DataTable BatchReportItemVersions(string projectId, string itemId)
     {
         DataTable dataTable = new DataTable();
         dataTable.Columns.Add("ItemId", typeof(string));
@@ -1809,7 +1826,7 @@ public class BIM360
         dataTable.Columns.Add("LastModifiedTime", typeof(DateTime));
         var itemsApi = new ItemsApi();
         // refresh token
-        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
+        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result.access_token;
         itemsApi.Configuration.AccessToken = get2LeggedToken;
         dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
@@ -1833,14 +1850,14 @@ public class BIM360
         }
         return dataTable;
     }
-    public void BatchExportAllRevitToExcel(string token2Leg,string directory,string hubId,string projectId,bool isRecursive)
+    public void BatchExportAllRevitToExcel(string directory,string hubId,string projectId,bool isRecursive)
     {
         DirectoryInfo directoryInfo = new DirectoryInfo(directory);
         if(!directoryInfo.Exists) directoryInfo.Create();
-        (string, string) projectFilesFolder = GetTopProjectFilesFolder(token2Leg, hubId, projectId);
+        (string, string) projectFilesFolder = GetTopProjectFilesFolder(hubId, projectId);
         string TopFolderId = projectFilesFolder.Item1;
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = token2Leg;
+        foldersApi.Configuration.AccessToken = Token.access_token;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, TopFolderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
@@ -1858,20 +1875,19 @@ public class BIM360
     /// <summary>
     /// Exports data from a Revit project to an Excel file.
     /// </summary>
-    /// <param name="token3Leg">The authentication token for accessing Revit data.</param>
     /// <param name="filePath">The file path where the Excel file will be saved.</param>
     /// <param name="versionId">The version identifier of the Revit project.</param>
-    public void ExportRevitDataToExcel(string token3Leg,string filePath,string versionId)
+    public void ExportRevitDataToExcel(string filePath,string versionId)
     {
-        PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(token3Leg, versionId);
+        PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(versionId);
         propDbReaderRevit.ExportAllDataToExcel(filePath);
     }
     private void ExportRevitExcelRecursive(string directory, string projectId, string folderId,bool isRecursive)
     {
         var foldersApi = new FoldersApi();
         // refresh token
-        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
-        foldersApi.Configuration.AccessToken = get2LeggedToken;
+        if(Token.expires_in<=0) Token = Auth.Authentication.Get2LeggedToken().Result;
+        foldersApi.Configuration.AccessToken = Token.access_token;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
@@ -1879,8 +1895,7 @@ public class BIM360
             string id = (string)itemInfo.Value.id;
             if (itemInfo.Value.type == "items" && name.EndsWith(".rvt"))
             {
-                get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
-                dynamic? item = GetLatestVersionItem(get2LeggedToken, projectId, id);
+                dynamic? item = GetLatestVersionItem(projectId, id);
                 string versionId = item.id;
                 string fileName = item.attributes.displayName;
                 // remove .rvt
@@ -1891,8 +1906,7 @@ public class BIM360
                 var startTime = DateTime.Now;
                 try
                 {
-                    PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(get2LeggedToken, versionId);
-
+                    PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(versionId);
                     propDbReaderRevit.ExportAllDataToExcel(filePath);
                 }
                 catch (Exception e)
