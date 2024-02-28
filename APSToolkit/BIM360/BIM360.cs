@@ -1038,6 +1038,10 @@ public class BIM360
         string token3Leg = Token.access_token;
         request.AddHeader("Authorization", $"Bearer {token3Leg}");
         var response = client.Execute(request);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            throw new Exception($"{nameof(indexVersionId)} not found");
+        }
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
         string fieldsUrl = version.fieldsUrl;
