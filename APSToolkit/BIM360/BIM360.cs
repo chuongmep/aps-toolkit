@@ -1808,7 +1808,6 @@ public class BIM360
         string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
         itemsApi.Configuration.AccessToken = get2LeggedToken;
         dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
-        get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
             string urn = string.Empty;
@@ -1839,7 +1838,7 @@ public class BIM360
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, TopFolderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
-            string name = (string)itemInfo.Value.attributes.displayName;
+            // string name = (string)itemInfo.Value.attributes.displayName;
             string id = (string)itemInfo.Value.id;
             // if type folder, recursive
             if (itemInfo.Value.type == "folders")
