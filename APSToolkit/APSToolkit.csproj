@@ -10,8 +10,8 @@
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <PackageType>Dependency</PackageType>
         <PackageId>APSToolkit</PackageId>
-        <AssemblyVersion>1.0.5</AssemblyVersion>
-        <PackageVersion>1.0.5</PackageVersion>
+        <AssemblyVersion>1.0.6</AssemblyVersion>
+        <PackageVersion>1.0.6</PackageVersion>
         <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
         <Deterministic>false</Deterministic>
         <PackageTags>revit;bim360;acc;adsk;forgetoolkit;forge;autodesk;aps;</PackageTags>
