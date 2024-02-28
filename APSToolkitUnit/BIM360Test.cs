@@ -419,7 +419,7 @@ public class BIM360Test
     public void ExportRevitDataToExcel(string filePath,string versionId)
     {
         BIM360 bim360 = new BIM360();
-        bim360.ExportRevitDataToExcel(Settings.Token2Leg, filePath,versionId);
+        bim360.ExportRevitDataToExcel(filePath,versionId);
     }
     [Test]
     [TestCase(Settings.HubId,Settings.ProjectId)]

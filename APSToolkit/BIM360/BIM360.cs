@@ -1868,10 +1868,9 @@ public class BIM360
     /// <summary>
     /// Exports data from a Revit project to an Excel file.
     /// </summary>
-    /// <param name="token">The authentication token for accessing Revit data.</param>
     /// <param name="filePath">The file path where the Excel file will be saved.</param>
     /// <param name="versionId">The version identifier of the Revit project.</param>
-    public void ExportRevitDataToExcel(Token token,string filePath,string versionId)
+    public void ExportRevitDataToExcel(string filePath,string versionId)
     {
         PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(versionId);
         propDbReaderRevit.ExportAllDataToExcel(filePath);
