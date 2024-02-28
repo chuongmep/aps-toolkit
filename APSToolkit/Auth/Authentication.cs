@@ -70,7 +70,7 @@ public static class Authentication
     /// </summary>
     /// <returns>The 2-legged access token.</returns>
     /// <exception cref="Exception">Thrown when APS_CLIENT_ID or APS_CLIENT_SECRET environment variables are missing.</exception>
-    public static async Task<string> Get2LeggedToken()
+    public static async Task<Token> Get2LeggedToken()
     {
         Autodesk.Forge.TwoLeggedApi twoLeggedApi = new Autodesk.Forge.TwoLeggedApi();
         var ClientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID");
@@ -87,13 +87,17 @@ public static class Authentication
                 Scope.BucketRead, Scope.CodeAll,
                 Scope.BucketUpdate, Scope.BucketDelete
             }).ConfigureAwait(false);
-        var access_token = token.access_token;
-        if (string.IsNullOrEmpty(access_token))
+        Token newToken = new Token()
+        {
+            access_token = token.access_token,
+            token_type = token.token_type,
+            expires_in = token.expires_in
+        };
+        if (string.IsNullOrEmpty(newToken.access_token))
         {
             throw new Exception("can't get access_token, please check again value APS_CLIENT_ID and APS_CLIENT_SECRET");
         }
-
-        return access_token;
+        return newToken;
     }
 
     /// <summary>

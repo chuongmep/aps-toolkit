@@ -345,7 +345,7 @@ public class RevitDesignAutomate
         string projectId, string versionId)
     {
         VersionsApi versionApi = new VersionsApi();
-        versionApi.Configuration.AccessToken = await Authentication.Get2LeggedToken().ConfigureAwait(false);
+        versionApi.Configuration.AccessToken = Authentication.Get2LeggedToken().Result.access_token;
         dynamic version = await versionApi.GetVersionAsync(projectId, versionId).ConfigureAwait(false);
         dynamic versionItem = await versionApi.GetVersionItemAsync(projectId, versionId).ConfigureAwait(false);
         string modelName = version.data.attributes.name;

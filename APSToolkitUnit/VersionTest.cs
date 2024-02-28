@@ -6,7 +6,7 @@ namespace ForgeToolkitUnit;
 
 public class VersionTest
 {
-    public string Token { get; set; }
+    public Token Token { get; set; }
     [SetUp]
     public void Setup()
     {
@@ -19,9 +19,9 @@ public class VersionTest
     public void TestGetInfoVersion(string projectId,string itemid)
     {
         VersionsApi versionsApi = new VersionsApi();
-        versionsApi.Configuration.AccessToken = Token;
+        versionsApi.Configuration.AccessToken = Token.access_token;
         ItemsApi itemsApi = new ItemsApi();
-        itemsApi.Configuration.AccessToken = Token;
+        itemsApi.Configuration.AccessToken = Token.access_token;
         dynamic versions = itemsApi.GetItemVersions(projectId, itemid);
         string versionId = versions.data[0].id;
         var version = versionsApi.GetVersion(projectId, versionId);

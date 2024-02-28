@@ -16,7 +16,7 @@ namespace ForgeToolkitUnit;
 [TestFixture]
 public class DesignAutomationTest
 {
-    private static string Token { get; set; }
+    private static Token Token { get; set; }
 
     [SetUp]
     public void Setup()

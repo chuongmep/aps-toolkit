@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
+using APSToolkit.Auth;
 using APSToolkit.Utils;
 using RestSharp;
 

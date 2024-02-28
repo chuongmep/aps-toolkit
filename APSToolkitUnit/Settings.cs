@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using APSToolkit.Auth;
 
 namespace ForgeToolkitUnit;
 
@@ -35,8 +36,8 @@ public static class Settings
     public const string VersionId = "urn:adsk.wipprod:fs.file:vf.Od8txDbKSSelToVg1oc1VA?version=13";
     public const string FileName = "MyHouse.rvt";
 
-    public static string Token2Leg = string.Empty;
-    public static string Token3Leg = string.Empty;
+    public static Token Token2Leg;
+    public static Token Token3Leg;
 
     public static IEnumerable<object[]> UrnTestCases()
     {

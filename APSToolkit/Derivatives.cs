@@ -2,6 +2,7 @@
 
 using System.IO.Compression;
 using System.Text.RegularExpressions;
+using APSToolkit.Auth;
 using APSToolkit.Schema;
 using Autodesk.Forge;
 using Autodesk.Forge.Model;
@@ -316,10 +317,10 @@ public static class Derivatives
         }
         return resources;
     }
-    public static async Task<List<Resource>> ExtractDataBaseAsync(string? urn, string accessToken)
+    public static async Task<List<Resource>> ExtractDataBaseAsync(string? urn, string token)
     {
         DerivativesApi derivativeApi = new DerivativesApi();
-        derivativeApi.Configuration.AccessToken = accessToken;
+        derivativeApi.Configuration.AccessToken = token;
 
         // get the manifest for the URN
         dynamic manifest = await derivativeApi.GetManifestAsync(urn).ConfigureAwait(false);

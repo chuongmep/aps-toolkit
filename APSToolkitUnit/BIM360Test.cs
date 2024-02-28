@@ -34,7 +34,7 @@ public class BIM360Test
     public void GetHubsTest()
     {
         BIM360 bim360 = new BIM360();
-        DynamicDictionaryItems dictionaryItems = bim360.GetHubs(Settings.Token2Leg);
+        DynamicDictionaryItems dictionaryItems = bim360.GetHubs();
         Assert.IsNotEmpty(dictionaryItems);
     }
 
@@ -43,7 +43,7 @@ public class BIM360Test
     public void GetProjectsTest(string hubId)
     {
         BIM360 bim360 = new BIM360();
-        DynamicDictionaryItems dictionary = bim360.GetProjects(Settings.Token2Leg, hubId);
+        DynamicDictionaryItems dictionary = bim360.GetProjects(hubId);
         Assert.IsNotEmpty(dictionary);
     }
 
@@ -53,7 +53,7 @@ public class BIM360Test
     {
         BIM360 bim360 = new BIM360();
         // can't use token 3 leg to get top folders, need to use token 2 leg
-        Dictionary<string, string> dictionary = bim360.GetTopFolders(Settings.Token2Leg, hubId, projectId);
+        Dictionary<string, string> dictionary = bim360.GetTopFolders(hubId, projectId);
         Assert.IsNotEmpty(dictionary);
     }
     [Test]
@@ -62,7 +62,7 @@ public class BIM360Test
     {
         BIM360 bim360 = new BIM360();
         // can't use token 3 leg to get top folders, need to use token 2 leg
-        (string, string) result = bim360.GetTopProjectFilesFolder(Settings.Token2Leg, hubId, projectId);
+        (string, string) result = bim360.GetTopProjectFilesFolder(hubId, projectId);
         Assert.IsNotEmpty(result.Item1);
         Assert.IsNotEmpty(result.Item2);
     }
@@ -72,7 +72,7 @@ public class BIM360Test
     public void TestGetItemsFolders(string projectId, string folderId)
     {
         BIM360 bim360 = new BIM360();
-        DynamicDictionaryItems items = bim360.GetItemsByFolder(Settings.Token2Leg, projectId, folderId);
+        DynamicDictionaryItems items = bim360.GetItemsByFolder( projectId, folderId);
         Assert.IsNotEmpty(items);
     }
 
@@ -82,7 +82,7 @@ public class BIM360Test
         string fileName)
     {
         BIM360 bim360 = new BIM360();
-        List<dynamic> items = bim360.GetItemsByFileName(Settings.Token2Leg, hubId, projectId, fileName);
+        List<dynamic> items = bim360.GetItemsByFileName(hubId, projectId, fileName);
         Assert.IsNotEmpty(items);
     }
 
@@ -91,7 +91,7 @@ public class BIM360Test
     public void GetItemVersionsTest(string projectId, string itemId)
     {
         BIM360 bim360 = new BIM360();
-        var result = bim360.GetItemVersions(Settings.Token2Leg, projectId, itemId);
+        var result = bim360.GetItemVersions(projectId, itemId);
         Assert.IsNotEmpty(result.ToString());
     }
     [Test]
@@ -99,7 +99,7 @@ public class BIM360Test
     public void TestGetLatestVersionItem(string projectId, string itemId)
     {
         BIM360 bim360 = new BIM360();
-        var result = bim360.GetLatestVersionItem(Settings.Token2Leg, projectId, itemId);
+        var result = bim360.GetLatestVersionItem(projectId, itemId);
         Assert.IsNotEmpty(result.ToString());
     }
 
@@ -111,16 +111,15 @@ public class BIM360Test
         // Please note that input for itemID is lineageUrn not a resourceUrn like : urn:adsk.wipprod:fs.file:vf.Od8txDbKSSelToVg1oc1VA?version=26
         // In this case put file :
         // correct item urn : urn:adsk.wipprod:dm.lineage:Od8txDbKSSelToVg1oc1VA and version id 26
-        var derivativesUrn = bim360.GetDerivativesUrn(Settings.Token2Leg, projectId, itemId, 2);
+        var derivativesUrn = bim360.GetDerivativesUrn(projectId, itemId, 2);
         Assert.IsNotEmpty(derivativesUrn);
     }
     [Test]
     [TestCase(Settings._RevitTestUrn)]
     public void CheckStatusProcessingDataTest(string urn)
     {
-        string token = Settings.Token2Leg;
         BIM360 bim360 = new BIM360();
-        string status = bim360.CheckStatusProcessingData(token, urn);
+        string status = bim360.CheckStatusProcessingData(urn);
         Console.WriteLine(status);
         Assert.IsNotEmpty(status);
     }
@@ -130,22 +129,21 @@ public class BIM360Test
     public void PipelineProcessTest(string projectId,string itemId,int version)
     {
         BIM360 bim360 = new BIM360();
-        string token = Settings.Token2Leg;
         string urn = string.Empty;
         while (true)
         {
-            string status = bim360.CheckStatusProcessingData(token, projectId, itemId, version);
+            string status = bim360.CheckStatusProcessingData(projectId, itemId, version);
             if (status != "complete")
             {
                 Thread.Sleep(5000);
                 continue;
             }
-            urn = bim360.GetDerivativesUrn(token,projectId,itemId,version);
+            urn = bim360.GetDerivativesUrn(projectId,itemId,version);
             Console.WriteLine(urn);
             break;
         }
         if(string.IsNullOrEmpty(urn)) Assert.Fail("Can't get urn");
-        token =  Authentication.Get2LeggedToken().Result;
+        var token =  Authentication.Get2LeggedToken().Result.access_token;
         PropDbReaderRevit propDbReaderRevit = new PropDbReaderRevit(urn,token);
         propDbReaderRevit.ExportAllDataToExcel("result.xlsx");
     }
@@ -154,21 +152,18 @@ public class BIM360Test
     [TestCase(Settings.ProjectId,Settings.ItemId,2)]
     public void CheckStatusProcessingDataTest(string projectId,string itemId,int version)
     {
-        string token = Settings.Token2Leg;
         BIM360 bim360 = new BIM360();
-        string status = bim360.CheckStatusProcessingData(token,projectId,itemId,version);
+        string status = bim360.CheckStatusProcessingData(projectId,itemId,version);
         Console.WriteLine(status);
         Assert.IsNotEmpty(status);
     }
 
     [Test]
-    [TestCase(Settings.ProjectId, Settings.FolderId,
-        @"./Resources/model.rvt")]
+    [TestCase(Settings.ProjectId, Settings.FolderId, @"./Resources/model.rvt")]
     public void UploadFileToBIM360Test(string projectId, string folderUrn, string filePath)
     {
         BIM360 bim360 = new BIM360();
-        string token = Authentication.Get2LeggedToken().Result;
-        Task<FileInfoInDocs> derivativesUrn = bim360.UploadFileToBIM360(projectId, folderUrn, filePath, token);
+        Task<FileInfoInDocs> derivativesUrn = bim360.UploadFileToBIM360(projectId, folderUrn, filePath);
         Assert.IsNotEmpty(derivativesUrn.Result.VersionId);
     }
 
@@ -177,7 +172,7 @@ public class BIM360Test
     public Task DownloadFileFromBIM360Test(string projectId, string folderUrn, string fileName)
     {
         BIM360 bim360 = new BIM360();
-        string token = Authentication.Get2LeggedToken().Result;
+        string token = Authentication.Get2LeggedToken().Result.access_token;
         string directory = "./";
         Task<string> derivativesUrn = bim360.DownloadFileFromBIM360(projectId, folderUrn, fileName, token, directory);
         Assert.IsNotEmpty(derivativesUrn.Result);
@@ -189,12 +184,12 @@ public class BIM360Test
         "result.xlsx")]
     public void ExportDataUploadBIM360Test(string projectId, string folderUrn, string filePath)
     {
-        var RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
+        var RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
         string categoryName = "Walls";
         RevitPropDbReader.ExportAllDataToExcelByCategory(filePath, categoryName, categoryName);
         BIM360 bim360 = new BIM360();
-        string token = Authentication.Get2LeggedToken().Result;
-        Task<FileInfoInDocs> derivativesUrn = bim360.UploadFileToBIM360(projectId, folderUrn, filePath, token);
+        string token = Authentication.Get2LeggedToken().Result.access_token;
+        Task<FileInfoInDocs> derivativesUrn = bim360.UploadFileToBIM360(projectId, folderUrn, filePath);
         Assert.IsNotEmpty(derivativesUrn.Result.VersionId);
     }
 
@@ -217,7 +212,7 @@ public class BIM360Test
     public void GetItemByFolder(string projectId, string folderId, string fileName)
     {
         BIM360 bim360 = new BIM360();
-        dynamic item = bim360.GetItemByFolder(Settings.Token2Leg, projectId, folderId, fileName);
+        dynamic item = bim360.GetItemByFolder(projectId, folderId, fileName);
         Assert.IsNotNull(item);
     }
 
@@ -231,13 +226,13 @@ public class BIM360Test
         string modelGuid, string bundlePath, string modelName)
     {
         BIM360 bim360 = new BIM360();
-        string token = Authentication.Get2LeggedToken().Result;
+        string token = Authentication.Get2LeggedToken().Result.access_token;
         string directory = "./";
         Task<string> filePath = bim360.DownloadFileFromBIM360(projectId, folderUrn, fileName, token, directory);
         Assert.IsNotEmpty(filePath.Result);
         string excelPath = filePath.Result;
         List<Params> readParams = ExcelUtils.ReadParams(excelPath, "Walls", "Assembly Code");
-        dynamic item = bim360.GetItemByFolder(Settings.Token2Leg, projectId, folderUrn, modelName);
+        dynamic item = bim360.GetItemByFolder(projectId, folderUrn, modelName);
         string itemId = item.id;
         Version version = DAUtils.GetRevitVersionByItem(token, projectId, item).Result;
         DesignAutomateConfiguration configuration = new DesignAutomateConfiguration()
@@ -443,7 +438,7 @@ public class BIM360Test
     {
         BIM360 bim360 = new BIM360();
         string directory = "./output";
-        bim360.BatchExportAllRevitToExcel(Settings.Token2Leg,directory, hubId, projectId,true);
+        bim360.BatchExportAllRevitToExcel(directory, hubId, projectId,true);
     }
     [Test]
     [TestCase(Settings.ProjectId,Settings.FolderId)]
