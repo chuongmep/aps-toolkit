@@ -1022,7 +1022,7 @@ public class BIM360
     /// </remarks>
     /// <seealso cref="BIMField"/>
     /// <seealso cref="BIMObject"/>
-    public List<BIMObject?> GetAllDataOriginalProperties(string token3Leg, string projectId, string indexVersionId)
+    public List<BIMObject?> GetAllDataOriginalProperties(Token token3Leg, string projectId, string indexVersionId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1096,20 +1096,20 @@ public class BIM360
 
         return properties;
     }
-    public void ExportRevitDataToParquet(string token3Leg, string projectId, string indexVersionId,string filePath)
+
+    public void ExportRevitDataToParquet(string projectId, string indexVersionId,string filePath)
     {
         if (projectId.StartsWith("b."))
         {
             projectId = projectId.Substring(2);
         }
-
         string versionUrl = $"{Host}/construction/index/v2/projects/{projectId}/indexes/{indexVersionId}";
 
         // rest api get to get manifestUrl, fieldsUrl,propertiesUrl
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        request.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request.AddHeader("Authorization", $"Bearer + {Token.access_token}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
@@ -1121,7 +1121,7 @@ public class BIM360
         var client2 = new RestClient(fieldsUrl);
         var request2 = new RestRequest();
         request2.Method = Method.Get;
-        request2.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request2.AddHeader("Authorization", $"Bearer {Token}");
         var response2 = client2.Execute(request2);
         //DeserializeObject to list feilds
         string? content = response2.Content;
@@ -1140,7 +1140,7 @@ public class BIM360
         var client3 = new RestClient(propertiesUrl);
         var request3 = new RestRequest();
         request3.Method = Method.Get;
-        request3.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request3.AddHeader("Authorization", $"Bearer {Token}");
         var response3 = client3.Execute(request3);
         string? content3 = response3.Content;
         //read content3 by \n to fix to json format before deserialize
@@ -1160,7 +1160,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously initiates the building of property indexes for a given project and a list of version IDs.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="versionIds">A list of version IDs for which property indexes are to be built.</param>
     /// <returns>
@@ -1179,7 +1178,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<dynamic?> BuildPropertyIndexesAsync(string token3Leg, string projectId, List<string> versionIds)
+    public async Task<dynamic?> BuildPropertyIndexesAsync(string projectId, List<string> versionIds)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1189,7 +1188,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes:batchStatus",
             RestSharp.Method.Post);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        request.AddHeader("Authorization", "Bearer " + Token);
 
         var data = versionIds.Select(versionId => new
         {
@@ -1214,7 +1213,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves the status of property indexes for a given project and index.
     /// </summary>
-    /// <param name="token3Leg">The authentication credentials, such as an access token.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1232,7 +1230,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<dynamic?> GetPropertyIndexesStatusAsync(string token3Leg, string projectId, string indexId)
+    public async Task<dynamic?> GetPropertyIndexesStatusAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         { projectId = projectId.Substring(2);
@@ -1240,7 +1238,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}",
             RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        request.AddHeader("Authorization", "Bearer " + Token);
 
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
@@ -1254,7 +1252,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves the property indexes manifest for a given project and index.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1272,7 +1269,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<dynamic?> GetPropertyIndexesManifestAsync(string token3Leg, string projectId, string indexId)
+    public async Task<dynamic?> GetPropertyIndexesManifestAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1282,7 +1279,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}/manifest",
             RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        request.AddHeader("Authorization", "Bearer " + Token);
 
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
@@ -1296,7 +1293,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves property fields for a given project and index.
     /// </summary>
-    /// <param name="credentials">The authentication credentials, such as an access token.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1314,7 +1310,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<List<JObject>?> GetPropertyFieldsAsync(string credentials, string projectId, string indexId)
+    public async Task<List<JObject>?> GetPropertyFieldsAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1324,7 +1320,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}/fields",
             RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + credentials);
+        request.AddHeader("Authorization", "Bearer " + Token);
 
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
@@ -1338,7 +1334,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves levels from AEC model data using the specified access token and URN.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="urn">The URN (Unique Resource Name) of the AEC model data.</param>
     /// <returns>
     /// A task representing the asynchronous operation. The task result is a list of Level instances
@@ -1356,10 +1351,10 @@ public class BIM360
     /// <seealso cref="DerivativesApi"/>
     /// <seealso cref="JsonSerializer"/>
     /// <seealso cref="JObject"/>
-    public async Task<List<Level>> GetLevelsFromAecModelData(string token3Leg, string urn)
+    public async Task<List<Level>> GetLevelsFromAecModelData(string urn)
     {
         var derivativeApi = new DerivativesApi();
-        derivativeApi.Configuration.AccessToken = token3Leg;
+        derivativeApi.Configuration.AccessToken = Token.access_token;
         string aecModelDataUrn = string.Empty;
         var data = await derivativeApi.GetManifestAsync(urn).ConfigureAwait(false);
         var result = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(data.ToString());
@@ -1447,7 +1442,6 @@ public class BIM360
     /// <summary>
     /// Asynchronously retrieves property results for a given project and index.
     /// </summary>
-    /// <param name="token3Leg">The OAuth 3-legged token for authentication.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="indexId">The unique identifier of the index.</param>
     /// <returns>
@@ -1465,7 +1459,7 @@ public class BIM360
     /// <seealso cref="RestClient"/>
     /// <seealso cref="RestRequest"/>
     /// <seealso cref="RestResponse"/>
-    public async Task<List<JObject>?> GetPropertiesResultsAsync(string token3Leg, string projectId, string indexId)
+    public async Task<List<JObject>?> GetPropertiesResultsAsync(string projectId, string indexId)
     {
         if (projectId.StartsWith("b."))
         {
@@ -1476,7 +1470,7 @@ public class BIM360
         RestRequest request =
             new RestRequest($"/construction/index/v2/projects/{projectId}/indexes/{indexId}/properties",
                 RestSharp.Method.Get);
-        request.AddHeader("Authorization", "Bearer " + token3Leg);
+        request.AddHeader("Authorization", "Bearer " + Token);
         RestResponse response = await client.ExecuteAsync(request).ConfigureAwait(false);
         if (response.Content != null)
         {
@@ -1543,23 +1537,22 @@ public class BIM360
     /// <summary>
     /// Retrieves all BIM (Building Information Modeling) data associated with a specific version of a project using the provided authentication token and project identifiers.
     /// </summary>
-    /// <param name="token3Leg">The authentication token required to access the project data.</param>
     /// <param name="projectId">The unique identifier of the project.</param>
     /// <param name="versionId">The identifier of the specific version of the project.</param>
     /// <returns>An array of BIMData objects containing the requested data.</returns>
-    public BIMData[] GetAllDataByVersionId(string token3Leg, string projectId, string versionId)
+    public BIMData[] GetAllDataByVersionId(string projectId, string versionId)
     {
-        dynamic? result = BuildPropertyIndexesAsync(token3Leg, projectId, new List<string>() { versionId }).Result;
+        dynamic? result = BuildPropertyIndexesAsync(projectId, new List<string>() { versionId }).Result;
         string? indexId;
         string? state = result?.indexes[0]?.state?.ToString() ?? result?.state?.ToString()?? null;
         while (!string.Equals(state, "FINISHED", StringComparison.Ordinal))
         {
             Thread.Sleep(1000);
-            result = BuildPropertyIndexesAsync(token3Leg, projectId, new List<string>() { versionId }).Result;
+            result = BuildPropertyIndexesAsync(projectId, new List<string>() { versionId }).Result;
             state = result?.indexes[0]?.state?.ToString() ?? result?.state?.ToString()?? null;
         }
         indexId = result?.indexes[0]?.indexId?.ToString() ?? result?.indexId?.ToString()?? null;
-        return GetAllDataByIndexVersionId(token3Leg, projectId, indexId);
+        return GetAllDataByIndexVersionId(projectId, indexId);
     }
     /// <summary>
     /// Retrieves BIM data properties for a given project and index version.
@@ -1573,7 +1566,7 @@ public class BIM360
     /// It then downloads and processes the fields and properties data, mapping them to the corresponding BIMObject properties.
     /// The resulting BIMData array includes information such as category, name, type, value, unit, bounding box, and external ID.
     /// </remarks>
-    public BIMData[] GetAllDataByIndexVersionId(string token3Leg, string projectId, string indexVersionId)
+    public BIMData[] GetAllDataByIndexVersionId(string projectId, string indexVersionId)
     {
         string versionUrl = $"{Host}/construction/index/v2/projects/{projectId}/indexes/{indexVersionId}";
 
@@ -1581,7 +1574,7 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        request.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request.AddHeader("Authorization", $"Bearer {Token}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
@@ -1591,7 +1584,7 @@ public class BIM360
         var client2 = new RestClient(fieldsUrl);
         var request2 = new RestRequest();
         request2.Method = Method.Get;
-        request2.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request2.AddHeader("Authorization", $"Bearer {Token}");
         var response2 = client2.Execute(request2);
         //DeserializeObject to list feilds
         string? content = response2.Content;
@@ -1611,7 +1604,7 @@ public class BIM360
         var client3 = new RestClient(propertiesUrl);
         var request3 = new RestRequest();
         request3.Method = Method.Get;
-        request3.AddHeader("Authorization", $"Bearer {token3Leg}");
+        request3.AddHeader("Authorization", $"Bearer {Token}");
         var response3 = client3.Execute(request3);
         string? content3 = response3.Content;
         //read content3 by \n to fix to json format before deserialize
