@@ -1756,6 +1756,7 @@ public class BIM360
         dataTable.Columns.Add("ItemName", typeof(string));
         dataTable.Columns.Add("ItemId", typeof(string));
         dataTable.Columns.Add("LatestVersion", typeof(long));
+        dataTable.Columns.Add("LatestURN", typeof(string));
         BatchReportItemVersionRecursive(projectId, folderId,extenstion,ref dataTable,isRecursive);
         return dataTable;
     }
@@ -1777,12 +1778,14 @@ public class BIM360
                 string fileName = item?.attributes.displayName;
                 long versionNumber = item?.attributes.versionNumber;
                 string itemId = item?.relationships.item.data.id;
+                string urn = item?.relationships.derivatives.data.id;
                 DataRow row = dt.NewRow();
                 row["ProjectId"] = projectId;
                 row["FolderId"] = folderId;
                 row["ItemName"] = fileName??string.Empty;
                 row["ItemId"] = itemId??string.Empty;
                 row["LatestVersion"] = versionNumber;
+                row["LatestURN"] = urn??string.Empty;
                 dt.Rows.Add(row);
             }
             else if (itemInfo.Value.type == "folders" && isRecursive)
