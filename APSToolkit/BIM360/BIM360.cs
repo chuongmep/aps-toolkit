@@ -1757,6 +1757,7 @@ public class BIM360
         dataTable.Columns.Add("ItemId", typeof(string));
         dataTable.Columns.Add("LatestVersion", typeof(long));
         dataTable.Columns.Add("LatestURN", typeof(string));
+        dataTable.Columns.Add("LastModifiedTime", typeof(DateTime));
         BatchReportItemVersionRecursive(projectId, folderId,extenstion,ref dataTable,isRecursive);
         return dataTable;
     }
@@ -1778,6 +1779,7 @@ public class BIM360
                 string urn = string.Empty;
                 dynamic? item = GetLatestVersionItem(get2LeggedToken, projectId, id);
                 string fileName = item?.attributes.displayName;
+                DateTime lastModifiedTime = item?.attributes.lastModifiedTime;
                 long versionNumber = item?.attributes.versionNumber;
                 string itemId = item?.relationships.item.data.id;
                 bool flag = item?.relationships.ContainsKey("derivatives");
@@ -1789,6 +1791,7 @@ public class BIM360
                 row["ItemId"] = itemId??string.Empty;
                 row["LatestVersion"] = versionNumber;
                 row["LatestURN"] = urn??string.Empty;
+                row["LastModifiedTime"] = lastModifiedTime;
                 dt.Rows.Add(row);
             }
             else if (itemInfo.Value.type == "folders" && isRecursive)
@@ -1803,6 +1806,7 @@ public class BIM360
         dataTable.Columns.Add("ItemId", typeof(string));
         dataTable.Columns.Add("Version", typeof(long));
         dataTable.Columns.Add("URN", typeof(string));
+        dataTable.Columns.Add("LastModifiedTime", typeof(DateTime));
         var itemsApi = new ItemsApi();
         // refresh token
         string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result;
@@ -1812,6 +1816,7 @@ public class BIM360
         {
             string urn = string.Empty;
             long version = itemInfo.Value.attributes.versionNumber;
+            DateTime lastModifiedTime = itemInfo.Value.attributes.lastModifiedTime;
             // check DynamicDictionary contains derivatives, fix does not contain a definition for 'derivatives'
             bool flag = itemInfo.Value.relationships.ContainsKey("derivatives");
             if (flag)
@@ -1822,6 +1827,7 @@ public class BIM360
             row["ItemId"] = itemId;
             row["Version"] = version;
             row["URN"] = urn;
+            row["LastModifiedTime"] = lastModifiedTime;
             dataTable.Rows.Add(row);
 
         }
