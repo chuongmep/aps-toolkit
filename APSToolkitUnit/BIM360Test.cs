@@ -446,16 +446,11 @@ public class BIM360Test
         bim360.BatchExportAllRevitToExcel(Settings.Token2Leg,directory, hubId, projectId,true);
     }
     [Test]
-    [TestCase("b.1f7aa830-c6ef-48be-8a2d-bd554779e74b","urn:adsk.wipprod:fs.folder:co.dEsE_6gCT6q0Kz7cRSGx0w")]
+    [TestCase(Settings.ProjectId,Settings.FolderId)]
     public void TestBatchExportAllRevitToExcelByFolder(string projectId,string folderId)
     {
         BIM360 bim360 = new BIM360();
-        string directory =
-            @"/output";
-        if (!System.IO.Directory.Exists(directory))
-        {
-            System.IO.Directory.CreateDirectory(directory);
-        }
+        string directory = @"./output";
         bim360.BatchExportAllRevitToExcelByFolder(directory, projectId,folderId,true);
     }
 
