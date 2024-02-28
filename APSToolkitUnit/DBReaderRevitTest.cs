@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace ForgeToolkitUnit;
 
 [TestFixture]
-public class DBReaderRevitTest
+public class DbReaderRevitTest
 {
     [SetUp]
     public void Setup()
