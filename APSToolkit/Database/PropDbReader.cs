@@ -3,6 +3,7 @@
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
+using APSToolkit.Auth;
 using APSToolkit.Utils;
 using ICSharpCode.SharpZipLib.GZip;
 using Newtonsoft.Json;
@@ -58,6 +59,8 @@ namespace APSToolkit.Database
             }
         }
 
+        private Token Token { get; set; }
+
         /// <summary>
         /// Reads a GZip-compressed file from the specified path, decompresses its content, and returns the decompressed byte array.
         /// </summary>
@@ -69,20 +72,26 @@ namespace APSToolkit.Database
             return Unzip(input);
         }
 
+        public PropDbReader(string urn)
+        {
+            this.Urn = urn;
+            Token = Authentication.Get2LeggedToken().Result;
+        }
         public PropDbReader()
         {
+            Token = Authentication.Get2LeggedToken().Result;
         }
-
         /// <summary>
         /// Read All Information properties from urn model
         /// </summary>
         /// <param name="urn"></param>
-        /// <param name="accessToken"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public PropDbReader(string urn, string accessToken)
+        public PropDbReader(string urn, Token token)
         {
             this.Urn = urn;
-            DownloadStreamAsync(urn, accessToken).Wait();
+            Token = token;
+            DownloadStreamAsync(urn, token.access_token).Wait();
         }
 
         /// <summary>

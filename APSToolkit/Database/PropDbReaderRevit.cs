@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text.RegularExpressions;
+using APSToolkit.Auth;
 using APSToolkit.Utils;
 using OfficeOpenXml;
 
@@ -551,11 +552,10 @@ public class PropDbReaderRevit : PropDbReader
         return properties;
     }
 
-    public PropDbReaderRevit(string urn, string accessToken) : base(urn, accessToken)
+    public PropDbReaderRevit(string urn, Token token) : base(urn, token)
     {
-        Configuration = new RevitDataConfiguration(urn, accessToken);
+        Configuration = new RevitDataConfiguration(urn, token);
     }
-
     public PropDbReaderRevit(byte[] _ids, byte[] _offsets, byte[] _avs, byte[] _attrs, byte[] _vals) : base(_ids,
         _offsets, _avs, _attrs, _vals)
     {

@@ -143,7 +143,7 @@ public class BIM360Test
             break;
         }
         if(string.IsNullOrEmpty(urn)) Assert.Fail("Can't get urn");
-        var token =  Authentication.Get2LeggedToken().Result.access_token;
+        var token =  Authentication.Get2LeggedToken().Result;
         PropDbReaderRevit propDbReaderRevit = new PropDbReaderRevit(urn,token);
         propDbReaderRevit.ExportAllDataToExcel("result.xlsx");
     }
@@ -183,7 +183,7 @@ public class BIM360Test
     [TestCase("b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d", "urn:adsk.wipprod:fs.folder:co.2yCTHGmWSvSCzlaIzdrFKA", "result.xlsx")]
     public void ExportDataUploadBIM360Test(string projectId, string folderUrn, string filePath)
     {
-        var RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        var RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         string categoryName = "Walls";
         RevitPropDbReader.ExportAllDataToExcelByCategory(filePath, categoryName, categoryName);
         BIM360 bim360 = new BIM360();
@@ -337,22 +337,16 @@ public class BIM360Test
     [TestCase("ec0f8261-aeca-4ab9-a1a5-5845f952b17d","urn:adsk.wipprod:fs.file:vf.Od8txDbKSSelToVg1oc1VA?version=13")]
     public void TestGetPropDbReader(string projectId,string urnVersionId)
     {
-        Scope[] scope = new Scope[]
-            { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
-        BIM360 bim360 = new BIM360(token3Leg);
-        PropDbReader result = bim360.GetPropDbReader(token3Leg.access_token,urnVersionId);
+        BIM360 bim360 = new BIM360();
+        PropDbReader result = bim360.GetPropDbReader(urnVersionId);
         Assert.AreNotEqual(0,result.attrs?.Length);
     }
     [Test]
     [TestCase("ec0f8261-aeca-4ab9-a1a5-5845f952b17d","urn:adsk.wipprod:fs.file:vf.Od8txDbKSSelToVg1oc1VA?version=21")]
     public void TestGetPropDbReaderRevit(string projectId,string urnVersionId)
     {
-        Scope[] scope = new Scope[]
-            { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
-        BIM360 bim360 = new BIM360(token3Leg);
-        PropDbReaderRevit result = bim360.GetPropDbReaderRevit(token3Leg.access_token,urnVersionId);
+        BIM360 bim360 = new BIM360();
+        PropDbReaderRevit result = bim360.GetPropDbReaderRevit(urnVersionId);
         Assert.AreNotEqual(0,result.attrs?.Length);
     }
     [Test]

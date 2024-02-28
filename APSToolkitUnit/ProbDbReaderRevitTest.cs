@@ -33,7 +33,7 @@ public class ProbDbReaderRevitTest
     [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
     public void GetAllCategoriesTest(string urn)
     {
-        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
         var categories = RevitPropDbReader.GetAllCategories();
         categories.ExportToCsv("result.csv");
         Assert.AreNotEqual(0, categories.Count);
@@ -42,14 +42,14 @@ public class ProbDbReaderRevitTest
     [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
     public void TestExportAllDataToExcel(string urn)
     {
-        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
         RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
     }
     [Test]
-    [TestCaseSource(typeof(Settings), nameof(Settings.RevitRealUrn))]
+    [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
     public void TestExportAllDataToParquet(string urn)
     {
-        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
         string dir = "./parquet";
         if (!System.IO.Directory.Exists(dir))
         {
@@ -61,7 +61,7 @@ public class ProbDbReaderRevitTest
     [TestCaseSource(typeof(Settings), nameof(Settings.RevitRealUrn))]
     public void TestGetAllDataByParameter(string urn)
     {
-        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
         List<string> parameters = new List<string>()
         {
             "Category",
@@ -77,14 +77,14 @@ public class ProbDbReaderRevitTest
     [TestCase("Doors")]
     public void TestExportAllDataToExcelByCategory(string category)
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         RevitPropDbReader.ExportAllDataToExcelByCategory("result.xlsx",category,category);
     }
     [Test]
     [TestCase("Doors")]
     public void ExportToParquetStreamTest(string category)
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         DataTable dataTable = RevitPropDbReader.GetAllDataByCategory(category);
         byte[] bytes = dataTable.ExportToParquetStream();
         string filePath = "result.parquet";
@@ -123,7 +123,7 @@ public class ProbDbReaderRevitTest
     [TestCase("Doors")]
     public void GetDataByCategoryTest(string category)
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         DataTable dataTable = RevitPropDbReader.GetAllDataByCategory(category);
         dataTable.ExportDataToExcel("result.xlsx");
         Assert.AreNotEqual(0, dataTable.Rows);
@@ -133,7 +133,7 @@ public class ProbDbReaderRevitTest
     [TestCase("Basic Wall")]
     public void GetDataByFamilyTest(string familyName)
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         DataTable dataTable = RevitPropDbReader.GetAllDataByFamily(familyName);
         dataTable.ExportToCsv("result.csv");
         Assert.AreNotEqual(0, dataTable.Rows);
@@ -142,7 +142,7 @@ public class ProbDbReaderRevitTest
     [TestCase("Sheet")]
     public void GetAllDataByFamilyTypeTest(string typeName)
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         DataTable dataTable = RevitPropDbReader.GetAllDataByFamilyType(typeName);
         dataTable.ExportToCsv("result.csv");
         Assert.AreNotEqual(0, dataTable.Rows);
@@ -154,7 +154,7 @@ public class ProbDbReaderRevitTest
     public void GetDataByCategoryParquetTest(string category)
 
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         DataTable dataTable = RevitPropDbReader.GetAllDataByCategory(category);
         dataTable.ExportToParquet("result.parquet");
         Assert.AreNotEqual(0, dataTable.Rows);
@@ -165,7 +165,7 @@ public class ProbDbReaderRevitTest
     public void GetDataByCategoryAndParametersTest(string category,string[] parameterNames)
 
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         RevitPropDbReader.Configuration.IsGetBBox = false;
         DataTable dataTable = RevitPropDbReader.GetDataByCategoryAndParameters(category,parameterNames.ToList());
         dataTable.ExportToCsv("result.csv");
@@ -176,7 +176,7 @@ public class ProbDbReaderRevitTest
     public void GetDataByCategoriesAndParametersTest(string[] category,string[] parameterNames)
 
     {
-        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         RevitPropDbReader.Configuration.IsGetBBox = false;
         DataTable dataTable = RevitPropDbReader.GetDataByCategoriesAndParameters(category.ToList(),parameterNames.ToList());
         dataTable.ExportToCsv("result.csv");
@@ -187,7 +187,7 @@ public class ProbDbReaderRevitTest
     [TestCase(Settings._RevitTestUrn)]
     public void GetAllDataTest(string urn)
     {
-        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg.access_token);
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
         var start = DateTime.Now;
         Dictionary<int, string> allCategories = RevitPropDbReader.GetAllCategories();
         foreach (KeyValuePair<int,string> cate in allCategories)

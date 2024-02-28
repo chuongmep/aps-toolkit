@@ -1711,16 +1711,16 @@ public class BIM360
         }
         return dt;
     }
-    public PropDbReader GetPropDbReader(string token3Leg,string versionId)
+    public PropDbReader GetPropDbReader(string versionId)
     {
         string derivativeUrn = Base64Convert.ToBase64String(versionId);
-        PropDbReader propDbReader = new PropDbReader(derivativeUrn, token3Leg);
+        PropDbReader propDbReader = new PropDbReader(derivativeUrn, Token);
         return propDbReader;
     }
-    public PropDbReaderRevit GetPropDbReaderRevit(string token3Leg,string versionId)
+    public PropDbReaderRevit GetPropDbReaderRevit(string versionId)
     {
         string derivativeUrn = Base64Convert.ToBase64String(versionId);
-        PropDbReaderRevit propDbReader = new PropDbReaderRevit(derivativeUrn, token3Leg);
+        PropDbReaderRevit propDbReader = new PropDbReaderRevit(derivativeUrn, Token);
         return propDbReader;
     }
 
@@ -1873,7 +1873,7 @@ public class BIM360
     /// <param name="versionId">The version identifier of the Revit project.</param>
     public void ExportRevitDataToExcel(Token token,string filePath,string versionId)
     {
-        PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(token.access_token, versionId);
+        PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(versionId);
         propDbReaderRevit.ExportAllDataToExcel(filePath);
     }
     private void ExportRevitExcelRecursive(string directory, string projectId, string folderId,bool isRecursive)
@@ -1900,7 +1900,7 @@ public class BIM360
                 var startTime = DateTime.Now;
                 try
                 {
-                    PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(Token.access_token, versionId);
+                    PropDbReaderRevit propDbReaderRevit = GetPropDbReaderRevit(versionId);
                     propDbReaderRevit.ExportAllDataToExcel(filePath);
                 }
                 catch (Exception e)
