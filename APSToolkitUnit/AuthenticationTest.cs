@@ -38,4 +38,11 @@ public class AuthenticationTest
         Assert.IsNotNull(Leg3Token);
         return Task.CompletedTask;
     }
+
+    [Test]
+    public void TestTokenExpired()
+    {
+        Token = Authentication.Get2LeggedToken().Result;
+        Assert.IsFalse(Token.IsExpired());
+    }
 }
