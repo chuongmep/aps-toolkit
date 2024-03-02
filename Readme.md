@@ -4,6 +4,7 @@
 
 [![Publish](../../actions/workflows/dotnet.yml/badge.svg)](../../actions)
 [![Nuget Version](https://img.shields.io/nuget/v/APSToolkit)](https://www.nuget.org/packages/APSToolkit)
+![pypi](https://img.shields.io/pypi/v/aps-toolkit.svg)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/APSToolkit.svg)](https://www.nuget.org/packages/APSToolkit/)
 
 <a href="https://twitter.com/intent/follow?screen_name=chuongmep">
