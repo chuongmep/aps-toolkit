@@ -77,8 +77,8 @@ RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
 ### Python
 
 ```python
-from aps_toolkit_python import Auth
-from aps_toolkit_python import PropDbReaderRevit
+from aps_toolkit import Auth
+from aps_toolkit import PropDbReaderRevit
 auth = Auth()
 token = auth.auth2leg()
 urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0z"

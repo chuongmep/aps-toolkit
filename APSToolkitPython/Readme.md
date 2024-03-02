@@ -14,7 +14,7 @@ pip install aps-toolkit
 ## Get Started
 
 ```python
-from aps_toolkit_python import Auth
+from aps_toolkit import Auth
 auth = Auth()
 token = auth.auth2leg()
 ```
