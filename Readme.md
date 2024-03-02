@@ -32,10 +32,20 @@ APS Toolkit (Former is Forge) is powerful for you to explore `Autodesk Platform 
 
 ## ⚙ Installation
 
+### .NET 
+
 Please follow latest update at [APSToolkit Nuget](https://www.nuget.org/packages/APSToolkit)
 
 ```bash
 <PackageReference Include="APSToolkit" Version="1.*" />
+```
+
+### Python 
+
+Please follow latest update at [APSToolkit Python](https://pypi.org/project/aps-toolkit/)
+
+```bash
+pip install aps-toolkit --upgrade
 ```
 
 Before start you need setup your environment:
@@ -50,6 +60,8 @@ APS_REFRESH_TOKEN = <your refresh token>
 
 I want export Revit Data To Excel 👇
 
+### .NET
+
 ```csharp
 using APSToolkit;
 using Autodesk.Forge;
@@ -61,7 +73,22 @@ var RevitPropDbReader = new PropDbReaderRevit(urn, token);
 RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
 ```
 
+### Python
+
+```python
+from aps_toolkit_python import Auth
+from aps_toolkit_python import PropDbReaderRevit
+auth = Auth()
+token = auth.auth2leg()
+urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0z"
+prop_reader = PropDbReaderRevit(urn, token)
+df = prop_reader.get_data_by_category("Ducts")
+df.save_to_excel("result.xlsx")
+```
+
 ## 📚 Tutorials
+
+### .NET
 
 All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutorials)
 
@@ -80,6 +107,11 @@ All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutoria
 - [11. Visualization Data - Data Analyst](./docs/Tutorials/11.%20Visualization%20Data%20-%20Data%20Analyst.ipynb)
 - [12. Custom Python In .NET Interactive](./docs/Tutorials/12.%20Custom%20Python%20In%20.NET%20Interactive.ipynb)
 - [13. Custom Metadata Export](./docs/Tutorials/13.%20Custom%20Metadata%20Export.ipynb) 
+
+
+### Python
+
+- 
 
 **WIP** : Working in progress, please collaborate with me to complete this.
 
