@@ -86,32 +86,33 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids(type_id)
         return dataframe
 
-    def _get_recursive_ids(self, childs: List[int]) -> pd.DataFrame:
+    def _get_recursive_ids(self, db_ids: List[int]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
-        if len(childs) == 0:
+        if len(db_ids) == 0:
             return dataframe
-        for child_id in childs:
-            properties = self.get_properties(child_id)
-            db_id = child_id
-            external_id = self.ids[child_id]
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
+            if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
+                ids = self.get_children(id)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+                continue
+            properties = self.get_properties(id)
+            db_id = id
+            external_id = self.ids[id]
             properties['dbId'] = db_id
             properties['external_id'] = external_id
-            # get instances
-            ins = self.get_instance(child_id)
+            ins = self.get_instance(id)
             if len(ins) > 0:
                 for instance in ins:
                     types = self.get_properties(instance)
                     properties = {**properties, **types}
-                    singleDF = pd.DataFrame(properties, index=[0])
-                    dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-            else:
-                singleDF = pd.DataFrame(properties, index=[0])
-                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-                ids = self.get_children(child_id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)],
-                                      ignore_index=True)  # Recurse for children
-        dataframe = dataframe.dropna(how='all',
-                                     subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
+            singleDF = pd.DataFrame(properties, index=[0])
+            dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            ids = self.get_children(id)
+            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+        dataframe = dataframe[
+            ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
     def _get_recursive_ids_prams(self, childs: List[int], params: List[str]) -> pd.DataFrame:
@@ -160,4 +161,3 @@ class PropDbReaderRevit(PropReader):
         df.columns = ['property', 'value']
         # keep dataframe because maybe we need expand for unit in future
         return df
-
