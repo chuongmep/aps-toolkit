@@ -117,6 +117,7 @@ All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSTo
 - [00. Jupyter Notebook And Python](./APSToolkitPython/Tutorials/00.%20Jupyter%20Notebook%20And%20Python.ipynb)
 - [01. Setup And Authentication](./APSToolkitPython/Tutorials/01.%20Setup%20And%20Authentication.ipynb)
 - [02. Explore Hubs - Projects - Items - URN](./APSToolkitPython/Tutorials/02.%20Explore%20Hubs%20-%20Projects%20-%20Items%20-%20URN.ipynb)
+- [03. Explore Versions Item and Derivative Urn](./APSToolkitPython/Tutorials/03.%20Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
 
 ## License
 Thís project is licensed under the terms of the [MIT](LICENSE).
