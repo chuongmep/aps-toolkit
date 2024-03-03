@@ -127,7 +127,7 @@ class PropDbReaderRevit(PropReader):
             # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
             if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
                 ids = self.get_children(id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids,params)], ignore_index=True)
                 continue
             properties = {}
             for prop in props:
