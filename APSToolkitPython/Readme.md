@@ -45,7 +45,7 @@ pip install dist/<name>.whl
 
 - Run the following command to build the package
 ```bash
-python setup.py sdist
+python setup.py bdist_wheel sdist
 ```
 - Run the following command to check and upload the package to pypi
 ```bash
