@@ -47,3 +47,7 @@ class TestPropDbReaderRevit(TestCase):
         df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
                                                                 ["name", "Width", "Height", "IfcGUID"])
         self.assertNotEquals(df.empty, True)
+    def test_get_data_by_external_id(self):
+        external_id = "31261f36-7edb-41d9-95bc-f8df75aec4c4-00005a5b"
+        df = self.prop_reader.get_data_by_external_id(external_id)
+        self.assertNotEquals(df.empty, True)
