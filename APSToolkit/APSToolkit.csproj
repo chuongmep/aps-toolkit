@@ -10,8 +10,8 @@
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <PackageType>Dependency</PackageType>
         <PackageId>APSToolkit</PackageId>
-        <AssemblyVersion>1.0.8</AssemblyVersion>
-        <PackageVersion>1.0.8</PackageVersion>
+        <AssemblyVersion>1.0.9</AssemblyVersion>
+        <PackageVersion>1.0.9</PackageVersion>
         <GenerateAssemblyFileVersionAttribute>true</GenerateAssemblyFileVersionAttribute>
         <Deterministic>false</Deterministic>
         <PackageTags>revit;bim360;acc;adsk;forgetoolkit;forge;autodesk;aps;</PackageTags>
@@ -46,7 +46,7 @@
         <PackageReference Include="SharpZipLib" Version="1.4.2"/>
         <!--      <PackageReference Include="Speckle.Objects" Version="2.16.0" />-->
         <!--        <PackageReference Include="ChoETL.JSON" Version="1.2.1.62" />-->
-        <PackageReference Include="ChoETL.Parquet" Version="1.0.1.30"/>
+        <PackageReference Include="ChoETL.Parquet" Version="1.0.1.31" />
         <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118"/>
         <PackageReference Include="System.IO" Version="4.3.0"/>
         <PackageReference Include="System.Numerics.Vectors" Version="4.5.0"/>

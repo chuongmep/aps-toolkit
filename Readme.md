@@ -4,6 +4,7 @@
 
 [![Publish](../../actions/workflows/dotnet.yml/badge.svg)](../../actions)
 [![Nuget Version](https://img.shields.io/nuget/v/APSToolkit)](https://www.nuget.org/packages/APSToolkit)
+![pypi](https://img.shields.io/pypi/v/aps-toolkit.svg)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/APSToolkit.svg)](https://www.nuget.org/packages/APSToolkit/)
 
 <a href="https://twitter.com/intent/follow?screen_name=chuongmep">
@@ -32,10 +33,20 @@ APS Toolkit (Former is Forge) is powerful for you to explore `Autodesk Platform 
 
 ## ⚙ Installation
 
+### .NET 
+
 Please follow latest update at [APSToolkit Nuget](https://www.nuget.org/packages/APSToolkit)
 
 ```bash
 <PackageReference Include="APSToolkit" Version="1.*" />
+```
+
+### Python 
+
+Please follow latest update at [APSToolkit Python](https://pypi.org/project/aps-toolkit/)
+
+```bash
+pip install aps-toolkit --upgrade
 ```
 
 Before start you need setup your environment:
@@ -50,6 +61,8 @@ APS_REFRESH_TOKEN = <your refresh token>
 
 I want export Revit Data To Excel 👇
 
+### .NET
+
 ```csharp
 using APSToolkit;
 using Autodesk.Forge;
@@ -61,9 +74,24 @@ var RevitPropDbReader = new PropDbReaderRevit(urn, token);
 RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
 ```
 
+### Python
+
+```python
+from aps_toolkit import Auth
+from aps_toolkit import PropDbReaderRevit
+auth = Auth()
+token = auth.auth2leg()
+urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0z"
+prop_reader = PropDbReaderRevit(urn, token)
+df = prop_reader.get_data_by_category("Ducts")
+df.save_to_excel("result.xlsx")
+```
+
 ## 📚 Tutorials
 
-All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutorials)
+### .NET
+
+All Tutorials are available under Jupyter Notebook at [.NET Tutorials](./docs/Tutorials)
 
 - [00. Jupyter Notebook And .NET Interactive](./docs/Tutorials/00.%20Jupyter%20Notebook%20And%20.NET%20Interactive.ipynb)
 - [01. Setup And Authentication](./docs/Tutorials/01.%20Setup%20And%20Authentication.ipynb)
@@ -81,7 +109,18 @@ All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutoria
 - [12. Custom Python In .NET Interactive](./docs/Tutorials/12.%20Custom%20Python%20In%20.NET%20Interactive.ipynb)
 - [13. Custom Metadata Export](./docs/Tutorials/13.%20Custom%20Metadata%20Export.ipynb) 
 
-**WIP** : Working in progress, please collaborate with me to complete this.
+
+### Python
+
+All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSToolkitPython/Tutorials)
+
+- [00. Jupyter Notebook And Python](./APSToolkitPython/Tutorials/00.%20Jupyter%20Notebook%20And%20Python.ipynb)
+- [01. Setup And Authentication](./APSToolkitPython/Tutorials/01.%20Setup%20And%20Authentication.ipynb)
+- [02. Explore Hubs - Projects - Items - URN](./APSToolkitPython/Tutorials/02.%20Explore%20Hubs%20-%20Projects%20-%20Items%20-%20URN.ipynb)
+- [03. Explore Versions Item and Derivative Urn](./APSToolkitPython/Tutorials/03.%20Explore%20Versions%20Item%20and%20Derivative%20Urn.ipynb)
+- [04. Explore General Metdadata With APSToolkit](./APSToolkitPython/Tutorials/04.%20Explore%20General%20Metdadata%20With%20APSToolkit.ipynb)
+- [04.01. Explore Revit Data With APSToolkit](./APSToolkitPython/Tutorials/04.01.%20Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
+- [05. Explore Access Database And Query Items](./APSToolkitPython/Tutorials/05.%20Explore%20Access%20Database%20And%20Query%20Items.ipynb)
 
 ## License
 Thís project is licensed under the terms of the [MIT](LICENSE).
