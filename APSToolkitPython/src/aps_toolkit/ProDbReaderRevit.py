@@ -148,7 +148,7 @@ class PropDbReaderRevit(PropReader):
             singleDF = pd.DataFrame(properties, index=[0])
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             ids = self.get_children(id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids,params)], ignore_index=True)
         dataframe = dataframe[['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
