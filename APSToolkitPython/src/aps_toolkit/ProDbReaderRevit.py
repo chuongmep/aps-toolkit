@@ -92,12 +92,16 @@ class PropDbReaderRevit(PropReader):
             return dataframe
         for id in db_ids:
             props = self.enumerate_properties(id)
+            properties = {}
+            rg = re.compile(r'^__\w+__$')
             # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
             if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
                 ids = self.get_children(id)
                 dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
                 continue
-            properties = self.get_properties(id)
+            for prop in props:
+                if prop.category and not rg.match(prop.category):
+                    properties[prop.name] = prop.value
             db_id = id
             external_id = self.ids[id]
             properties['dbId'] = db_id
@@ -120,6 +124,12 @@ class PropDbReaderRevit(PropReader):
         if len(childs) == 0:
             return dataframe
         for child_id in childs:
+            props = self.enumerate_properties(id)
+            # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
+            if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
+                ids = self.get_children(id)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+                continue
             properties = self.get_properties(child_id)
             db_id = child_id
             external_id = self.ids[child_id]
