@@ -43,4 +43,4 @@ class TestBIM360(TestCase):
 
     def test_batch_report_item_versions(self):
         df = self.bim360.batch_report_item_versions(self.project_id, self.item_id)
-        self.A(df.empty, True)
+        self.assertNotEquals(df.empty, True)
