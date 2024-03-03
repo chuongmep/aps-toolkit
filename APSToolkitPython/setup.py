@@ -1,11 +1,12 @@
 import setuptools
 
-with open("README.md") as f:
-    readme = f.read()
+with open("Readme.md") as f:
+    if f is not None:
+        readme = f.read()
 
 setuptools.setup(
     name="aps-toolkit",
-    version="0.0.7",
+    version="0.0.8",
     author="chuong mep",
     author_email="chuongpqvn@gmail.com",
     description="A Toolkit Autodesk Platform Services for Python",
