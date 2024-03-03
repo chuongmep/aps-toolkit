@@ -91,7 +91,7 @@ df.save_to_excel("result.xlsx")
 
 ### .NET
 
-All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutorials)
+All Tutorials are available under Jupyter Notebook at [.NET Tutorials](./docs/Tutorials)
 
 - [00. Jupyter Notebook And .NET Interactive](./docs/Tutorials/00.%20Jupyter%20Notebook%20And%20.NET%20Interactive.ipynb)
 - [01. Setup And Authentication](./docs/Tutorials/01.%20Setup%20And%20Authentication.ipynb)
@@ -111,8 +111,9 @@ All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutoria
 
 
 ### Python
-
+All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSToolkitPython/Tutorials)
 - [00. Jupyter Notebook And Python](./APSToolkitPython/Tutorials/00.%20Jupyter%20Notebook%20And%20Python.ipynb)
+- [01. Setup And Authentication](./APSToolkitPython/Tutorials/01.%20Setup%20And%20Authentication.ipynb)
 
 **WIP** : Working in progress, please collaborate with me to complete this.
 
