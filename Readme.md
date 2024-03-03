@@ -112,7 +112,7 @@ All Tutorials are available under Jupyter Notebook at [Tutorials](./docs/Tutoria
 
 ### Python
 
-- 
+- [00. Jupyter Notebook And Python](./APSToolkitPython/Tutorials/00.%20Jupyter%20Notebook%20And%20Python.ipynb)
 
 **WIP** : Working in progress, please collaborate with me to complete this.
 
