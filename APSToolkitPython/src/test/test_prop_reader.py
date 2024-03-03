@@ -18,6 +18,10 @@ class TestPropDbReader(TestCase):
         properties = self.prop_reader.get_properties(1)
         self.assertNotEquals(properties, 0)
 
+    def test_get_all_properties(self):
+        properties = self.prop_reader.get_all_properties(1)
+        self.assertNotEquals(properties, 0)
+
     def test_get_instance(self):
         instance = self.prop_reader.get_instance(1)
         self.assertEquals(len(instance), 0)

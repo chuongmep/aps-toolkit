@@ -10,6 +10,9 @@ class TestPropDbReaderRevit(TestCase):
         self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0yNA"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
 
+    def test_get_document_info(self):
+        document_info = self.prop_reader.get_document_info()
+        self.assertNotEquals(document_info, 0)
     def test_get_all_categories(self):
         categories = self.prop_reader.get_all_categories()
         print(categories)

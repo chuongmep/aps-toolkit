@@ -25,6 +25,14 @@ class PropDbReaderRevit(PropReader):
     def get_external_id(self, id) -> str:
         return self.ids[id]
 
+    def get_document_info(self) -> pd.Series:
+        properties = self.get_properties(1)
+        instances = self.get_instance(1)
+        for instance in instances:
+            types = self.get_properties(instance)
+            properties = {**properties, **types}
+        return pd.Series(properties)
+
     def get_all_categories(self) -> dict:
         categories = {}
         self._get_recursive_child(categories, 1, "_RC")
