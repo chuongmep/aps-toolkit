@@ -57,4 +57,20 @@ public static class DataFrame
         DataTable dt = ExcelUtils.ReadDataFromExcelToDataTable(filePath, sheetName);
         return dt.ToDataFrame();
     }
+
+    public static void ExportToExcel(Microsoft.Data.Analysis.DataFrame dataFrame,string filePath, string sheetName)
+    {
+        DataTable dt = dataFrame.ToTable();
+        dt.ExportDataToExcel(filePath, sheetName);
+    }
+    public static void ExportToCsv(Microsoft.Data.Analysis.DataFrame dataFrame,string filePath)
+    {
+        DataTable dt = dataFrame.ToTable();
+        dt.ExportToCsv(filePath);
+    }
+    public static void ExportToParquet(Microsoft.Data.Analysis.DataFrame dataFrame,string filePath)
+    {
+        DataTable dt = dataFrame.ToTable();
+        dt.ExportToParquet(filePath);
+    }
 }
