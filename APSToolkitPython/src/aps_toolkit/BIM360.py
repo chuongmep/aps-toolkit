@@ -104,3 +104,12 @@ class BIM360:
         latest_version['last_modified_time'] = item_versions['data'][0]['attributes']['lastModifiedTime']
         latest_version['derivative_urn'] = item_versions['data'][0]['relationships']['derivatives']['data']['id']
         return latest_version
+    def get_urn_item_version(self, project_id, item_id, version):
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
+        response = requests.get(url, headers=headers)
+        item_versions = response.json()
+        for item_version in item_versions['data']:
+            if item_version['attributes']['versionNumber'] == version:
+                return item_version['relationships']['derivatives']['data']['id']
+        return None
