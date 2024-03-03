@@ -88,10 +88,19 @@ class PropDbReaderRevit(PropReader):
             external_id = self.ids[child_id]
             properties['dbId'] = db_id
             properties['external_id'] = external_id
-            singleDF = pd.DataFrame(properties, index=[0])  # Convert properties to DataFrame
-            dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-            ids = self.get_children(child_id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)  # Recurse for children
+            # get instances
+            ins = self.get_instance(child_id)
+            if len(ins) > 0:
+                for instance in ins:
+                    types = self.get_properties(instance)
+                    properties = {**properties, **types}
+                    singleDF = pd.DataFrame(properties, index=[0])
+                    dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            else:
+                singleDF = pd.DataFrame(properties, index=[0])
+                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+                ids = self.get_children(child_id)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)  # Recurse for children
         dataframe = dataframe.dropna(how='all',
                                      subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
         return dataframe
@@ -108,11 +117,21 @@ class PropDbReaderRevit(PropReader):
             properties = {k: v for k, v in properties.items() if k in params}
             properties['dbId'] = db_id
             properties['external_id'] = external_id
-            singleDF = pd.DataFrame(properties, index=[0])  # Convert properties to DataFrame
-            singleDF = singleDF[
-                ['dbId', 'external_id'] + [col for col in singleDF.columns if col not in ['dbId', 'external_id']]]
-            dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-            ids = self.get_children(child_id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params)],
-                                  ignore_index=True)  # Recurse for children
+            # get instances
+            ins = self.get_instance(child_id)
+            if len(ins) > 0:
+                for instance in ins:
+                    types = self.get_properties(instance)
+                    types = {k: v for k, v in types.items() if k in params}
+                    properties = {**properties, **types}
+                    singleDF = pd.DataFrame(properties, index=[0])
+                    dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            else:
+                singleDF = pd.DataFrame(properties, index=[0])  # Convert properties to DataFrame
+                singleDF = singleDF[
+                    ['dbId', 'external_id'] + [col for col in singleDF.columns if col not in ['dbId', 'external_id']]]
+                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+                ids = self.get_children(child_id)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params)],
+                                      ignore_index=True)  # Recurse for children
         return dataframe
