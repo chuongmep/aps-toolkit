@@ -100,7 +100,8 @@ class PropDbReaderRevit(PropReader):
                 singleDF = pd.DataFrame(properties, index=[0])
                 dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
                 ids = self.get_children(child_id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)  # Recurse for children
+                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)],
+                                      ignore_index=True)  # Recurse for children
         dataframe = dataframe.dropna(how='all',
                                      subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
         return dataframe
@@ -135,3 +136,20 @@ class PropDbReaderRevit(PropReader):
                 dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params)],
                                       ignore_index=True)  # Recurse for children
         return dataframe
+
+    def get_data_by_external_id(self, external_id) -> pd.DataFrame:
+        db_id = None
+        for idx in range(1, len(self.ids) + 1):
+            if self.ids[idx] == external_id:
+                db_id = idx
+                break
+        if db_id is None:
+            return pd.DataFrame()
+        dataframe = self._get_recursive_ids([db_id])
+        # transpose to dataframe with two columns: property and value
+        df = dataframe.T
+        df.reset_index(inplace=True)
+        df.columns = ['property', 'value']
+        # keep dataframe because maybe we need expand for unit in future
+        return df
+
