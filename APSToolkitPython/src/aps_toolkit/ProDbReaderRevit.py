@@ -47,6 +47,9 @@ class PropDbReaderRevit(PropReader):
             category = category[5:].strip()
         category_id = [key for key, value in categories.items() if value == category]
         dataframe = self._get_recursive_ids(category_id)
+        # remove all row have all values is null, ignore dbId and external_id columns
+        dataframe = dataframe.dropna(how='all',
+                                     subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
         return dataframe
 
     def get_data_by_categories(self, categories: List[str]) -> pd.DataFrame:
@@ -89,8 +92,6 @@ class PropDbReaderRevit(PropReader):
             properties['dbId'] = db_id
             properties['external_id'] = external_id
             singleDF = pd.DataFrame(properties, index=[0])  # Convert properties to DataFrame
-            singleDF = singleDF[
-                ['dbId', 'external_id'] + [col for col in singleDF.columns if col not in ['dbId', 'external_id']]]
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             ids = self.get_children(child_id)
             dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)  # Recurse for children

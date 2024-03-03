@@ -7,7 +7,7 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLjAtYnBtcEpXUWJTRUVNdUFac1VETWc_dmVyc2lvbj0yNQ"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0yNA"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
 
     def test_get_all_categories(self):
@@ -24,8 +24,10 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(families_types, 0)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("Ducts")
-        self.assertNotEquals(df.empty, True)
+        df = self.prop_reader.get_data_by_category("Windows")
+        # check if dataframe have rows = 1
+        df_rows = df.shape[0]
+        self.countTestCases(df_rows, 1)
 
     def test_get_data_by_categories(self):
         df = self.prop_reader.get_data_by_categories(["Ducts", "Rooms"])
