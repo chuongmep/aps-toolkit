@@ -28,13 +28,13 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(families_types, 0)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("Doors")
+        df = self.prop_reader.get_data_by_category("Windows")
         # check if dataframe have rows = 1
         df_rows = df.shape[0]
         self.assertNotEquals(df_rows, 0)
 
     def test_get_data_by_categories(self):
-        df = self.prop_reader.get_data_by_categories(["Doors", "Rooms"])
+        df = self.prop_reader.get_data_by_categories(["Doors", "Windows"])
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_family(self):

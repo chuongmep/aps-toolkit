@@ -115,45 +115,41 @@ class PropDbReaderRevit(PropReader):
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             ids = self.get_children(id)
             dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
-        dataframe = dataframe[
-            ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+        dataframe = dataframe[['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
     def _get_recursive_ids_prams(self, childs: List[int], params: List[str]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         if len(childs) == 0:
             return dataframe
-        for child_id in childs:
+        for id in childs:
             props = self.enumerate_properties(id)
             # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
             if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
                 ids = self.get_children(id)
                 dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
                 continue
-            properties = self.get_properties(child_id)
-            db_id = child_id
-            external_id = self.ids[child_id]
+            properties = {}
+            for prop in props:
+                properties[prop.name] = prop.value
+            db_id = id
+            external_id = self.ids[id]
             # filter just get properties name in params list
             properties = {k: v for k, v in properties.items() if k in params}
             properties['dbId'] = db_id
             properties['external_id'] = external_id
             # get instances
-            ins = self.get_instance(child_id)
+            ins = self.get_instance(id)
             if len(ins) > 0:
                 for instance in ins:
-                    types = self.get_properties(instance)
+                    types = self.get_all_properties(instance)
                     types = {k: v for k, v in types.items() if k in params}
                     properties = {**properties, **types}
-                    singleDF = pd.DataFrame(properties, index=[0])
-                    dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-            else:
-                singleDF = pd.DataFrame(properties, index=[0])  # Convert properties to DataFrame
-                singleDF = singleDF[
-                    ['dbId', 'external_id'] + [col for col in singleDF.columns if col not in ['dbId', 'external_id']]]
-                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-                ids = self.get_children(child_id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params)],
-                                      ignore_index=True)  # Recurse for children
+            singleDF = pd.DataFrame(properties, index=[0])
+            dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            ids = self.get_children(id)
+            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+        dataframe = dataframe[['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
     def get_data_by_external_id(self, external_id) -> pd.DataFrame:
