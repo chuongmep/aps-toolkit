@@ -88,6 +88,7 @@ class PropDbReaderRevit(PropReader):
 
     def _get_recursive_ids(self, db_ids: List[int]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
+        props_ignore = ['parent', 'instanceof_objid', 'child',"viewable_in"]
         if len(db_ids) == 0:
             return dataframe
         for id in db_ids:
@@ -100,7 +101,8 @@ class PropDbReaderRevit(PropReader):
                 dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
                 continue
             for prop in props:
-                if prop.category and not rg.match(prop.category):
+                # if prop.category and not rg.match(prop.category):
+                if prop.name not in props_ignore:
                     properties[prop.name] = prop.value
             db_id = id
             external_id = self.ids[id]

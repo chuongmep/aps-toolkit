@@ -62,8 +62,11 @@ class PropReader:
                 "Authorization": f"Bearer {access_token}"
             }
             response = requests.get(url, headers=headers)
-            file_bytes = response.content
-            downloaded_files[item] = file_bytes
+            if response.status_code == 200:
+                file_bytes = response.content
+                downloaded_files[item] = file_bytes
+            else:
+                print("Have an error: "+str(response.reason))
         self.ids = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_ids.json.gz"]), 'utf-8'))
         self.offsets = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_offs.json.gz"]), 'utf-8'))
         self.avs = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_avs.json.gz"]), 'utf-8'))
