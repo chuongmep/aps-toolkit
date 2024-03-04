@@ -47,3 +47,7 @@ class TestBIM360(TestCase):
     def test_get_urn_item_version(self):
         urn = self.bim360.get_urn_item_version(self.project_id, self.item_id,2)
         self.assertNotEquals(urn, "")
+
+    def test_batch_report_projects(self):
+        df = self.bim360.batch_report_projects(self.hub_id)
+        self.assertNotEquals(df.empty, True)
