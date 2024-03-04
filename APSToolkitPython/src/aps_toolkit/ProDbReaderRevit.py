@@ -186,9 +186,4 @@ class PropDbReaderRevit(PropReader):
         if db_id is None:
             return pd.DataFrame()
         dataframe = self._get_recursive_ids([db_id], is_get_sub_family)
-        # transpose to dataframe with two columns: property and value
-        df = dataframe.T
-        df.reset_index(inplace=True)
-        df.columns = ['property', 'value']
-        # keep dataframe because maybe we need expand for unit in future
-        return df
+        return dataframe

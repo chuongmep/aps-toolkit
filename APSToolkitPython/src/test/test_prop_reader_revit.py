@@ -54,6 +54,6 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_external_id(self):
-        external_id = "31261f36-7edb-41d9-95bc-f8df75aec4c4-00005a5b"
-        df = self.prop_reader.get_data_by_external_id(external_id)
+        external_id = "6d22740f-4d3f-4cc6-a442-8c98ddd54f1f-0004923b"
+        df = self.prop_reader.get_data_by_external_id(external_id,True)
         self.assertNotEquals(df.empty, True)
