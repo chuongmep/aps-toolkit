@@ -398,3 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 *.idea
 output
+**/_trial_temp-[0-9]/
+**/_trial_temp-[0-9].lock

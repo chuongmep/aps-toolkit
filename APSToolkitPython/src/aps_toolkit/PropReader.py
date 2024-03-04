@@ -62,15 +62,18 @@ class PropReader:
                 "Authorization": f"Bearer {access_token}"
             }
             response = requests.get(url, headers=headers)
-            file_bytes = response.content
-            downloaded_files[item] = file_bytes
+            if response.status_code == 200:
+                file_bytes = response.content
+                downloaded_files[item] = file_bytes
+            else:
+                print("Have an error: "+str(response.reason))
         self.ids = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_ids.json.gz"]), 'utf-8'))
         self.offsets = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_offs.json.gz"]), 'utf-8'))
         self.avs = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_avs.json.gz"]), 'utf-8'))
         self.attrs = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_attrs.json.gz"]), 'utf-8'))
         self.vals = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_vals.json.gz"]), 'utf-8'))
 
-    def enumerate_properties(self, id) ->list:
+    def enumerate_properties(self, id) -> list:
         properties = []
         if 0 < id < len(self.offsets):
             av_start = 2 * self.offsets[id]
@@ -99,7 +102,10 @@ class PropReader:
                              display_precision, forge_parameter_id, value))
         return properties
 
-    def get_properties(self, id) ->dict:
+    """
+    Get all properties exclude internal properties
+    """
+    def get_properties(self, id) -> dict:
         props = {}
         rg = re.compile(r'^__\w+__$')
         for prop in self.enumerate_properties(id):
@@ -107,7 +113,16 @@ class PropReader:
                 props[prop.name] = prop.value
         return props
 
-    def get_properties_group_by_category(self, id) ->dict:
+    """
+    Get all properties include internal properties
+    """
+    def get_all_properties(self, id) -> dict:
+        props = {}
+        for prop in self.enumerate_properties(id):
+            props[prop.name] = prop.value
+        return props
+
+    def get_properties_group_by_category(self, id) -> dict:
         properties = {}
         rg = re.compile(r'^__\w+__$')
         categories = []
@@ -129,21 +144,21 @@ class PropReader:
 
         return properties
 
-    def get_children(self, id) ->list:
+    def get_children(self, id) -> list:
         children = []
         for prop in self.enumerate_properties(id):
             if prop.category == "__child__":
                 children.append(int(prop.value))
         return children
 
-    def get_parent(self, id) ->list:
+    def get_parent(self, id) -> list:
         parent = []
         for prop in self.enumerate_properties(id):
             if prop.category == "__parent__":
                 parent.append(int(prop.value))
         return parent
 
-    def get_instance(self, id) ->list:
+    def get_instance(self, id) -> list:
         instance_of = []
         for prop in self.enumerate_properties(id):
             if prop.category == "__instanceof__":
@@ -152,7 +167,7 @@ class PropReader:
 
 
 class Property():
-    def __init__(self, id  =None, name  =None, category=None, data_type=None, data_type_context=None, description=None,
+    def __init__(self, id=None, name=None, category=None, data_type=None, data_type_context=None, description=None,
                  display_name=None, flags=None,
                  display_precision=None, forge_parameter_id=None, value=None):
         self.id = id,

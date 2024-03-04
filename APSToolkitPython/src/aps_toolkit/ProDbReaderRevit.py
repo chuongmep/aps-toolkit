@@ -25,6 +25,14 @@ class PropDbReaderRevit(PropReader):
     def get_external_id(self, id) -> str:
         return self.ids[id]
 
+    def get_document_info(self) -> pd.Series:
+        properties = self.get_properties(1)
+        instances = self.get_instance(1)
+        for instance in instances:
+            types = self.get_properties(instance)
+            properties = {**properties, **types}
+        return pd.Series(properties)
+
     def get_all_categories(self) -> dict:
         categories = {}
         self._get_recursive_child(categories, 1, "_RC")
@@ -78,41 +86,88 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids(type_id)
         return dataframe
 
-    def _get_recursive_ids(self, childs: List[int]) -> pd.DataFrame:
+    def _get_recursive_ids(self, db_ids: List[int]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
-        if len(childs) == 0:
+        props_ignore = ['parent', 'instanceof_objid', 'child',"viewable_in"]
+        if len(db_ids) == 0:
             return dataframe
-        for child_id in childs:
-            properties = self.get_properties(child_id)
-            db_id = child_id
-            external_id = self.ids[child_id]
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            properties = {}
+            rg = re.compile(r'^__\w+__$')
+            # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
+            if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
+                ids = self.get_children(id)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+                continue
+            for prop in props:
+                # if prop.category and not rg.match(prop.category):
+                if prop.name not in props_ignore:
+                    properties[prop.name] = prop.value
+            db_id = id
+            external_id = self.ids[id]
             properties['dbId'] = db_id
             properties['external_id'] = external_id
-            singleDF = pd.DataFrame(properties, index=[0])  # Convert properties to DataFrame
-            singleDF = singleDF[
-                ['dbId', 'external_id'] + [col for col in singleDF.columns if col not in ['dbId', 'external_id']]]
+            ins = self.get_instance(id)
+            if len(ins) > 0:
+                for instance in ins:
+                    types = self.get_properties(instance)
+                    properties = {**properties, **types}
+            singleDF = pd.DataFrame(properties, index=[0])
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-            ids = self.get_children(child_id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)  # Recurse for children
+            ids = self.get_children(id)
+            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+        dataframe = dataframe[['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
     def _get_recursive_ids_prams(self, childs: List[int], params: List[str]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
+        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
         if len(childs) == 0:
             return dataframe
-        for child_id in childs:
-            properties = self.get_properties(child_id)
-            db_id = child_id
-            external_id = self.ids[child_id]
+        for id in childs:
+            props = self.enumerate_properties(id)
+            # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
+            if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
+                ids = self.get_children(id)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids,params)], ignore_index=True)
+                continue
+            properties = {}
+            for prop in props:
+                if prop.name not in props_ignore:
+                    properties[prop.name] = prop.value
+            db_id = id
+            external_id = self.ids[id]
             # filter just get properties name in params list
             properties = {k: v for k, v in properties.items() if k in params}
             properties['dbId'] = db_id
             properties['external_id'] = external_id
-            singleDF = pd.DataFrame(properties, index=[0])  # Convert properties to DataFrame
-            singleDF = singleDF[
-                ['dbId', 'external_id'] + [col for col in singleDF.columns if col not in ['dbId', 'external_id']]]
+            # get instances
+            ins = self.get_instance(id)
+            if len(ins) > 0:
+                for instance in ins:
+                    types = self.get_all_properties(instance)
+                    types = {k: v for k, v in types.items() if k in params}
+                    properties = {**properties, **types}
+            singleDF = pd.DataFrame(properties, index=[0])
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-            ids = self.get_children(child_id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params)],
-                                  ignore_index=True)  # Recurse for children
+            ids = self.get_children(id)
+            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids,params)], ignore_index=True)
+        dataframe = dataframe[['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
+
+    def get_data_by_external_id(self, external_id) -> pd.DataFrame:
+        db_id = None
+        for idx in range(1, len(self.ids) + 1):
+            if self.ids[idx] == external_id:
+                db_id = idx
+                break
+        if db_id is None:
+            return pd.DataFrame()
+        dataframe = self._get_recursive_ids([db_id])
+        # transpose to dataframe with two columns: property and value
+        df = dataframe.T
+        df.reset_index(inplace=True)
+        df.columns = ['property', 'value']
+        # keep dataframe because maybe we need expand for unit in future
+        return df

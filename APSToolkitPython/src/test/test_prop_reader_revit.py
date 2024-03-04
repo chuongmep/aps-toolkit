@@ -7,8 +7,13 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLjAtYnBtcEpXUWJTRUVNdUFac1VETWc_dmVyc2lvbj0yNQ"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0yNA"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
+
+    def test_get_document_info(self):
+        document_info = self.prop_reader.get_document_info()
+        # check series is not empty
+        self.assertNotEquals(document_info,0)
 
     def test_get_all_categories(self):
         categories = self.prop_reader.get_all_categories()
@@ -24,11 +29,13 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(families_types, 0)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("Ducts")
-        self.assertNotEquals(df.empty, True)
+        df = self.prop_reader.get_data_by_category("Windows")
+        # check if dataframe have rows = 1
+        df_rows = df.shape[0]
+        self.assertNotEquals(df_rows, 0)
 
     def test_get_data_by_categories(self):
-        df = self.prop_reader.get_data_by_categories(["Ducts", "Rooms"])
+        df = self.prop_reader.get_data_by_categories(["Doors", "Windows"])
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_family(self):
@@ -42,6 +49,11 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_categories_and_params(self):
-        df = self.prop_reader.get_data_by_categories_and_params(["Ducts"],
-                                                                ["name", "Category", "System Name", "IfcGUID"])
+        df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
+                                                                ["name","Category","ElementId", "Width", "Height", "IfcGUID"])
+        self.assertNotEquals(df.empty, True)
+
+    def test_get_data_by_external_id(self):
+        external_id = "31261f36-7edb-41d9-95bc-f8df75aec4c4-00005a5b"
+        df = self.prop_reader.get_data_by_external_id(external_id)
         self.assertNotEquals(df.empty, True)
