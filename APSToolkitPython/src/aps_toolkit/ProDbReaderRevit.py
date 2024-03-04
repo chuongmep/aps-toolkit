@@ -58,15 +58,18 @@ class PropDbReaderRevit(PropReader):
     def get_data_by_categories(self, categories: List[str], is_get_sub_family=False) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         for category in categories:
-            dataframe = pd.concat([dataframe, self.get_data_by_category(category, is_get_sub_family)], ignore_index=True)
+            dataframe = pd.concat([dataframe, self.get_data_by_category(category, is_get_sub_family)],
+                                  ignore_index=True)
         return dataframe
 
-    def get_data_by_categories_and_params(self, categories: List[str], params: List[str], is_get_sub_family=False) -> pd.DataFrame:
+    def get_data_by_categories_and_params(self, categories: List[str], params: List[str],
+                                          is_get_sub_family=False) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         all_categories = self.get_all_categories()
         category_ids = [key for key, value in all_categories.items() if value in categories]
         for category_id in category_ids:
-            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams([category_id], params, is_get_sub_family)], ignore_index=True)
+            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams([category_id], params, is_get_sub_family)],
+                                  ignore_index=True)
         # remove all row have all values is null, ignore dbId and external_id columns
         dataframe = dataframe.dropna(how='all',
                                      subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
@@ -139,7 +142,8 @@ class PropDbReaderRevit(PropReader):
             # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
             if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
                 ids = self.get_children(id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params,get_sub_family)], ignore_index=True)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family)],
+                                      ignore_index=True)
                 continue
             properties = {}
             for prop in props:
@@ -158,7 +162,8 @@ class PropDbReaderRevit(PropReader):
             properties['external_id'] = external_id
             if flag_sub_families and not get_sub_family:
                 ids = self.get_children(id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family)], ignore_index=True)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family)],
+                                      ignore_index=True)
                 continue
             # get instances
             ins = self.get_instance(id)
@@ -170,7 +175,8 @@ class PropDbReaderRevit(PropReader):
             single_df = pd.DataFrame(properties, index=[0])
             dataframe = pd.concat([dataframe, single_df], ignore_index=True)
             ids = self.get_children(id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family)], ignore_index=True)
+            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family)],
+                                  ignore_index=True)
         # set dbid and external_id to first and second column if it exists
         if 'dbId' in dataframe.columns and 'external_id' in dataframe.columns:
             dataframe = dataframe[
@@ -187,3 +193,14 @@ class PropDbReaderRevit(PropReader):
             return pd.DataFrame()
         dataframe = self._get_recursive_ids([db_id], is_get_sub_family)
         return dataframe
+
+    def get_all_parameters(self) -> List:
+        parameters = []
+        for id in range(0, len(self.ids)):
+            props_dict = self.get_properties(id)
+            for key, value in props_dict.items():
+                if key not in parameters:
+                    parameters.append(key)
+        parameters = list(set(parameters))
+        parameters.sort()
+        return parameters
