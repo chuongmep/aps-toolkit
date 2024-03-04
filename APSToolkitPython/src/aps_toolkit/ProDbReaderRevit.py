@@ -55,10 +55,10 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids(category_id, is_get_sub_family)
         return dataframe
 
-    def get_data_by_categories(self, categories: List[str]) -> pd.DataFrame:
+    def get_data_by_categories(self, categories: List[str], is_get_sub_family=False) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         for category in categories:
-            dataframe = pd.concat([dataframe, self.get_data_by_category(category)], ignore_index=True)
+            dataframe = pd.concat([dataframe, self.get_data_by_category(category, is_get_sub_family)], ignore_index=True)
         return dataframe
 
     def get_data_by_categories_and_params(self, categories: List[str], params: List[str], is_get_sub_family=False) -> pd.DataFrame:
