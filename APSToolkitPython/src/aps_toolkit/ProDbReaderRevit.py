@@ -1,5 +1,5 @@
 from typing import List
-
+import re
 import pandas as pd
 
 from .PropReader import PropReader
@@ -185,7 +185,7 @@ class PropDbReaderRevit(PropReader):
 
     def get_data_by_external_id(self, external_id, is_get_sub_family=False) -> pd.DataFrame:
         db_id = None
-        for idx in range(1, len(self.ids) + 1):
+        for idx in range(0, len(self.ids)):
             if self.ids[idx] == external_id:
                 db_id = idx
                 break
@@ -194,6 +194,24 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids([db_id], is_get_sub_family)
         return dataframe
 
+    def get_data_by_element_id(self, element_id) -> dict:
+        rg = re.compile(r'^__\w+__$')
+        properties = {}
+        for i in range(0,len(self.ids)):
+            props = self.enumerate_properties(i)
+            for prop in props:
+                if prop.name == "ElementId" and prop.value == str(element_id):
+                    for prop in props:
+                        if not rg.match(prop.category):
+                            properties[prop.name] = prop.value
+                    # get instance
+                    instances = self.get_instance(i)
+                    for instance in instances:
+                        types = self.get_properties(instance)
+                        properties = {**properties, **types}
+                    break
+        properties = dict(sorted(properties.items()))
+        return properties
     def get_all_parameters(self) -> List:
         parameters = []
         for id in range(0, len(self.ids)):

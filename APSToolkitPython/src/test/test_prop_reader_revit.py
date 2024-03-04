@@ -58,6 +58,11 @@ class TestPropDbReaderRevit(TestCase):
         df = self.prop_reader.get_data_by_external_id(external_id,True)
         self.assertNotEquals(df.empty, True)
 
+    def test_get_data_by_element_id(self):
+        element_id = 289790
+        parameters = self.prop_reader.get_data_by_element_id(element_id)
+        self.assertIsNotNone(parameters)
+        self.assertNotEquals(len(parameters), 0)
     def test_get_all_parametes(self):
         parameters = self.prop_reader.get_all_parameters()
         self.assertNotEquals(parameters, 0)
