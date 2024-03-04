@@ -1,10 +1,8 @@
-import gzip
-import json
-import re
-import codecs
 from typing import List
-from .PropReader import PropReader
+
 import pandas as pd
+
+from .PropReader import PropReader
 
 
 class PropDbReaderRevit(PropReader):
@@ -48,13 +46,13 @@ class PropDbReaderRevit(PropReader):
         self._get_recursive_child(families_types, 1, "_RFT")
         return families_types
 
-    def get_data_by_category(self, category) -> pd.DataFrame:
+    def get_data_by_category(self, category, is_get_sub_family=False) -> pd.DataFrame:
         categories = self.get_all_categories()
         # if category starts with Revit, remove it
         if category.startswith("Revit"):
             category = category[5:].strip()
         category_id = [key for key, value in categories.items() if value == category]
-        dataframe = self._get_recursive_ids(category_id)
+        dataframe = self._get_recursive_ids(category_id, is_get_sub_family)
         return dataframe
 
     def get_data_by_categories(self, categories: List[str]) -> pd.DataFrame:
@@ -74,40 +72,48 @@ class PropDbReaderRevit(PropReader):
                                      subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
         return dataframe
 
-    def get_data_by_family(self, family_name) -> pd.DataFrame:
+    def get_data_by_family(self, family_name, is_get_sub_family=False) -> pd.DataFrame:
         families = self.get_all_families()
         category_id = [key for key, value in families.items() if value == family_name]
-        dataframe = self._get_recursive_ids(category_id)
+        dataframe = self._get_recursive_ids(category_id, is_get_sub_family)
         return dataframe
 
-    def get_data_by_family_type(self, family_type) -> pd.DataFrame:
+    def get_data_by_family_type(self, family_type, is_get_sub_family=False) -> pd.DataFrame:
         family_types = self.get_all_families_types()
         type_id = [key for key, value in family_types.items() if value == family_type]
-        dataframe = self._get_recursive_ids(type_id)
+        dataframe = self._get_recursive_ids(type_id, is_get_sub_family)
         return dataframe
 
-    def _get_recursive_ids(self, db_ids: List[int]) -> pd.DataFrame:
+    def _get_recursive_ids(self, db_ids: List[int], get_sub_family) -> pd.DataFrame:
         dataframe = pd.DataFrame()
-        props_ignore = ['parent', 'instanceof_objid', 'child',"viewable_in"]
+        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
         if len(db_ids) == 0:
             return dataframe
         for id in db_ids:
             props = self.enumerate_properties(id)
+            flag_sub_families = False
             properties = {}
-            rg = re.compile(r'^__\w+__$')
             # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
             if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
                 ids = self.get_children(id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids, get_sub_family)], ignore_index=True)
                 continue
             for prop in props:
-                # if prop.category and not rg.match(prop.category):
+                if prop.category == "__internalref__" and prop.name == "Sub Family":
+                    flag_sub_families = True
                 if prop.name not in props_ignore:
-                    properties[prop.name] = prop.value
+                    if prop.name == "name":
+                        properties["Name"] = prop.value
+                    else:
+                        properties[prop.name] = prop.value
             db_id = id
             external_id = self.ids[id]
             properties['dbId'] = db_id
             properties['external_id'] = external_id
+            if flag_sub_families and not get_sub_family:
+                ids = self.get_children(id)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids(ids, get_sub_family)], ignore_index=True)
+                continue
             ins = self.get_instance(id)
             if len(ins) > 0:
                 for instance in ins:
@@ -116,8 +122,9 @@ class PropDbReaderRevit(PropReader):
             singleDF = pd.DataFrame(properties, index=[0])
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             ids = self.get_children(id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids)], ignore_index=True)
-        dataframe = dataframe[['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+            dataframe = pd.concat([dataframe, self._get_recursive_ids(ids, get_sub_family)], ignore_index=True)
+        # dataframe = dataframe[
+        #     ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
     def _get_recursive_ids_prams(self, childs: List[int], params: List[str]) -> pd.DataFrame:
@@ -130,7 +137,7 @@ class PropDbReaderRevit(PropReader):
             # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
             if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
                 ids = self.get_children(id)
-                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids,params)], ignore_index=True)
+                dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params)], ignore_index=True)
                 continue
             properties = {}
             for prop in props:
@@ -149,14 +156,15 @@ class PropDbReaderRevit(PropReader):
                     types = self.get_all_properties(instance)
                     types = {k: v for k, v in types.items() if k in params}
                     properties = {**properties, **types}
-            singleDF = pd.DataFrame(properties, index=[0])
-            dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            single_df = pd.DataFrame(properties, index=[0])
+            dataframe = pd.concat([dataframe, single_df], ignore_index=True)
             ids = self.get_children(id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids,params)], ignore_index=True)
-        dataframe = dataframe[['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params)], ignore_index=True)
+        dataframe = dataframe[
+            ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
-    def get_data_by_external_id(self, external_id) -> pd.DataFrame:
+    def get_data_by_external_id(self, external_id, is_get_sub_family=False) -> pd.DataFrame:
         db_id = None
         for idx in range(1, len(self.ids) + 1):
             if self.ids[idx] == external_id:
@@ -164,7 +172,7 @@ class PropDbReaderRevit(PropReader):
                 break
         if db_id is None:
             return pd.DataFrame()
-        dataframe = self._get_recursive_ids([db_id])
+        dataframe = self._get_recursive_ids([db_id], is_get_sub_family)
         # transpose to dataframe with two columns: property and value
         df = dataframe.T
         df.reset_index(inplace=True)

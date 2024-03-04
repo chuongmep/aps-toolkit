@@ -145,3 +145,5 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 Thanks [JetBrains](https://www.jetbrains.com/) for providing a free All product IDE for this project.
 
 ---
+
+## Known Issues
