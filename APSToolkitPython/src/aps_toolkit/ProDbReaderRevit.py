@@ -6,8 +6,8 @@ from .PropReader import PropReader
 
 
 class PropDbReaderRevit(PropReader):
-    def __int__(self, urn, token):
-        super().__init__(urn, token)
+    def __int__(self, urn, token,region="US"):
+        super().__init__(urn, token,region)
 
     def _get_recursive_child(self, output, id, name):
         children = self.get_children(id)
