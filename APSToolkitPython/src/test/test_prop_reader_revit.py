@@ -12,8 +12,7 @@ class TestPropDbReaderRevit(TestCase):
 
     def test_get_document_info(self):
         document_info = self.prop_reader.get_document_info()
-        # check series is not empty
-        self.assertNotEquals(document_info,0)
+        self.assertIsNotNone(document_info)
 
     def test_get_all_categories(self):
         categories = self.prop_reader.get_all_categories()
@@ -29,7 +28,7 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(families_types, 0)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("Windows")
+        df = self.prop_reader.get_data_by_category("Windows",True)
         # check if dataframe have rows = 1
         df_rows = df.shape[0]
         self.assertNotEquals(df_rows, 0)
@@ -39,21 +38,30 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_family(self):
-        family_name = "ex_M_MAU_02"
+        family_name = "Seating-LAMMHULTS-PENNE-Chair"
         df = self.prop_reader.get_data_by_family(family_name)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_family_type(self):
-        family_type = "457x191x67UB"
+        family_type = "Plastic-Seat"
         df = self.prop_reader.get_data_by_family_type(family_type)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_categories_and_params(self):
         df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
-                                                                ["name","Category","ElementId", "Width", "Height", "IfcGUID"])
+                                                                ["name","Category","ElementId", "Width", "Height", "IfcGUID"],True)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_external_id(self):
-        external_id = "31261f36-7edb-41d9-95bc-f8df75aec4c4-00005a5b"
-        df = self.prop_reader.get_data_by_external_id(external_id)
+        external_id = "6d22740f-4d3f-4cc6-a442-8c98ddd54f1f-0004923b"
+        df = self.prop_reader.get_data_by_external_id(external_id,True)
         self.assertNotEquals(df.empty, True)
+
+    def test_get_data_by_element_id(self):
+        element_id = 289790
+        parameters = self.prop_reader.get_data_by_element_id(element_id)
+        self.assertIsNotNone(parameters)
+        self.assertNotEquals(len(parameters), 0)
+    def test_get_all_parametes(self):
+        parameters = self.prop_reader.get_all_parameters()
+        self.assertNotEquals(parameters, 0)

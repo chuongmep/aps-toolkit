@@ -318,12 +318,12 @@ namespace APSToolkit.Database
         }
 
         /// <summary>
-        /// Finds "public" properties of given object.
+        /// Finds "public" and internal properties of given object.
         /// Additional properties like parent-child relationships are not included in the output.
         /// </summary>
         /// <param name="id">id Object ID</param>
         /// <returns name="string">Dictionary of property names and values.</returns>
-        public Dictionary<string, string?> GetProperties(int id)
+        public Dictionary<string, string?> GetAllProperties(int id)
         {
             Dictionary<string, string?> props = new Dictionary<string, string?>();
             foreach (var prop in EnumerateProperties(id))
@@ -470,7 +470,7 @@ namespace APSToolkit.Database
 
                         // the reason here because we also need export parameter type
                         int dbTypeId = GetInstanceOf(i).FirstOrDefault();
-                        GetProperties(dbTypeId);
+                        GetAllProperties(dbTypeId);
                         Property[] PropertyTypes = EnumerateProperties(dbTypeId);
                         // Iterate over each property and export to subsequent columns
                         foreach (var enumerateProperty in PropertyTypes.Where(x =>

@@ -40,6 +40,20 @@ class BIM360:
         response = requests.get(url, headers=headers)
         return response.json()
 
+    def batch_report_projects(self,hub_id) -> pd.DataFrame:
+        df = pd.DataFrame(columns=['project_id', 'project_name',"project_type", 'top_folder_id'])
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/project/v1/hubs/{hub_id}/projects"
+        response = requests.get(url, headers=headers)
+        projects = response.json()
+        for project in projects['data']:
+            project_id = project['id']
+            project_name = project['attributes']['name']
+            project_type = project['attributes']['extension']["data"]["projectType"]
+            top_folder = self.get_top_folders(hub_id, project_id)
+            top_folder_id = top_folder["data"][0]["id"]
+            df = pd.concat([df, pd.DataFrame({'project_id': project_id, 'project_name': project_name,'project_type':project_type, 'top_folder_id': top_folder_id}, index=[0])], ignore_index=True)
+        return df
     def batch_report_item_versions(self, project_id, item_id) -> pd.DataFrame:
         # create a dataframe to save data report with columns : item_id,version,derivative_urn,last_modified_time
         df = pd.DataFrame(columns=['item_id', 'version', 'derivative_urn', 'last_modified_time'])

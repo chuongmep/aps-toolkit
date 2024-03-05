@@ -66,7 +66,7 @@ class PropReader:
                 file_bytes = response.content
                 downloaded_files[item] = file_bytes
             else:
-                print("Have an error: "+str(response.reason))
+                print("Have an error: " + str(response.reason))
         self.ids = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_ids.json.gz"]), 'utf-8'))
         self.offsets = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_offs.json.gz"]), 'utf-8'))
         self.avs = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_avs.json.gz"]), 'utf-8'))
@@ -105,6 +105,7 @@ class PropReader:
     """
     Get all properties exclude internal properties
     """
+
     def get_properties(self, id) -> dict:
         props = {}
         rg = re.compile(r'^__\w+__$')
@@ -116,6 +117,7 @@ class PropReader:
     """
     Get all properties include internal properties
     """
+
     def get_all_properties(self, id) -> dict:
         props = {}
         for prop in self.enumerate_properties(id):
@@ -164,6 +166,12 @@ class PropReader:
             if prop.category == "__instanceof__":
                 instance_of.append(int(prop.value))
         return instance_of
+
+    def get_internal_ref(self, id) -> list:
+        reference = []
+        for prop in self.enumerate_properties(id):
+            if prop.category == "__internalref__":
+                reference.append(int(prop.value))
 
 
 class Property():

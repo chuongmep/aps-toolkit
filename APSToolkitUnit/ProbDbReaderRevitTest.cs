@@ -200,5 +200,14 @@ public class ProbDbReaderRevitTest
         Console.WriteLine($"Time elapsed seconds: {(end - start).TotalSeconds}");
     }
 
+    [Test]
+    [TestCase(Settings._RevitTestUrn)]
+    public void GetDocumentInforTest(string urn)
+    {
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
+        var documentInfo = RevitPropDbReader.GetDocumentInfor();
+        Assert.AreNotEqual(0, documentInfo.Count);
+    }
+
 
 }
