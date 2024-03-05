@@ -26,7 +26,7 @@ class PropReader:
     #             self.avs = json.load(avs_file)
     #             self.attrs = json.load(attrs_file)
     #             self.vals = json.load(vals_file)
-    def __init__(self, urn, token):
+    def __init__(self, urn, token,region="US"):
         items = [
             "objects_attrs.json.gz",
             "objects_vals.json.gz",
@@ -41,7 +41,8 @@ class PropReader:
         access_token = token.access_token
         # add headers authorization
         headers = {
-            "Authorization": f"Bearer {access_token}"
+            "Authorization": f"Bearer {access_token}",
+            "region": region
         }
         # request
         response = requests.get(URL, headers=headers)
@@ -57,9 +58,9 @@ class PropReader:
             path = f"urn:adsk.viewing:fs.file:{urn}/output/Resource/{item}"
             url = f"{host}/modelderivative/v2/designdata/{urn}/manifest/{path}"
             # add headers authorization
-
             headers = {
-                "Authorization": f"Bearer {access_token}"
+                "Authorization": f"Bearer {access_token}",
+                "region": region
             }
             response = requests.get(url, headers=headers)
             if response.status_code == 200:
