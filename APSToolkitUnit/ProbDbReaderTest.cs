@@ -44,7 +44,7 @@ public class ProbDbReaderTest
     [Test]
     public void GetPropertiesTest()
     {
-        Dictionary<string, string> properties = PropDbReader.GetProperties(3);
+        Dictionary<string, string> properties = PropDbReader.GetAllProperties(3);
         properties.ExportDataToExcel(@"result.xlsx");
         Assert.AreNotEqual(0, properties.Count);
     }

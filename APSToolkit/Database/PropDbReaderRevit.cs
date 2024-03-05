@@ -239,6 +239,16 @@ public class PropDbReaderRevit : PropDbReader
         excelPackage.SaveAs(new FileInfo(path));
     }
 
+    /// <summary>
+    /// Retrieves information about the document.
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<string, string> GetDocumentInfor()
+    {
+        Dictionary<string,string> properties = this.GetAllProperties(1);
+        return properties;
+    }
+
     public DataTable GetAllDataByCategory(string categoryName)
     {
         if (categoryName.StartsWith("Revit")) categoryName = categoryName.Substring(5).Trim();
