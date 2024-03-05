@@ -32,6 +32,10 @@ class PropDbReaderRevit(PropReader):
         self._get_recursive_child(categories, 1, "_RC")
         return categories
 
+    def get_all_data(self, is_get_sub_family=False) -> pd.DataFrame:
+        childs = self.get_children(1)
+        dataframe = self._get_recursive_ids(childs,is_get_sub_family)
+        return dataframe
     def get_all_families(self) -> dict:
         families = {}
         self._get_recursive_child(families, 1, "_RFN")
