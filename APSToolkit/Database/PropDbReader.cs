@@ -272,7 +272,7 @@ namespace APSToolkit.Database
         }
 
 
-        public int GetDBIndexExternalId(string externalId)
+        public int GetDbIndexExternalId(string externalId)
         {
             int index = -1;
             for (int i = 0; i < ids.Length; i++)
