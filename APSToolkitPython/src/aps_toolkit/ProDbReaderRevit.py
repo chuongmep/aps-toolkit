@@ -24,11 +24,7 @@ class PropDbReaderRevit(PropReader):
         return self.ids[id]
 
     def get_document_info(self) -> pd.Series:
-        properties = self.get_properties(1)
-        instances = self.get_instance(1)
-        for instance in instances:
-            types = self.get_properties(instance)
-            properties = {**properties, **types}
+        properties = self.get_all_properties(1)
         return pd.Series(properties)
 
     def get_all_categories(self) -> dict:

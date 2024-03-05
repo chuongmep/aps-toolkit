@@ -12,7 +12,6 @@ class TestPropDbReaderRevit(TestCase):
 
     def test_get_document_info(self):
         document_info = self.prop_reader.get_document_info()
-        # check series is not empty
         self.assertIsNotNone(document_info)
 
     def test_get_all_categories(self):
