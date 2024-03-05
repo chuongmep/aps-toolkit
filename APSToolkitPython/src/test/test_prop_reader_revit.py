@@ -27,6 +27,10 @@ class TestPropDbReaderRevit(TestCase):
         families_types = self.prop_reader.get_all_families_types()
         self.assertNotEquals(families_types, 0)
 
+    def test_get_all_data(self):
+        data = self.prop_reader.get_all_data()
+        self.assertIsNotNone(data)
+
     def test_get_data_by_category(self):
         df = self.prop_reader.get_data_by_category("Windows",True)
         # check if dataframe have rows = 1

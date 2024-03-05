@@ -549,6 +549,7 @@ public class PropDbReaderRevit : PropDbReader
     /// <returns>
     /// An array of public properties excluding internal categories and reserved names.
     /// </returns>
+    [Obsolete("This method is deprecated, because it is slow and not efficient. Please use GetAllProperties(id) instead.")]
     public Property[] GetAllPublicProperties()
     {
         Property[] properties = GetAllProperties()
