@@ -46,6 +46,9 @@ class PropReader:
         }
         # request
         response = requests.get(URL, headers=headers)
+        if response.status_code != 200:
+            print(response.reason)
+            return
         json_response = response.json()
         children = json_response['derivatives'][0]["children"]
         path = ""
@@ -67,7 +70,8 @@ class PropReader:
                 file_bytes = response.content
                 downloaded_files[item] = file_bytes
             else:
-                print("Have an error: " + str(response.reason))
+                print(response.reason)
+                return
         self.ids = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_ids.json.gz"]), 'utf-8'))
         self.offsets = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_offs.json.gz"]), 'utf-8'))
         self.avs = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_avs.json.gz"]), 'utf-8'))
