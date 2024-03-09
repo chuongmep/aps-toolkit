@@ -40,6 +40,11 @@ class BIM360:
         response = requests.get(url, headers=headers)
         return response.json()
 
+    def get_item_info(self, project_id, item_id):
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}"
+        response = requests.get(url, headers=headers)
+        return response.json()
     def batch_report_projects(self,hub_id) -> pd.DataFrame:
         df = pd.DataFrame(columns=['project_id', 'project_name',"project_type", 'top_folder_id'])
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
@@ -54,6 +59,7 @@ class BIM360:
             top_folder_id = top_folder["data"][0]["id"]
             df = pd.concat([df, pd.DataFrame({'project_id': project_id, 'project_name': project_name,'project_type':project_type, 'top_folder_id': top_folder_id}, index=[0])], ignore_index=True)
         return df
+
     def batch_report_item_versions(self, project_id, item_id) -> pd.DataFrame:
         # create a dataframe to save data report with columns : item_id,version,derivative_urn,last_modified_time
         df = pd.DataFrame(columns=['item_id', 'version', 'derivative_urn', 'last_modified_time'])
@@ -71,6 +77,13 @@ class BIM360:
             df = pd.concat([df, pd.DataFrame({'item_id': item_id, 'version': version, 'derivative_urn': derivative_urn,
                                               'last_modified_time': last_modified_time}, index=[0])], ignore_index=True)
         return df
+
+    def get_item_display_name(self, project_id, item_id):
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}"
+        response = requests.get(url, headers=headers)
+        item = response.json()
+        return item['data']['attributes']['displayName']
 
     def batch_report_items(self, project_id, folder_id, extension=".rvt", is_sub_folder=False) -> pd.DataFrame:
         df = pd.DataFrame(columns=['project_id', 'folder_id', 'item_name', 'item_id', 'last_version', 'derivative_urn',
