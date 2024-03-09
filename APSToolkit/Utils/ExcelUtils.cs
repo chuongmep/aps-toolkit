@@ -204,18 +204,6 @@ public static class ExcelUtils
                     worksheet.Row(i + 2).Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
                 }
             }
-
-            // set freeze panes
-            worksheet.View.FreezePanes(2, 2);
-            worksheet.Cells.AutoFitColumns();
-            // set color header background black, text white
-            for (int i = 1; i <= dataTable.Columns.Count; i++)
-            {
-                worksheet.Cells[1, i].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                worksheet.Cells[1, i].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Black);
-                worksheet.Cells[1, i].Style.Font.Color.SetColor(System.Drawing.Color.White);
-            }
-
             package.SaveAs(new System.IO.FileInfo(filePath));
         }
     }

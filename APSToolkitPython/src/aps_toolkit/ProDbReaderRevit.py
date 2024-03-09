@@ -33,8 +33,12 @@ class PropDbReaderRevit(PropReader):
         return categories
 
     def get_all_data(self, is_get_sub_family=False) -> pd.DataFrame:
-        childs = self.get_children(1)
-        dataframe = self._get_recursive_ids(childs,is_get_sub_family)
+        categories_dict = self.get_all_categories()
+        dbids = list(categories_dict.keys())
+        dataframe = pd.DataFrame()
+        for dbid in dbids:
+            df = self._get_recursive_ids([dbid], is_get_sub_family)
+            dataframe = pd.concat([dataframe, df], ignore_index=True)
         return dataframe
     def get_all_families(self) -> dict:
         families = {}

@@ -188,16 +188,8 @@ public class ProbDbReaderRevitTest
     public void GetAllDataTest(string urn)
     {
         RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
-        var start = DateTime.Now;
-        Dictionary<int, string> allCategories = RevitPropDbReader.GetAllCategories();
-        foreach (KeyValuePair<int,string> cate in allCategories)
-        {
-            Console.WriteLine($"Processing category: {cate.Value}");
-            DataTable dataTable = RevitPropDbReader.GetAllDataByCategory(cate.Value);
-            Assert.AreNotEqual(0, dataTable.Rows);
-        }
-        var end = DateTime.Now;
-        Console.WriteLine($"Time elapsed seconds: {(end - start).TotalSeconds}");
+        DataTable dataTable = RevitPropDbReader.GetAllData();
+        dataTable.ExportDataToExcel("result.xlsx");
     }
 
     [Test]
