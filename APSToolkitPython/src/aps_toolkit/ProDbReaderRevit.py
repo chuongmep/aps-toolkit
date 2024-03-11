@@ -1,13 +1,14 @@
 from typing import List
 import re
 import pandas as pd
-
+import json
+import requests
 from .PropReader import PropReader
 
 
 class PropDbReaderRevit(PropReader):
-    def __int__(self, urn, token,region="US"):
-        super().__init__(urn, token,region)
+    def __int__(self, urn, token, region="US"):
+        super().__init__(urn, token, region)
 
     def _get_recursive_child(self, output, id, name):
         children = self.get_children(id)
@@ -27,6 +28,58 @@ class PropDbReaderRevit(PropReader):
         properties = self.get_all_properties(1)
         return pd.Series(properties)
 
+    def _get_aec_model_data(self):
+        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest"
+        access_token = self.token.access_token
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "region": self.region
+        }
+        # request
+        response = requests.get(URL, headers=headers)
+        json_response = response.json()
+        children = json_response['derivatives'][0]["children"]
+        urn_json = ""
+        for child in children:
+            if child["type"] == "resource" and child["role"] == "Autodesk.AEC.ModelData":
+                urn_json = child["urn"]
+        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest/{urn_json}"
+        response = requests.get(URL, headers=headers)
+        json_response = response.json()
+        return json_response
+
+    def get_phases(self) -> List[str]:
+        phases = []
+        json_response = self._get_aec_model_data()
+        for phase in json_response["phases"]:
+            phases.append(phase["name"])
+        return phases
+
+    def get_document_id(self) -> str:
+        json_response = self._get_aec_model_data()
+        return json_response["documentId"]
+
+    def get_levels(self) -> pd.DataFrame:
+        json_response = self._get_aec_model_data()
+        levels = json_response["levels"]
+        df = pd.DataFrame(levels)
+        return df
+
+    def get_grids(self) -> pd.DataFrame:
+        json_response = self._get_aec_model_data()
+        grids = json_response["grids"]
+        df = pd.DataFrame(grids)
+        return df
+
+    def get_linked_documents(self) -> list:
+        json_response = self._get_aec_model_data()
+        linked_documents = json_response["linkedDocuments"]
+        return linked_documents
+
+    def get_ref_point_transformation(self) -> list:
+        json_response = self._get_aec_model_data()
+        return json_response["refPointTransformation"]
+
     def get_all_categories(self) -> dict:
         categories = {}
         self._get_recursive_child(categories, 1, "_RC")
@@ -40,6 +93,7 @@ class PropDbReaderRevit(PropReader):
             df = self._get_recursive_ids([dbid], is_get_sub_family)
             dataframe = pd.concat([dataframe, df], ignore_index=True)
         return dataframe
+
     def get_all_families(self) -> dict:
         families = {}
         self._get_recursive_child(families, 1, "_RFN")
@@ -201,7 +255,7 @@ class PropDbReaderRevit(PropReader):
     def get_data_by_element_id(self, element_id) -> dict:
         rg = re.compile(r'^__\w+__$')
         properties = {}
-        for i in range(0,len(self.ids)):
+        for i in range(0, len(self.ids)):
             props = self.enumerate_properties(i)
             for prop in props:
                 if prop.name == "ElementId" and prop.value == str(element_id):
@@ -216,6 +270,7 @@ class PropDbReaderRevit(PropReader):
                     break
         properties = dict(sorted(properties.items()))
         return properties
+
     def get_all_parameters(self) -> List:
         parameters = []
         for id in range(0, len(self.ids)):

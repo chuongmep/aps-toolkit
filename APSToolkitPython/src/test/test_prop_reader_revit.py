@@ -14,6 +14,22 @@ class TestPropDbReaderRevit(TestCase):
         document_info = self.prop_reader.get_document_info()
         self.assertIsNotNone(document_info)
 
+    def test_get_documentId(self):
+        documentId = self.prop_reader.get_document_id()
+        self.assertIsNotNone(documentId)
+
+    def test_get_levels(self):
+        levels = self.prop_reader.get_levels()
+        self.assertNotEquals(len(levels), 0)
+
+    def test_get_grids(self):
+        grids = self.prop_reader.get_grids()
+        self.assertNotEquals(len(grids), 0)
+
+    def test_get_phases(self):
+        phases = self.prop_reader.get_phases()
+        self.assertNotEquals(len(phases), 0)
+
     def test_get_all_categories(self):
         categories = self.prop_reader.get_all_categories()
         print(categories)
@@ -32,7 +48,7 @@ class TestPropDbReaderRevit(TestCase):
         self.assertIsNotNone(data)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("Windows",True)
+        df = self.prop_reader.get_data_by_category("Windows", True)
         # check if dataframe have rows = 1
         df_rows = df.shape[0]
         self.assertNotEquals(df_rows, 0)
@@ -53,12 +69,13 @@ class TestPropDbReaderRevit(TestCase):
 
     def test_get_data_by_categories_and_params(self):
         df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
-                                                                ["name","Category","ElementId", "Width", "Height", "IfcGUID"],True)
+                                                                ["name", "Category", "ElementId", "Width", "Height",
+                                                                 "IfcGUID"], True)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_external_id(self):
         external_id = "6d22740f-4d3f-4cc6-a442-8c98ddd54f1f-0004923b"
-        df = self.prop_reader.get_data_by_external_id(external_id,True)
+        df = self.prop_reader.get_data_by_external_id(external_id, True)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_element_id(self):
@@ -66,6 +83,7 @@ class TestPropDbReaderRevit(TestCase):
         parameters = self.prop_reader.get_data_by_element_id(element_id)
         self.assertIsNotNone(parameters)
         self.assertNotEquals(len(parameters), 0)
+
     def test_get_all_parametes(self):
         parameters = self.prop_reader.get_all_parameters()
         self.assertNotEquals(parameters, 0)
