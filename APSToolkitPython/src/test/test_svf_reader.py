@@ -11,7 +11,7 @@ class TestSVFReader(TestCase):
 
     def test_read_svf(self):
         reader = SVFReader(self.urn, self.token)
-        resources = reader.read()
+        resources = reader.read_sources()
         self.assertTrue(len(resources) > 0)
     def test_download_svf(self):
         reader = SVFReader(self.urn, self.token)
