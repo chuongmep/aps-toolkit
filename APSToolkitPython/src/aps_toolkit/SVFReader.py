@@ -21,4 +21,4 @@ class SVFReader:
             combined_path = join(output_dir, localpath)
             if not os.path.exists(os.path.dirname(combined_path)):
                 os.makedirs(os.path.dirname(combined_path))
-            resource.download_resource(combined_path)
+            self.derivative.download_resource(resource, combined_path)

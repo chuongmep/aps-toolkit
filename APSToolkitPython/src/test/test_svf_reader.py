@@ -15,6 +15,6 @@ class TestSVFReader(TestCase):
         self.assertTrue(len(resources) > 0)
     def test_download_svf(self):
         reader = SVFReader(self.urn, self.token)
-        folder = r"C:\Users\chuongho\Downloads\test"
+        folder = r"./data/svfs/"
         reader.download(folder)
         self.assertTrue(len(os.listdir(folder)) > 0)
