@@ -12,7 +12,9 @@ from aps_toolkit import DbReader
 from aps_toolkit import Auth
 from aps_toolkit import Token
 from aps_toolkit import BIM360
-from aps_toolkit import Fragment
+from aps_toolkit import Fragments
 from aps_toolkit import Derivative
+from aps_toolkit import SVFReader
+
 APS_CLIENT_ID = os.environ["APS_CLIENT_ID"]
 APS_CLIENT_SECRET = os.environ["APS_CLIENT_SECRET"]

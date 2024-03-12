@@ -1,36 +1,24 @@
+from os.path import join
+import os
+from .Derivative import Derivative
+
+
 class SVFReader:
-    def __init__(self, filename):
-        self.filename = filename
-        self.file = open(filename, 'r')
-        self.lines = self.file.readlines()
-        self.file.close()
-        self.line = 0
-        self.current = self.lines[self.line]
+    def __init__(self, urn, token, region="US"):
+        self.urn = urn
+        self.token = token
+        self.region = region
+        self.derivative = Derivative(self.urn, self.token, self.region)
 
-    def next(self):
-        self.line += 1
-        if self.line < len(self.lines):
-            self.current = self.lines[self.line]
-            return self.current
-        else:
-            return None
+    def read(self):
+        resources = self.derivative.read_svf_resource()
+        return resources
 
-    def get(self):
-        return self.current
-
-    def getLine(self):
-        return self.line
-
-    def getFilename(self):
-        return self.filename
-
-    def getLines(self):
-        return self.lines
-
-    def close(self):
-        self.file.close()
-        self.file = None
-        self.lines = None
-        self.current = None
-        self.line = None
-        self.filename = None
+    def download(self, output_dir):
+        resources = self.read()
+        for resource in resources:
+            localpath = resource.local_path
+            combined_path = join(output_dir, localpath)
+            if not os.path.exists(os.path.dirname(combined_path)):
+                os.makedirs(os.path.dirname(combined_path))
+            resource.download_resource(combined_path)
