@@ -10,9 +10,12 @@ class SVFReader:
         self.region = region
         self.derivative = Derivative(self.urn, self.token, self.region)
 
-    def read(self):
+    def read_sources(self):
         resources = self.derivative.read_svf_resource()
         return resources
+    def _read_contents(self):
+        #TODO : 
+        pass
 
     def download(self, output_dir):
         resources = self.read()
