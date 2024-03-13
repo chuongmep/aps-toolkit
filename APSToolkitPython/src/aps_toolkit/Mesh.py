@@ -3,8 +3,8 @@ from .PackFileReader import PackFileReader
 import math
 from .SVFLines import SVFLines
 from .SVFPoints import SVFPoints
-
-
+from .Derivative import Derivative
+import re
 class Mesh:
     def __init__(self, v_count=None, t_count=None, uv_count=None, attrs=None, flags=None, comment=None,
                  uv_maps: [SVFUVMap] = None,
@@ -22,6 +22,26 @@ class Mesh:
         self.colors = colors
         self.min = min
         self.max = max
+
+
+    @staticmethod
+    def read_mesh_from_urn(urn, token, region="US") -> dict:
+        derivative = Derivative(urn, token, region)
+        manifest_items = derivative.read_svf_manifest_items()
+        mesh_packs = {}
+        for manifest_item in manifest_items:
+            svf_resources = derivative.read_svf_resource_item(manifest_item)
+            # filter the resources have file extension .pf and name follow <number>.pf
+            pattern = re.compile(r"^\d+\.pf$")
+            file_packs = [resource for resource in svf_resources if pattern.match(resource.file_name)]
+            meshes_manifest_item = []
+            for file_pack in file_packs:
+                bytes_io = derivative.download_stream_resource(file_pack)
+                buffer = bytes_io.read()
+                meshes = Mesh.parse_mesh(buffer)
+                meshes_manifest_item.extend(meshes)
+            mesh_packs[manifest_item.guid] = meshes_manifest_item
+        return mesh_packs
 
     @staticmethod
     def parse_mesh_from_file(file_path):
