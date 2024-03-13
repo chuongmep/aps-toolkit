@@ -18,7 +18,7 @@ class SVFReader:
         pass
 
     def download(self, output_dir):
-        resources = self.read()
+        resources = self.read_sources()
         for resource in resources:
             localpath = resource.local_path
             combined_path = join(output_dir, localpath)
