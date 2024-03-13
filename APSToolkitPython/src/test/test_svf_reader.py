@@ -20,3 +20,8 @@ class TestSVFReader(TestCase):
         folder = r"./output/svfs/"
         reader.download(folder)
         self.assertTrue(len(os.listdir(folder)) > 0)
+
+    def test_read_svf_manifest_items(self):
+        reader = SVFReader(self.urn, self.token)
+        manifest_items = reader.read_svf_manifest_items()
+        self.assertTrue(len(manifest_items) > 0)

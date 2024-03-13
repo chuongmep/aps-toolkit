@@ -13,8 +13,13 @@ class SVFReader:
     def read_sources(self):
         resources = self.derivative.read_svf_resource()
         return resources
+
+    def read_svf_manifest_items(self):
+        items = self.derivative.read_svf_manifest_items()
+        return items
+
     def _read_contents(self):
-        #TODO : 
+        # TODO :
         pass
 
     def download(self, output_dir):
