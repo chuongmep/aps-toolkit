@@ -1,6 +1,7 @@
 from os.path import join
 import os
 from .Derivative import Derivative
+from .Fragments import Fragments
 
 
 class SVFReader:
@@ -18,6 +19,19 @@ class SVFReader:
         items = self.derivative.read_svf_manifest_items()
         return items
 
+    def read_fragments(self, manifest_item=None)->dict:
+        fragments = {}
+        if manifest_item:
+            resources = self.derivative.read_svf_resource_item(manifest_item)
+            for resource in resources:
+                if resource.local_path.endswith("FragmentList.pack"):
+                    bytes_io = self.derivative.download_stream_resource(resource)
+                    buffer = bytes_io.read()
+                    frags = Fragments.parse_fragments(buffer)
+                    fragments[manifest_item.guid] = frags
+        else:
+            fragments = Fragments.parse_fragments_from_urn(self.urn, self.token, self.region)
+        return fragments
     def _read_contents(self):
         # TODO :
         pass

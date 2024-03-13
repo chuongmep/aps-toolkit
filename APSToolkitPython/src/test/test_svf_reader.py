@@ -9,19 +9,26 @@ class TestSVFReader(TestCase):
     def setUp(self):
         self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0yNA"
         self.token = Auth().auth2leg()
+        self.reader = SVFReader(self.urn, self.token)
 
     def test_read_svf(self):
-        reader = SVFReader(self.urn, self.token)
-        resources = reader.read_sources()
+        resources = self.reader.read_sources()
         self.assertTrue(len(resources) > 0)
 
+    def test_read_fragment(self):
+        fragments = self.reader.read_fragments()
+        self.assertTrue(len(fragments) > 0)
+
+    def test_read_fragment_item(self):
+        manifest_items = self.reader.read_svf_manifest_items()
+        fragments = self.reader.read_fragments(manifest_items[0])
+        self.assertTrue(len(fragments) > 0)
+
     def test_download_svf(self):
-        reader = SVFReader(self.urn, self.token)
         folder = r"./output/svfs/"
-        reader.download(folder)
+        self.reader.download(folder)
         self.assertTrue(len(os.listdir(folder)) > 0)
 
     def test_read_svf_manifest_items(self):
-        reader = SVFReader(self.urn, self.token)
-        manifest_items = reader.read_svf_manifest_items()
+        manifest_items = self.reader.read_svf_manifest_items()
         self.assertTrue(len(manifest_items) > 0)

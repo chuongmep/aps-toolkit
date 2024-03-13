@@ -20,7 +20,7 @@ class Derivative:
         self.region = region
         self.host = "https://developer.api.autodesk.com"
 
-    def read_svf_manifest_items(self):
+    def read_svf_manifest_items(self) -> List[ManifestItem]:
         """
         Reads SVF manifest items associated with the URN.
 
