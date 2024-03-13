@@ -12,7 +12,6 @@ from .PathInfo import PathInfo
 from .Resource import Resource
 from .ManifestItem import ManifestItem
 
-
 class Derivative:
     def __init__(self, urn, token, region="US"):
         self.urn = urn

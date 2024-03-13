@@ -33,6 +33,11 @@ class TestSVFReader(TestCase):
         geometries = self.reader.read_geometries(manifest_items[0])
         self.assertTrue(len(geometries) > 0)
 
+    def test_read_properties(self):
+        prop_reader = self.reader.read_properties()
+        self.assertTrue(len(prop_reader.attrs) > 0)
+        self.assertTrue(len(prop_reader.vals) > 0)
+
     def test_download_svf(self):
         folder = r"./output/svfs/"
         self.reader.download(folder)

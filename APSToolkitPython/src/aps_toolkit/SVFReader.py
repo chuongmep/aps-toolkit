@@ -5,7 +5,7 @@ from .Fragments import Fragments
 from .Geometries import Geometries
 from .ManifestItem import ManifestItem
 from .Resource import Resource
-
+from .PropReader import PropReader
 
 class SVFReader:
     def __init__(self, urn, token, region="US"):
@@ -48,6 +48,9 @@ class SVFReader:
         else:
             geometries = Geometries.parse_geometries_from_urn(self.urn, self.token, self.region)
         return geometries
+
+    def read_properties(self) -> PropReader:
+        return PropReader(self.urn, self.token, self.region)
 
     def download(self, output_dir, manifest_item: [ManifestItem] = None):
         if manifest_item:
