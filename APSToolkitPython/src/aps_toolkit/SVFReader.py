@@ -6,7 +6,7 @@ from .Geometries import Geometries
 from .ManifestItem import ManifestItem
 from .Resource import Resource
 from .PropReader import PropReader
-
+from .SVFContent import SVFContent
 class SVFReader:
     def __init__(self, urn, token, region="US"):
         self.urn = urn
@@ -14,9 +14,17 @@ class SVFReader:
         self.region = region
         self.derivative = Derivative(self.urn, self.token, self.region)
 
-    def _read_contents(self):
-        # TODO :
-        pass
+    def _read_contents(self) -> list[SVFContent]:
+        contents = []
+        manifest_items = self.read_svf_manifest_items()
+        for manifest_item in manifest_items:
+            content = SVFContent()
+            content.fragments = self.read_fragments(manifest_item)
+            content.geometries = self.read_geometries(manifest_item)
+            content.properties = self.read_properties()
+            # TODO: add other missing contents
+            contents.append(content)
+        return contents
 
     def read_sources(self) -> dict[str, Resource]:
         resources = self.derivative.read_svf_resource()

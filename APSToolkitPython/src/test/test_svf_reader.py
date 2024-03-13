@@ -11,6 +11,10 @@ class TestSVFReader(TestCase):
         self.token = Auth().auth2leg()
         self.reader = SVFReader(self.urn, self.token)
 
+    def test_read_contents(self):
+        contents = self.reader._read_contents()
+        self.assertTrue(len(contents) > 0)
+
     def test_read_svf(self):
         resources = self.reader.read_sources()
         self.assertTrue(len(resources) > 0)
