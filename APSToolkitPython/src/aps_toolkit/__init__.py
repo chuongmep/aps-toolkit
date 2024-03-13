@@ -10,3 +10,4 @@ from .SVFReader import SVFReader
 from .SVFContent import SVFContent
 from .Derivative import Derivative
 from .Fragments import Fragments
+from .Geometries import Geometries

@@ -13,6 +13,7 @@ from aps_toolkit import Auth
 from aps_toolkit import Token
 from aps_toolkit import BIM360
 from aps_toolkit import Fragments
+from aps_toolkit import Geometries
 from aps_toolkit import Derivative
 from aps_toolkit import SVFReader
 
