@@ -84,22 +84,25 @@ class SVFMaterials:
 
     @staticmethod
     def parse_boolean_property(material: [Materials], prop, default_value) -> bool:
-        if material.properties.booleans is not None and prop in material.properties.booleans:
-            return material.properties.booleans[prop]
+        props = MaterialProperties(**material.properties)
+        if props.booleans is not None and prop in props.booleans:
+            return props.booleans[prop]
         else:
             return default_value
 
     @staticmethod
     def parse_scalar_property(material: [Materials], prop, default_value) -> float:
-        if material.properties.scalars is not None and prop in material.properties.scalars:
-            return material.properties.scalars[prop]["values"][0]
+        props = MaterialProperties(**material.properties)
+        if props.scalars is not None and prop in props.scalars:
+            return props.scalars[prop]["values"][0]
         else:
             return default_value
 
     @staticmethod
     def parse_color_property(material: [Materials], prop, default_value) -> [float]:
-        if material.properties.colors is not None and prop in material.properties.colors:
-            color = material.properties.colors[prop]["values"][0]
+        props = MaterialProperties(**material.properties)
+        if props.colors is not None and prop in props.colors:
+            color = props.colors[prop]["values"][0]
             return [color["r"], color["g"], color["b"], color["a"]]
         else:
             return default_value

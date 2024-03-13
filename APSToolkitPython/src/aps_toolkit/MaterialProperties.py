@@ -1,5 +1,6 @@
 class MaterialProperties:
-    def __init__(self, integers, booleans, strings, uris, scalars, colors, choicelists, uuids, references):
+    def __init__(self, integers=None, booleans=None, strings=None, uris=None, scalars=None, colors=None,
+                 choicelists=None, uuids=None, references=None):
         self.integers = integers
         self.booleans = booleans
         self.strings = strings
