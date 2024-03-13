@@ -52,7 +52,7 @@ class Derivative:
                         manifest_items.append(ManifestItem(guid, mime, path_info))
         return manifest_items
 
-    def read_svf_resource_item(self, manifest_item):
+    def read_svf_resource_item(self, manifest_item) -> List[Resource]:
         """
         Reads SVF resource items from the manifest item.
 

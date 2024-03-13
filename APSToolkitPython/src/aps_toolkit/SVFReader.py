@@ -60,9 +60,10 @@ class SVFReader:
                 self.derivative.download_resource(resource, combined_path)
         else:
             resources = self.read_sources()
-            for _, resource in resources.items():
-                localpath = resource.local_path
-                combined_path = join(output_dir, localpath)
-                if not os.path.exists(os.path.dirname(combined_path)):
-                    os.makedirs(os.path.dirname(combined_path))
-                self.derivative.download_resource(resource, combined_path)
+            for _, items in resources.items():
+                for source in items:
+                    localpath = source.local_path
+                    combined_path = join(output_dir, localpath)
+                    if not os.path.exists(os.path.dirname(combined_path)):
+                        os.makedirs(os.path.dirname(combined_path))
+                    self.derivative.download_resource(source, combined_path)
