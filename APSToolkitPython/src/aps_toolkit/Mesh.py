@@ -5,6 +5,8 @@ from .SVFLines import SVFLines
 from .SVFPoints import SVFPoints
 from .Derivative import Derivative
 import re
+
+
 class Mesh:
     def __init__(self, v_count=None, t_count=None, uv_count=None, attrs=None, flags=None, comment=None,
                  uv_maps: [SVFUVMap] = None,
@@ -23,9 +25,21 @@ class Mesh:
         self.min = min
         self.max = max
 
-
     @staticmethod
     def read_mesh_from_urn(urn, token, region="US") -> dict:
+        """
+        Reads mesh data from a specified URN (Uniform Resource Name) and returns a dictionary of mesh packs.
+
+        Parameters:
+        urn (str): The URN from which to read the mesh data.
+        token (str): The token used for authentication.
+        region (str, optional): The region where the data is stored. Defaults to "US".
+
+        Returns:
+        dict: A dictionary where the keys are GUIDs of manifest items and the values are lists of meshes associated with each manifest item.
+
+        The function works by creating a `Derivative` object using the provided URN, token, and region. It then reads the manifest items from the `Derivative` object. For each manifest item, it reads the associated resources and filters them to include only those with a file name that matches the pattern `<number>.pf`. For each of these filtered resources, the function downloads the resource as a stream, reads the content into a buffer, and parses the buffer into a mesh using the `Mesh.parse_mesh` method. The parsed meshes are stored in a list. Finally, the function adds the list of parsed meshes to a dictionary, using the manifest item's GUID as the key. This dictionary is returned as the result of the function.
+        """
         derivative = Derivative(urn, token, region)
         manifest_items = derivative.read_svf_manifest_items()
         mesh_packs = {}
@@ -64,6 +78,7 @@ class Mesh:
             elif entry.type == "Autodesk.CloudPlatform.Points":
                 mesh_packs.append(Mesh.parse_points(pfr, entry.version))
         return mesh_packs
+
     @staticmethod
     def parse_mesh_octm(pfr: [PackFileReader]):
         fourcc = pfr.get_string(4)
