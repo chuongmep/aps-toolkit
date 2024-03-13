@@ -5,7 +5,7 @@ from .SVFMaterialMap import SVFMaterialMap
 class Materials:
     def __init__(self, diffuse=None, specular=None, ambient=None, emissive=None, glossiness=None, reflectivity=None,
                  opacity=None, metal=None, map: [SVFMaterialMap] = None, tag=None,
-                 proteinType=None, definition=None, transparent=None, keyworks=None, categories=None,
+                 proteinType=None, definition=None, transparent=None, keywords=None, categories=None,
                  properties: [MaterialProperties] = None,
                  textures=None):
         self.diffuse = diffuse
@@ -21,7 +21,7 @@ class Materials:
         self.proteinType = proteinType
         self.definition = definition
         self.transparent = transparent
-        self.keyworks = keyworks
+        self.keywords = keywords
         self.categories = categories
         self.properties = properties
         self.textures = textures

@@ -61,7 +61,7 @@ class SVFMaterials:
                 if str(material.definition) == 'SimplePhong':
                     materials.append(SVFMaterials.parse_simple_phong_material(group_materials))
                 else:
-                    print("Unsupported material definition:", material['definition'])
+                    print("Unsupported material definition:", material.definition)
 
         return materials
 
@@ -136,16 +136,25 @@ class SVFMaterials:
         if material.textures is not None and prop in material.textures:
             connection = material.textures[prop]["connections"][0]
             texture = group.materials[connection]
-            if "unifiedbitmap_Bitmap" in texture.properties.uris:
-                uri = texture.properties.uris["unifiedbitmap_Bitmap"]["values"][0]
+            texture = SVFTexture(**texture)
+            mat_props = MaterialProperties(**texture.properties)
+            if "unifiedbitmap_Bitmap" in mat_props.uris:
+                uri = mat_props.uris["unifiedbitmap_Bitmap"]["values"][0]
                 texture_uscale, texture_vscale = 0.0, 0.0
 
-                if texture.properties.scalars is not None \
-                        and "texture_UScale" in texture.properties.scalars \
-                        and "texture_VScale" in texture.properties.scalars:
-                    texture_uscale = texture.properties.scalars["texture_UScale"]["values"][0]
-                    texture_vscale = texture.properties.scalars["texture_VScale"]["values"][0]
+                if mat_props.scalars is not None \
+                        and "texture_UScale" in mat_props.scalars \
+                        and "texture_VScale" in mat_props.scalars:
+                    texture_uscale = mat_props.scalars["texture_UScale"]["values"][0]
+                    texture_vscale = mat_props.scalars["texture_VScale"]["values"][0]
 
                 if uri is not None:
                     return SVFMaterialMap(uri=uri, scale=SVFMaterialMapScale(texture_uscale, texture_vscale))
         return None
+
+
+class SVFTexture:
+    def __init__(self, tag=None, definition=None, properties=None):
+        self.tag = tag
+        self.definition = definition
+        self.properties = properties
