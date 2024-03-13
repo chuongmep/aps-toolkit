@@ -2,8 +2,8 @@ import struct
 import gzip
 from io import BytesIO
 from .InputStream import InputStream
-from .SvfTransform import SvfTransform
-from .SvfManifestType import SvfManifestType
+from .SVFTransform import SVFTransform
+from .SVFManifestType import SVFManifestType
 
 
 class PackFileReader(InputStream):
@@ -39,7 +39,7 @@ class PackFileReader(InputStream):
             type_class = self.get_string(self.get_varint())
             type_val = self.get_string(self.get_varint())
             version = self.get_varint()
-            self.types.append(SvfManifestType())
+            self.types.append(SVFManifestType())
             self.types[-1].type_class = type_class
             self.types[-1].type = type_val
             self.types[-1].version = version
@@ -71,20 +71,20 @@ class PackFileReader(InputStream):
     def get_transform(self):
         xform_type = self.get_uint8()
         if xform_type == 0:
-            return SvfTransform(t=self.get_vector3d())
+            return SVFTransform(t=self.get_vector3d())
         elif xform_type == 1:
             q = self.get_quaternion()
             t = self.get_vector3d()
             s = (1.0, 1.0, 1.0)
-            return SvfTransform(t=t, q=q, s=s)
+            return SVFTransform(t=t, q=q, s=s)
         elif xform_type == 2:
             scale = self.get_float32()
             q = self.get_quaternion()
             t = self.get_vector3d()
             s = (scale, scale, scale)
-            return SvfTransform(t=t, q=q, s=s)
+            return SVFTransform(t=t, q=q, s=s)
         elif xform_type == 3:
             matrix = self.get_matrix3x3()
             t = self.get_vector3d()
-            return SvfTransform(t=t, matrix=matrix)
+            return SVFTransform(t=t, matrix=matrix)
         return None
