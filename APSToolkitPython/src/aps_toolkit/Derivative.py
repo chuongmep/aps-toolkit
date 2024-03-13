@@ -8,6 +8,9 @@ from urllib.parse import unquote, quote, urljoin
 import re
 from os.path import join, normpath
 import os
+from .PathInfo import PathInfo
+from .Resource import Resource
+from .ManifestItem import ManifestItem
 
 
 class Derivative:
@@ -174,6 +177,7 @@ class Derivative:
         }
         response = requests.get(url, headers=headers)
         return BytesIO(response.content)
+
     def download_resource(self, resource, local_path) -> str:
         """
         Downloads a resource from a URL and saves it to a local path.
@@ -198,36 +202,3 @@ class Derivative:
         with open(local_path, "wb") as f:
             f.write(response.content)
         return local_path
-
-
-class ManifestItem:
-    def __init__(self, guid, mime, path_info):
-        self.guid = guid
-        self.mime = mime
-        self.path_info = path_info
-
-
-class PathInfo:
-    def __init__(self, root_file_name=None, base_path=None, local_path=None, urn=None):
-        self.root_file_name = root_file_name
-        self.local_path = local_path
-        self.base_path = base_path
-        self.urn = urn
-        self.files = []
-
-
-class Resource:
-    def __init__(self, file_name, remote_path, local_path):
-        self.host = "https://developer.api.autodesk.com"
-        self.file_name = file_name
-        self.remote_path = self._resolve_path_slashes(remote_path)
-        self.url = self._resolve_url(remote_path)
-        self.local_path = self._resolve_path_slashes(local_path)
-
-    def _resolve_path_slashes(self, path):
-        url_with_forward_slashes = path.replace('\\', '/')
-        return url_with_forward_slashes
-
-    def _resolve_url(self, remote_path):
-        url_with_forward_slashes = remote_path.replace('\\', '/')
-        return urljoin(self.host, quote(url_with_forward_slashes, safe=':/'))

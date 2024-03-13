@@ -1,6 +1,6 @@
 from .PackFileReader import PackFileReader
 from .Derivative import Derivative
-
+from .ManifestItem import ManifestItem
 class Fragments:
     def __init__(self):
         self.visible = False
@@ -11,18 +11,32 @@ class Fragments:
         self.bbox = [0, 0, 0, 0, 0, 0]
 
     @staticmethod
-    def parse_fragments_from_urn(urn,token, region="US"):
-        fragments = []
+    def parse_fragments_from_urn(urn, token, region="US") -> dict:
+        """
+        Parse fragments from urn
+        :param urn: the urn of the model
+        :param token: the token authentication
+        :param region:  the region of hub (default is US)
+        :return:  a dictionary of fragments with key is the guid of the manifest item and value is the list of fragments
+        """
+        fragments = {}
         derivative = Derivative(urn, token, region)
-        resources = derivative.read_svf_resource()
-        for resource in resources:
-            if resource.local_path.endswith("FragmentList.pack"):
-                bytes_io = derivative.download_stream_resource(resource)
-                buffer = bytes_io.read()
-                frags = Fragments.parse_fragments(buffer)
-                fragments.extend(frags)
+        manifest_items = derivative.read_svf_manifest_items()
+        for manifest_item in manifest_items:
+            resources = derivative.read_svf_resource_item(manifest_item)
+            for resource in resources:
+                if resource.local_path.endswith("FragmentList.pack"):
+                    bytes_io = derivative.download_stream_resource(resource)
+                    buffer = bytes_io.read()
+                    frags = Fragments.parse_fragments(buffer)
+                    fragments[manifest_item.guid] = frags
         return fragments
 
+    @staticmethod
+    def parse_fragments_from_file(file_path):
+        with open(file_path, "rb") as f:
+            buffer = f.read()
+            return Fragments.parse_fragments(buffer)
 
     @staticmethod
     def parse_fragments(buffer: bytes):
