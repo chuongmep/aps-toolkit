@@ -1,5 +1,5 @@
 from unittest import TestCase
-from .context import Fragment
+from .context import Fragments
 
 
 class TestFragment(TestCase):
@@ -12,5 +12,5 @@ class TestFragment(TestCase):
         with open(path, 'rb') as f:
             buffer = f.read()
         # read fragments
-        fragment = Fragment.Fragments.parse_fragments(buffer)
+        fragment = Fragments.parse_fragments(buffer)
         self.assertNotEquals(len(fragment), 0)

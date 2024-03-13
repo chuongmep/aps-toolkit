@@ -10,17 +10,17 @@ class TestDerivative(TestCase):
         self.token = Auth().auth2leg()
 
     def test_read_svf_manifest_items(self):
-        derivative = Derivative.Derivative(self.urn, self.token)
+        derivative = Derivative(self.urn, self.token)
         manifest_items = derivative.read_svf_manifest_items()
         self.assertNotEquals(len(manifest_items), 0)
 
     def test_read_svf_resource(self):
-        derivative = Derivative.Derivative(self.urn, self.token)
+        derivative = Derivative(self.urn, self.token)
         svf_resources = derivative.read_svf_resource()
         self.assertNotEquals(len(svf_resources), 0)
 
-    def read_svf_resource_item(self):
-        derivative = Derivative.Derivative(self.urn, self.token)
+    def test_read_svf_resource_item(self):
+        derivative = Derivative(self.urn, self.token)
         manifest_items = derivative.read_svf_manifest_items()
         svf_resources = derivative.read_svf_resource_item(manifest_items[0])
         self.assertNotEquals(len(svf_resources), 0)
