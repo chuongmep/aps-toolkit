@@ -33,13 +33,23 @@ class Fragments:
         return fragments
 
     @staticmethod
-    def parse_fragments_from_file(file_path):
+    def parse_fragments_from_file(file_path) -> list:
+        """
+        Parse fragments from file
+        :param file_path:  FragmentList.pack
+        :return:  a list of fragments
+        """
         with open(file_path, "rb") as f:
             buffer = f.read()
             return Fragments.parse_fragments(buffer)
 
     @staticmethod
-    def parse_fragments(buffer: bytes):
+    def parse_fragments(buffer: bytes) -> list:
+        """
+        Parse fragments from buffer
+        :param buffer:  the buffer of the fragment list
+        :return:  a list of fragments
+        """
         fragments = []
         pfr = PackFileReader(buffer)
 
