@@ -3,7 +3,7 @@ from .PackFileReader import PackFileReader
 from .ManifestItem import ManifestItem
 
 
-class Geometries:
+class SVFGeometries:
     def __init__(self, frag_type=None, prim_count=None, pack_id=None, entity_id=None, topo_id=None):
         self.fragment_type = frag_type
         self.primitive_count = prim_count
@@ -24,7 +24,7 @@ class Geometries:
         derivative = Derivative(urn, token, region)
         manifest_items = derivative.read_svf_manifest_items()
         for manifest_item in manifest_items:
-            geos = Geometries.parse_geos_from_manifest_item(derivative, manifest_item)
+            geos = SVFGeometries.parse_geos_from_manifest_item(derivative, manifest_item)
             geometries[manifest_item.guid] = geos
         return geometries
 
@@ -36,7 +36,7 @@ class Geometries:
             if resource.local_path.endswith("GeometryMetadata.pf"):
                 bytes_io = derivative.download_stream_resource(resource)
                 buffer = bytes_io.read()
-                geos = Geometries.parse_geometries(buffer)
+                geos = SVFGeometries.parse_geometries(buffer)
                 geometries.append(geos)
         return geometries
 
@@ -59,7 +59,7 @@ class Geometries:
                 p_id = pfr.get_string(pfr.get_varint()).replace(".pf", "")
                 pack_id = int(p_id)
                 entity_id = pfr.get_varint()
-                geometry = Geometries(frag_type, prim_count, pack_id, entity_id)
+                geometry = SVFGeometries(frag_type, prim_count, pack_id, entity_id)
                 geometries.append(geometry)
 
         return geometries

@@ -2,7 +2,7 @@ from os.path import join
 import os
 from .Derivative import Derivative
 from .Fragments import Fragments
-from .Geometries import Geometries
+from .SVFGeometries import SVFGeometries
 from .ManifestItem import ManifestItem
 from .Resource import Resource
 from .PropReader import PropReader
@@ -66,10 +66,10 @@ class SVFReader:
     def read_geometries(self, manifest_item: [ManifestItem] = None) -> dict:
         geometries = {}
         if manifest_item:
-            geos = Geometries.parse_geos_from_manifest_item(self.derivative, manifest_item)
+            geos = SVFGeometries.parse_geos_from_manifest_item(self.derivative, manifest_item)
             geometries[manifest_item.guid] = geos
         else:
-            geometries = Geometries.parse_geometries_from_urn(self.urn, self.token, self.region)
+            geometries = SVFGeometries.parse_geometries_from_urn(self.urn, self.token, self.region)
         return geometries
 
     def read_meshes(self, manifest_item: [ManifestItem] = None) -> dict:

@@ -10,6 +10,6 @@ from .SVFReader import SVFReader
 from .SVFContent import SVFContent
 from .Derivative import Derivative
 from .Fragments import Fragments
-from .Geometries import Geometries
+from .SVFGeometries import SVFGeometries
 from .SVFMesh import SVFMesh
 from .SVFMaterials import SVFMaterials

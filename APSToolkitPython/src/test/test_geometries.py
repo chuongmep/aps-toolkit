@@ -1,6 +1,6 @@
 from unittest import TestCase
 from .context import Auth
-from .context import Geometries
+from .context import SVFGeometries
 
 
 class TestGeometries(TestCase):
@@ -13,9 +13,9 @@ class TestGeometries(TestCase):
     def test_parse_geometries(self):
         with open(self.file_path, 'rb') as f:
             buffer = f.read()
-        geometries = Geometries.parse_geometries(buffer)
+        geometries = SVFGeometries.parse_geometries(buffer)
         self.assertNotEquals(len(geometries), 0)
 
     def test_parse_geometries_from_urn(self):
-        geometries = Geometries.parse_geometries_from_urn(self.urn, self.token)
+        geometries = SVFGeometries.parse_geometries_from_urn(self.urn, self.token)
         self.assertNotEquals(len(geometries), 0)
