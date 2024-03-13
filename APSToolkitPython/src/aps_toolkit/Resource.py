@@ -1,5 +1,6 @@
 from urllib.parse import urljoin, quote
 
+
 class Resource:
     def __init__(self, file_name, remote_path, local_path):
         self.host = "https://developer.api.autodesk.com"

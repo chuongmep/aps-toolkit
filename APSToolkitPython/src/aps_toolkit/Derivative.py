@@ -76,7 +76,7 @@ class Derivative:
             resources.append(Resource(file_name, remote_path, local_path))
         return resources
 
-    def read_svf_resource(self):
+    def read_svf_resource(self) -> dict[str, List[Resource]]:
         """
         Reads SVF resources from the SVF manifest items.
 
@@ -84,10 +84,10 @@ class Derivative:
         List[Resource]: A list of resources extracted from the SVF manifest.
         """
         manifest_items = self.read_svf_manifest_items()
-        resources = []
+        resources = {}
         for manifest_item in manifest_items:
             source_items = self.read_svf_resource_item(manifest_item)
-            resources.extend(source_items)
+            resources[manifest_item.guid] = source_items
         return resources
 
     def _unzip_svf(self, urn):

@@ -24,6 +24,15 @@ class TestSVFReader(TestCase):
         fragments = self.reader.read_fragments(manifest_items[0])
         self.assertTrue(len(fragments) > 0)
 
+    def test_read_geometries(self):
+        geometries = self.reader.read_geometries()
+        self.assertTrue(len(geometries) > 0)
+
+    def test_read_geometries_item(self):
+        manifest_items = self.reader.read_svf_manifest_items()
+        geometries = self.reader.read_geometries(manifest_items[0])
+        self.assertTrue(len(geometries) > 0)
+
     def test_download_svf(self):
         folder = r"./output/svfs/"
         self.reader.download(folder)

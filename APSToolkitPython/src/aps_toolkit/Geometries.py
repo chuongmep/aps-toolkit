@@ -1,5 +1,6 @@
 from .Derivative import Derivative
 from .PackFileReader import PackFileReader
+from .ManifestItem import ManifestItem
 
 
 class Geometries:
@@ -23,13 +24,20 @@ class Geometries:
         derivative = Derivative(urn, token, region)
         manifest_items = derivative.read_svf_manifest_items()
         for manifest_item in manifest_items:
-            resources = derivative.read_svf_resource_item(manifest_item)
-            for resource in resources:
-                if resource.local_path.endswith("GeometryMetadata.pf"):
-                    bytes_io = derivative.download_stream_resource(resource)
-                    buffer = bytes_io.read()
-                    geos = Geometries.parse_geometries(buffer)
-                    geometries[manifest_item.guid] = geos
+            geos = Geometries.parse_geos_from_manifest_item(derivative, manifest_item)
+            geometries[manifest_item.guid] = geos
+        return geometries
+
+    @staticmethod
+    def parse_geos_from_manifest_item(derivative: [Derivative], manifest_item: [ManifestItem]) -> list:
+        geometries = []
+        resources = derivative.read_svf_resource_item(manifest_item)
+        for resource in resources:
+            if resource.local_path.endswith("GeometryMetadata.pf"):
+                bytes_io = derivative.download_stream_resource(resource)
+                buffer = bytes_io.read()
+                geos = Geometries.parse_geometries(buffer)
+                geometries.append(geos)
         return geometries
 
     @staticmethod
