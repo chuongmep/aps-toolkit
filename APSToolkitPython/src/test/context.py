@@ -14,7 +14,7 @@ from aps_toolkit import Token
 from aps_toolkit import BIM360
 from aps_toolkit import Fragments
 from aps_toolkit import Geometries
-from aps_toolkit import Mesh
+from aps_toolkit import SVFMesh
 from aps_toolkit import Derivative
 from aps_toolkit import SVFReader
 from aps_toolkit import SVFMaterials

@@ -7,7 +7,7 @@ from .Derivative import Derivative
 import re
 
 
-class Mesh:
+class SVFMesh:
     def __init__(self, v_count=None, t_count=None, uv_count=None, attrs=None, flags=None, comment=None,
                  uv_maps: [SVFUVMap] = None,
                  indices=None, vertices=None, normals=None, colors=None, min=None, max=None):
@@ -26,7 +26,7 @@ class Mesh:
         self.max = max
 
     @staticmethod
-    def read_mesh_from_urn(urn, token, region="US") -> dict:
+    def parse_mesh_from_urn(urn, token, region="US") -> dict:
         """
         Reads mesh data from a specified URN (Uniform Resource Name) and returns a dictionary of mesh packs.
 
@@ -52,7 +52,7 @@ class Mesh:
             for file_pack in file_packs:
                 bytes_io = derivative.download_stream_resource(file_pack)
                 buffer = bytes_io.read()
-                meshes = Mesh.parse_mesh(buffer)
+                meshes = SVFMesh.parse_mesh(buffer)
                 meshes_manifest_item.extend(meshes)
             mesh_packs[manifest_item.guid] = meshes_manifest_item
         return mesh_packs
@@ -61,7 +61,7 @@ class Mesh:
     def parse_mesh_from_file(file_path):
         with open(file_path, "rb") as file:
             buffer = file.read()
-        return Mesh.parse_mesh(buffer)
+        return SVFMesh.parse_mesh(buffer)
 
     @staticmethod
     def parse_mesh(buffer):
@@ -72,11 +72,11 @@ class Mesh:
             assert entry is not None
             assert entry.version >= 1
             if entry.type == "Autodesk.CloudPlatform.OpenCTM":
-                mesh_packs.append(Mesh.parse_mesh_octm(pfr))
+                mesh_packs.append(SVFMesh.parse_mesh_octm(pfr))
             elif entry.type == "Autodesk.CloudPlatform.Lines":
-                mesh_packs.append(Mesh.parse_lines(pfr, entry.version))
+                mesh_packs.append(SVFMesh.parse_lines(pfr, entry.version))
             elif entry.type == "Autodesk.CloudPlatform.Points":
-                mesh_packs.append(Mesh.parse_points(pfr, entry.version))
+                mesh_packs.append(SVFMesh.parse_points(pfr, entry.version))
         return mesh_packs
 
     @staticmethod
@@ -91,7 +91,7 @@ class Mesh:
         pfr.get_uint8()  # Read the last 0 char of the RAW or MG2 fourCC
 
         if method == "RAW":
-            return Mesh.parse_mesh_raw(pfr)
+            return SVFMesh.parse_mesh_raw(pfr)
         else:
             print("Unsupported OpenCTM method " + method)
             return None
@@ -164,8 +164,8 @@ class Mesh:
                 else:
                     pfr.seek(pfr.offset + vcount * 4)
 
-        mesh = Mesh(vcount, tcount, uvcount, attrs, flags, comment, uvmaps, indices, vertices, normals, colors,
-                    min_values, max_values)
+        mesh = SVFMesh(vcount, tcount, uvcount, attrs, flags, comment, uvmaps, indices, vertices, normals, colors,
+                       min_values, max_values)
         if normals is not None:
             mesh.normals = normals
         if colors is not None:
