@@ -5,11 +5,35 @@ from .SVFMaterialGroup import SVFMaterialGroup
 from .Materials import Materials
 import json
 from .PackFileReader import PackFileReader
+from .Derivative import Derivative
+from .ManifestItem import ManifestItem
 
 
 class SVFMaterials:
     def __init__(self):
         pass
+
+    @staticmethod
+    def parse_materials_from_urn(urn, token, region="US") -> dict[str, list[Materials]]:
+        materials = {}
+        derivative = Derivative(urn, token, region)
+        manifest_items = derivative.read_svf_manifest_items()
+        for manifest_item in manifest_items:
+            mats = SVFMaterials.parse_materials_from_manifest_item(derivative, manifest_item)
+            materials[manifest_item.guid] = mats
+        return materials
+
+    @staticmethod
+    def parse_materials_from_manifest_item(derivative: [Derivative], manifest_item: [ManifestItem]) -> list[Materials]:
+        resources = derivative.read_svf_resource_item(manifest_item)
+        materials = []
+        for resource in resources:
+            if resource.local_path.endswith("Materials.json.gz"):
+                bytes_io = derivative.download_stream_resource(resource)
+                buffer = bytes_io.read()
+                mats = SVFMaterials.parse_materials(buffer)
+                materials.extend(mats)
+        return materials
 
     @staticmethod
     def parse_materials_from_file(file_path) -> list[Materials]:
