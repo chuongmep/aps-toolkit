@@ -156,6 +156,24 @@ class Derivative:
 
         return PathInfo(rootFileName, basePath, localPath, urn)
 
+    def download_stream_resource(self, resource) -> BytesIO:
+        """
+        Downloads a resource from a URL and returns it as a stream.
+
+        Parameters:
+        resource (Resource): The resource object containing the URL to download.
+
+        Returns:
+        BytesIO: A stream containing the downloaded resource.
+        """
+        url = resource.url
+        access_token = self.token.access_token
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "region": self.region
+        }
+        response = requests.get(url, headers=headers)
+        return BytesIO(response.content)
     def download_resource(self, resource, local_path) -> str:
         """
         Downloads a resource from a URL and saves it to a local path.

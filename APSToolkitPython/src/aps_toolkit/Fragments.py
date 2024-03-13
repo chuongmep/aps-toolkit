@@ -1,5 +1,5 @@
 from .PackFileReader import PackFileReader
-
+from .Derivative import Derivative
 
 class Fragments:
     def __init__(self):
@@ -9,6 +9,20 @@ class Fragments:
         self.dbID = 0
         self.transform = None
         self.bbox = [0, 0, 0, 0, 0, 0]
+
+    @staticmethod
+    def parse_fragments_from_urn(urn,token, region="US"):
+        fragments = []
+        derivative = Derivative(urn, token, region)
+        resources = derivative.read_svf_resource()
+        for resource in resources:
+            if resource.local_path.endswith("FragmentList.pack"):
+                bytes_io = derivative.download_stream_resource(resource)
+                buffer = bytes_io.read()
+                frags = Fragments.parse_fragments(buffer)
+                fragments.extend(frags)
+        return fragments
+
 
     @staticmethod
     def parse_fragments(buffer: bytes):
