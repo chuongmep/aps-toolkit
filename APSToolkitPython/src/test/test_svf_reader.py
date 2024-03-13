@@ -15,6 +15,11 @@ class TestSVFReader(TestCase):
         contents = self.reader._read_contents()
         self.assertTrue(len(contents) > 0)
 
+    def test_read_contents_manifest(self):
+        manifest_items = self.reader.read_svf_manifest_items()
+        contents = self.reader.read_contents(manifest_items[0])
+        self.assertTrue(len(contents) > 0)
+
     def test_read_svf(self):
         resources = self.reader.read_sources()
         self.assertTrue(len(resources) > 0)
@@ -36,6 +41,15 @@ class TestSVFReader(TestCase):
         manifest_items = self.reader.read_svf_manifest_items()
         geometries = self.reader.read_geometries(manifest_items[0])
         self.assertTrue(len(geometries) > 0)
+
+    def test_read_meshes(self):
+        meshes = self.reader.read_meshes()
+        self.assertTrue(len(meshes) > 0)
+
+    def test_read_meshes_item(self):
+        manifest_items = self.reader.read_svf_manifest_items()
+        meshes = self.reader.read_meshes(manifest_items[0])
+        self.assertTrue(len(meshes) > 0)
 
     def test_read_properties(self):
         prop_reader = self.reader.read_properties()

@@ -7,6 +7,9 @@ from .ManifestItem import ManifestItem
 from .Resource import Resource
 from .PropReader import PropReader
 from .SVFContent import SVFContent
+from .SVFMesh import SVFMesh
+
+
 class SVFReader:
     def __init__(self, urn, token, region="US"):
         self.urn = urn
@@ -14,17 +17,29 @@ class SVFReader:
         self.region = region
         self.derivative = Derivative(self.urn, self.token, self.region)
 
-    def _read_contents(self) -> list[SVFContent]:
+    def read_contents(self, manifest_item: [ManifestItem] = None) -> list[SVFContent]:
         contents = []
-        manifest_items = self.read_svf_manifest_items()
-        for manifest_item in manifest_items:
-            content = SVFContent()
-            content.fragments = self.read_fragments(manifest_item)
-            content.geometries = self.read_geometries(manifest_item)
-            content.properties = self.read_properties()
-            # TODO: add other missing contents
+        if manifest_item:
+            content = self._read_contents_manifest(manifest_item)
             contents.append(content)
+        else:
+            manifest_items = self.read_svf_manifest_items()
+            for manifest_item in manifest_items:
+                content = self._read_contents_manifest(manifest_item)
+                contents.append(content)
         return contents
+
+    def _read_contents_manifest(self, manifest_item: [ManifestItem] = None) -> SVFContent:
+        content = SVFContent()
+        content.fragments = self.read_fragments(manifest_item)
+        content.geometries = self.read_geometries(manifest_item)
+        content.properties = self.read_properties()
+        content.meshpacks = self.read_meshes(manifest_item)
+        # TODO: add other missing contents
+        content.images = None
+        content.materials = None
+        content.metadata = None
+        return content
 
     def read_sources(self) -> dict[str, Resource]:
         resources = self.derivative.read_svf_resource()
@@ -56,6 +71,15 @@ class SVFReader:
         else:
             geometries = Geometries.parse_geometries_from_urn(self.urn, self.token, self.region)
         return geometries
+
+    def read_meshes(self, manifest_item: [ManifestItem] = None) -> dict:
+        meshes = {}
+        if manifest_item:
+            mesh = SVFMesh.parse_mesh_from_manifest_item(self.derivative, manifest_item)
+            meshes[manifest_item.guid] = mesh
+        else:
+            meshes = SVFMesh.parse_mesh_from_urn(self.urn, self.token, self.region)
+        return meshes
 
     def read_properties(self) -> PropReader:
         return PropReader(self.urn, self.token, self.region)
