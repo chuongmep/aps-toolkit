@@ -8,6 +8,8 @@ from .Resource import Resource
 from .PropReader import PropReader
 from .SVFContent import SVFContent
 from .SVFMesh import SVFMesh
+from .Materials import Materials
+from .SVFMaterials import SVFMaterials
 
 
 class SVFReader:
@@ -36,8 +38,8 @@ class SVFReader:
         content.properties = self.read_properties()
         content.meshpacks = self.read_meshes(manifest_item)
         # TODO: add other missing contents
-        content.images = None
         content.materials = None
+        content.images = None
         content.metadata = None
         return content
 
@@ -80,6 +82,10 @@ class SVFReader:
         else:
             meshes = SVFMesh.parse_mesh_from_urn(self.urn, self.token, self.region)
         return meshes
+
+    def read_materials(self) -> dict[str, list[Materials]]:
+        materials = SVFMaterials.parse_materials_from_urn(self.urn, self.token, self.region)
+        return materials
 
     def read_properties(self) -> PropReader:
         return PropReader(self.urn, self.token, self.region)
