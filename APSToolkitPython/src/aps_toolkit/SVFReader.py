@@ -33,12 +33,12 @@ class SVFReader:
 
     def _read_contents_manifest(self, manifest_item: [ManifestItem] = None) -> SVFContent:
         content = SVFContent()
-        content.fragments = self.read_fragments(manifest_item)
-        content.geometries = self.read_geometries(manifest_item)
+        content.fragments = self.read_fragments(manifest_item).items().__iter__().__next__()[1]
+        content.geometries = self.read_geometries(manifest_item).items().__iter__().__next__()[1]
         content.properties = self.read_properties()
-        content.meshpacks = self.read_meshes(manifest_item)
+        content.meshpacks = self.read_meshes(manifest_item).items().__iter__().__next__()[1]
+        content.materials = self.read_materials(manifest_item).items().__iter__().__next__()[1]
         # TODO: add other missing contents
-        content.materials = None
         content.images = None
         content.metadata = None
         return content
@@ -83,8 +83,13 @@ class SVFReader:
             meshes = SVFMesh.parse_mesh_from_urn(self.urn, self.token, self.region)
         return meshes
 
-    def read_materials(self) -> dict[str, list[Materials]]:
-        materials = SVFMaterials.parse_materials_from_urn(self.urn, self.token, self.region)
+    def read_materials(self, manifest_item: [ManifestItem] = None) -> dict[str, list[Materials]]:
+        materials = {}
+        if manifest_item:
+            mats = SVFMaterials.parse_materials_from_manifest_item(self.derivative, manifest_item)
+            materials[manifest_item.guid] = mats
+        else:
+            materials = SVFMaterials.parse_materials_from_urn(self.urn, self.token, self.region)
         return materials
 
     def read_properties(self) -> PropReader:

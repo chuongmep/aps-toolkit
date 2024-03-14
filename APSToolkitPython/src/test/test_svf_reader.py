@@ -60,6 +60,11 @@ class TestSVFReader(TestCase):
         materials = self.reader.read_materials()
         self.assertTrue(len(materials) > 0)
 
+    def test_read_materials_item(self):
+        manifest_items = self.reader.read_svf_manifest_items()
+        materials = self.reader.read_materials(manifest_items[0])
+        self.assertTrue(len(materials) > 0)
+
     def test_download_svf(self):
         folder = r"./output/svfs/"
         self.reader.download(folder)
