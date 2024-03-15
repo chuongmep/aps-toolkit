@@ -112,8 +112,6 @@ All Tutorials are available under Jupyter Notebook at [.NET Tutorials](./docs/Tu
 
 ### Python
 
-WARNING: UNDER DEVELOPMENT
-
 All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSToolkitPython/Tutorials)
 
 - [00. Jupyter Notebook And Python](./APSToolkitPython/Tutorials/00.%20Jupyter%20Notebook%20And%20Python.ipynb)
@@ -129,9 +127,8 @@ All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSTo
 - [08. Explore URL ACC Extract](./APSToolkitPython/Tutorials/08.%20Explore%20URL%20ACC%20Extract.ipynb)
 
 ## License
-Thís project is licensed under the terms of the [MIT](LICENSE).
 
-Many thanks some repos:
+This project is licensed under the terms of the [gnu-gpl-v3.0](License.md). Some part of the project base on the licese follow the original project :
 
 - [forge-convert-utils](https://github.com/petrbroz/forge-convert-utils)
 - [UnityForgeImporter](https://github.com/chuongmep/UnityForgeImporter)
@@ -149,4 +146,8 @@ Thanks [JetBrains](https://www.jetbrains.com/) for providing a free All product 
 
 ---
 
-## Known Issues
+## Disclaimer
+
+This is not an official Autodesk product to support for Autodesk Platform Services. Use it at your own risk. 
+
+I'm not responsible for any data loss or any other issues caused by using this library, some features need require cost for using. Please read carefully the [Autodesk Forge](https://forge.autodesk.com/) and [Autodesk Platform Services](https://www.autodesk.com/platform-services) terms of use. I'm just doing, testing , maintaining in free time, so feel free to contribute and make it better. 
