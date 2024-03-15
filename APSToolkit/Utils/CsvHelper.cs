@@ -91,4 +91,26 @@ public static class CsvHelper
             }
         }
     }
+
+    /// <summary>
+    /// Reads data from a CSV file and returns a collection of objects of type T.
+    /// </summary>
+    /// <typeparam name="T">The type of objects to be returned. This type must be a class.</typeparam>
+    /// <param name="path">The file path of the CSV file to be read.</param>
+    /// <param name="delimiter">The delimiter used in the CSV file (e.g., ",", ";", "\t"). Default is "\t".</param>
+    /// <returns>A collection of objects of type T.</returns>
+    public static IEnumerable<T> ReadFromCsv<T>(string path, string delimiter = "\t") where T : class
+    {
+        var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            Delimiter = delimiter,
+            HasHeaderRecord = true,
+            Encoding = Encoding.UTF8,
+        };
+        using (var reader = new StreamReader(path))
+        using (var csv = new CsvReader(reader, configuration))
+        {
+            return csv.GetRecords<T>().ToList();
+        }
+    }
 }

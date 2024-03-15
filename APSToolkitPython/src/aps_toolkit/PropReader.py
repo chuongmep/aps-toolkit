@@ -26,7 +26,7 @@ class PropReader:
     #             self.avs = json.load(avs_file)
     #             self.attrs = json.load(attrs_file)
     #             self.vals = json.load(vals_file)
-    def __init__(self, urn, token,region="US"):
+    def __init__(self, urn, token, region="US"):
         items = [
             "objects_attrs.json.gz",
             "objects_vals.json.gz",
@@ -36,8 +36,11 @@ class PropReader:
             "objects_ids.json.gz"
         ]
         # get manifest
-        host = "https://developer.api.autodesk.com"
-        URL = f"{host}/modelderivative/v2/designdata/{urn}/manifest"
+        self.host = "https://developer.api.autodesk.com"
+        self.urn = urn
+        self.token = token
+        self.region = region
+        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest"
         access_token = token.access_token
         # add headers authorization
         headers = {
@@ -58,8 +61,8 @@ class PropReader:
                 break
         downloaded_files = {}
         for item in items:
-            path = f"urn:adsk.viewing:fs.file:{urn}/output/Resource/{item}"
-            url = f"{host}/modelderivative/v2/designdata/{urn}/manifest/{path}"
+            path = f"urn:adsk.viewing:fs.file:{self.urn}/output/Resource/{item}"
+            url = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest/{path}"
             # add headers authorization
             headers = {
                 "Authorization": f"Bearer {access_token}",

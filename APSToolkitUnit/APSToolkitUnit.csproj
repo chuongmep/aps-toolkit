@@ -34,9 +34,6 @@
     <None Update="Resources\model_rvt.sdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\86382-EXYTE-00-00-GE-NAV-0001_20230829.sdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\F10A.sdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

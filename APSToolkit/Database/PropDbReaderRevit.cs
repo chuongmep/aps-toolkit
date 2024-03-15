@@ -373,7 +373,10 @@ public class PropDbReaderRevit : PropDbReader
                     }
                 }
 
-                var names = properties.Select(x => x.Name).Distinct().ToList();
+                var names = properties.Select(x => x.Name).
+                    Distinct()
+                    .Select(x => x.Trim())
+                    .ToList();
                 // create columns
                 foreach (var name in names)
                 {
@@ -386,20 +389,21 @@ public class PropDbReaderRevit : PropDbReader
 
                 foreach (var property in properties)
                 {
-                    string columnName = property.Name;
+                    string columnName = property?.Name?.Trim();
                     if (columnName == "parent") continue;
                     if (columnName == "instanceof_objid" && Configuration.IsGetParameterType)
                     {
                         Property[] types = EnumerateProperties(int.Parse(property.Value));
                         foreach (var type in types)
                         {
-                            if (type.Name == "parent") continue;
-                            if (!dataTable.Columns.Contains(type.Name))
+                            var name = type.Name.Trim();
+                            if (name == "parent") continue;
+                            if (!dataTable.Columns.Contains(name))
                             {
-                                dataTable.Columns.Add(type.Name);
+                                dataTable.Columns.Add(name);
                             }
 
-                            dataRow[type.Name] = type.Value;
+                            dataRow[name] = type.Value;
                         }
 
                         continue;
@@ -472,7 +476,7 @@ public class PropDbReaderRevit : PropDbReader
                     }
                 }
                 properties = properties.Where(x => parameters.Contains(x.Name)).ToArray();
-                var names = properties.Select(x => x.Name).Distinct().ToList();
+                var names = properties.Select(x => x.Name).Select(x=>x!.Trim()).Distinct().ToList();
                 // create columns
                 foreach (var name in names)
                 {
@@ -485,29 +489,30 @@ public class PropDbReaderRevit : PropDbReader
 
                 foreach (var property in properties)
                 {
-                    string columnName = property.Name;
+                    string columnName = property.Name.Trim();
                     if (columnName == "parent") continue;
                     if (columnName == "instanceof_objid" && Configuration.IsGetParameterType)
                     {
                         Property[] types = EnumerateProperties(int.Parse(property.Value));
                         foreach (var type in types)
                         {
-                            if (type.Name == "parent") continue;
-                            if (!dataTable.Columns.Contains(type.Name))
+                            var name = type.Name.Trim();
+                            if (name == "parent") continue;
+                            if (!dataTable.Columns.Contains(name))
                             {
-                                dataTable.Columns.Add(type.Name);
+                                dataTable.Columns.Add(name);
                             }
                             if (Configuration.IsAddUnits && !string.IsNullOrEmpty(property.DataTypeContext))
                             {
                                 UnitsData? unitsData = UnitUtils.ParseUnitsData(property.DataTypeContext);
                                 if (Configuration.Units.TryGetValue(unitsData.TypeId, out var unit))
                                 {
-                                    dataRow[type.Name] = property.Value + " " + unit;
+                                    dataRow[name] = property.Value + " " + unit;
                                 }
                             }
                             else
                             {
-                                dataRow[type.Name] = type.Value;
+                                dataRow[name] = type.Value;
                             }
                         }
 
