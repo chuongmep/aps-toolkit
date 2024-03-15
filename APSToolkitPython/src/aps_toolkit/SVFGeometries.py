@@ -37,7 +37,7 @@ class SVFGeometries:
                 bytes_io = derivative.download_stream_resource(resource)
                 buffer = bytes_io.read()
                 geos = SVFGeometries.parse_geometries(buffer)
-                geometries.append(geos)
+                geometries.extend(geos)
         return geometries
 
     @staticmethod
