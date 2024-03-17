@@ -128,6 +128,8 @@ All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSTo
 
 ## License
 
+Many source codes here are collected from open-source authors under the MIT License. Without their sharing and contributions, I wouldn't be able to do this. I am deeply grateful to them, and therefore, I hope that if you are using this tool, please thank them before thanking me and follow their licenses.
+
 This project is licensed under the terms of the [gnu-gpl-v3.0](License.md). Some part of the project base on the licese follow the original project :
 
 - [forge-convert-utils](https://github.com/petrbroz/forge-convert-utils)
@@ -150,4 +152,6 @@ Thanks [JetBrains](https://www.jetbrains.com/) for providing a free All product 
 
 This is not an official Autodesk product to support for Autodesk Platform Services. Use it at your own risk. 
 
-I'm not responsible for any data loss or any other issues caused by using this library, some features need require cost for using. Please read carefully the [Autodesk Forge](https://forge.autodesk.com/) and [Autodesk Platform Services](https://www.autodesk.com/platform-services) terms of use. I'm just doing, testing , maintaining in free time, so feel free to contribute and make it better. 
+I'm not responsible for any data loss or any other issues caused by using this library, some features need require cost for using. Please read carefully the [Autodesk Forge](https://forge.autodesk.com/) and [Autodesk Platform Services](https://aps.autodesk.com/) terms of use. I'm just doing, testing , maintaining in free time, so feel free to contribute and make it better. 
+
+Update : There is a new, official [Node.js/TypeScript SDK](https://github.com/autodesk-platform-services/aps-sdk-node) that's currently in beta but will be stabilized soon. That SDK will offer various benefits over forge-server-utils, for example, it will be easier to maintain and extend in the future as it's being auto-generated from OpenAPI specs. As soon as it's ready to use (which should be really soon), I would archive this project and point to the official SDK instead.
