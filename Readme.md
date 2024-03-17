@@ -143,6 +143,18 @@ This project is licensed under the terms of the [gnu-gpl-v3.0](License.md). Some
 - [forge-convert-utils](https://github.com/petrbroz/forge-convert-utils)
 - [UnityForgeImporter](https://github.com/chuongmep/UnityForgeImporter)
 - [forge-bucketsmanager-desktop](https://github.com/Autodesk-Forge/forge-bucketsmanager-desktop)
+- [ChoETL](https://github.com/Cinchoo/ChoETL)
+
+## Dependencies
+
+- [Autodesk.Forge](https://www.nuget.org/packages/Autodesk.Forge/) - The .NET SDK for Autodesk Forge.
+- [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json/) - Json.NET is a popular high-performance JSON framework for .NET.
+- [CsvHelper](https://www.nuget.org/packages/CsvHelper/) - Library to help reading and writing CSV files.
+- [EPPlus](https://www.nuget.org/packages/EPPlus/) - EPPlus is a .NET library that reads and writes Excel files using the Office Open XML format (xlsx).
+- [ChoETL](https://github.com/Cinchoo/ChoETL) - Cinchoo ETL is a code-based ETL framework for extracting data from multiple sources, transforming, and loading into your very own data warehouse in .NET environment. You can have data in your data warehouse in no time.
+- [SharpZipLib](https://github.com/icsharpcode/SharpZipLib) - SharpZipLib (#ziplib, formerly NZipLib) is a compression library for Zip, GZip, BZip2. 
+- [Pandas](https://pandas.pydata.org/) - Pandas is a fast, powerful, flexible and easy to use open source data analysis and data manipulation library built on top of the Python programming language.
+- [Nuke](https://github.com/nuke-build/nuke) - Nuke is a cross-platform build automation system with C# DSL for tasks such as compiling code, copying files and folders, running unit tests, compressing files and building NuGet packages.
 
 ## 👨‍🏫 Contributing
 
