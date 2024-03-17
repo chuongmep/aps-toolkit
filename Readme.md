@@ -69,7 +69,7 @@ using Autodesk.Forge;
 using APSToolkit.Database;
 using APSToolkit.Auth;
 var token = Authentication.Get2LeggedToken().Result;
-string urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0z";
+string urn = "<Derivative URN>";
 var RevitPropDbReader = new PropDbReaderRevit(urn, token);
 RevitPropDbReader.ExportAllDataToExcel("result.xlsx");
 ```
@@ -81,7 +81,7 @@ from aps_toolkit import Auth
 from aps_toolkit import PropDbReaderRevit
 auth = Auth()
 token = auth.auth2leg()
-urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0z"
+urn = "<Derivative URN>"
 prop_reader = PropDbReaderRevit(urn, token)
 df = prop_reader.get_data_by_category("Ducts")
 df.save_to_excel("result.xlsx")
