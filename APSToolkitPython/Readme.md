@@ -60,3 +60,7 @@ python -m twine upload dist/*
 ```python
 pip install --upgrade twine requests-toolbelt
 ```
+
+## License
+
+This project is licensed under the GNU **General Public License V3 License** - see the [[LICENSE.md](https://en.wikipedia.org/wiki/GNU_General_Public_License)](
