@@ -136,6 +136,7 @@ All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSTo
 - [06. Data Visualization - Analyst BIM Model](./APSToolkitPython/Tutorials/06.%20Data%20Visualization%20-%20Analyst%20BIM%20Model.ipynb)
 - [07. Explore Big Data Format Storage](./APSToolkitPython/Tutorials/07.%20Explore%20Big%20Data%20Format%20Storage.ipynb)
 - [08. Explore URL ACC Extract](./APSToolkitPython/Tutorials/08.%20Explore%20URL%20ACC%20Extract.ipynb)
+- [09. Explore SVF - Export SVF Viewer](./APSToolkitPython/Tutorials/09.%20Explore%20SVF%20-%20Export%20SVF%20Viewer.ipynb)
 
 ## License
 
