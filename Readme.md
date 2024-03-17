@@ -39,6 +39,8 @@ APS Toolkit (Former is Forge) is powerful tool for developer,software enginner, 
 
 - I want connect, intergrate with another platform to help improve data in BIM, step to near with AI, Machine Learning, Big Data, etc.
 
+- Attract talent more interesting in BIM, AI, Machine Learning, Big Data, etc.
+
 ## ⚙ Installation
 
 ### .NET 
