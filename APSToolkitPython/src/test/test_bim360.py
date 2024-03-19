@@ -36,19 +36,21 @@ class TestBIM360(TestCase):
         top_folders = self.bim360.get_top_folders(hubs['data'][0]['id'], projects['data'][0]['id'])
         folder_contents = self.bim360.get_folder_contents(projects['data'][0]['id'], top_folders['data'][0]['id'])
         self.assertNotEquals(folder_contents, 0)
+
     def test_get_item_info(self):
         item_info = self.bim360.get_item_info(self.project_id, self.item_id)
         self.assertNotEquals(item_info, 0)
-    def test_get_item_versions(self):
-        items =self.bim360.batch_report_items(self.project_id, self.folder_id)
-        self.assertNotEquals(items, 0)
 
+    def test_get_item_versions(self):
+        items = self.bim360.batch_report_items(self.project_id, self.folder_id)
+        self.assertNotEquals(len(items), 0)
 
     def test_batch_report_item_versions(self):
         df = self.bim360.batch_report_item_versions(self.project_id, self.item_id)
         self.assertNotEquals(df.empty, True)
+
     def test_get_urn_item_version(self):
-        urn = self.bim360.get_urn_item_version(self.project_id, self.item_id,2)
+        urn = self.bim360.get_urn_item_version(self.project_id, self.item_id, 2)
         self.assertNotEquals(urn, "")
 
     def test_batch_report_projects(self):
