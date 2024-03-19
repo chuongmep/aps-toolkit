@@ -31,16 +31,6 @@ APS Toolkit (Former is Forge) is powerful tool for developer,software enginner, 
 - [x] Export Data to Excel
 - [x] Export Data to Parquet
 
-## Why I publish this project
-
-- In many year, I can't see any tool to support for `Autodesk Platform Services` and `Autodesk Forge` to help developer, software engineer, AI engineer to explore the data easier way, so I decide to build this tool to help me and many developer work with `Autodesk Platform Services` and `Autodesk Forge` easily.
-
-- I want Autodesk receive the feedback from the community, listen end user to improve the `Autodesk Platform Services` and `Autodesk Forge` to make it better and better.
-
-- I want connect, intergrate with another platform to help improve data in BIM, step to near with AI, Machine Learning, Big Data, etc.
-
-- Attract talent more interesting in BIM, AI, Machine Learning, Big Data, etc.
-
 ## ⚙ Installation
 
 ### .NET 
