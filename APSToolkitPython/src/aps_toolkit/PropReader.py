@@ -19,30 +19,30 @@ import json
 import re
 import codecs
 import requests
+from .Derivative import Derivative
+from .ManifestItem import ManifestItem
 
 
 class PropReader:
 
-    # def __init__(self, arg1, arg2=None, arg3=None, arg4=None, arg5=None):
-    #     if isinstance(arg1, bytes):
-    #         # If the first argument is bytes, assume buffer initialization
-    #         self.ids = json.loads(codecs.decode(gzip.decompress(arg1), 'utf-8'))
-    #         self.offsets = json.loads(codecs.decode(gzip.decompress(arg2), 'utf-8'))
-    #         self.avs = json.loads(codecs.decode(gzip.decompress(arg3), 'utf-8'))
-    #         self.attrs = json.loads(codecs.decode(gzip.decompress(arg4), 'utf-8'))
-    #         self.vals = json.loads(codecs.decode(gzip.decompress(arg5), 'utf-8'))
-    #     else:
-    #         # Otherwise, assume file path initialization
-    #         ids_path, offsets_path, avs_path, attrs_path, vals_path = arg1, arg2, arg3, arg4, arg5
-    #         with gzip.open(ids_path, 'rb') as ids_file, gzip.open(offsets_path, 'rb') as offsets_file, \
-    #                 gzip.open(avs_path, 'rb') as avs_file, gzip.open(attrs_path, 'rb') as attrs_file, \
-    #                 gzip.open(vals_path, 'rb') as vals_file:
-    #             self.ids = json.load(ids_file)
-    #             self.offsets = json.load(offsets_file)
-    #             self.avs = json.load(avs_file)
-    #             self.attrs = json.load(attrs_file)
-    #             self.vals = json.load(vals_file)
-    def __init__(self, urn, token, region="US"):
+    def __init__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
+        # get manifest
+        self.host = "https://developer.api.autodesk.com"
+        self.urn = urn
+        self.token = token
+        self.region = region
+        if manifest_item:
+            derivative = Derivative(self.urn, self.token, self.region)
+            self._read_metadata_item(derivative, manifest_item)
+        else:
+            self._read_metadata()
+
+    def _read_metadata(self):
+        derivative = Derivative(self.urn, self.token, self.region)
+        manifest_items = derivative.read_svf_manifest_items()
+        self._read_metadata_item(derivative, manifest_items[0])
+
+    def _read_metadata_item(self, derivative, manifest_item):
         items = [
             "objects_attrs.json.gz",
             "objects_vals.json.gz",
@@ -51,46 +51,21 @@ class PropReader:
             "objects_avs.json.gz",
             "objects_ids.json.gz"
         ]
-        # get manifest
-        self.host = "https://developer.api.autodesk.com"
-        self.urn = urn
-        self.token = token
-        self.region = region
-        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest"
-        access_token = token.access_token
-        # add headers authorization
+        resources = derivative.read_svf_resource_item(manifest_item)
+        # filters just get items
+        downloaded_files = {}
+        access_token = self.token.access_token
         headers = {
             "Authorization": f"Bearer {access_token}",
-            "region": region
+            "region": self.region
         }
-        # request
-        response = requests.get(URL, headers=headers)
-        if response.status_code != 200:
-            print(response.reason)
-            return
-        json_response = response.json()
-        children = json_response['derivatives'][0]["children"]
-        path = ""
-        for child in children:
-            if child["type"] == "resource" and child["mime"] == "application/autodesk-db":
-                path = child["urn"]
-                break
-        downloaded_files = {}
-        for item in items:
-            path = f"urn:adsk.viewing:fs.file:{self.urn}/output/Resource/{item}"
-            url = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest/{path}"
-            # add headers authorization
-            headers = {
-                "Authorization": f"Bearer {access_token}",
-                "region": region
-            }
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                file_bytes = response.content
-                downloaded_files[item] = file_bytes
-            else:
-                print(response.reason)
-                return
+        for source in resources:
+            if source.file_name in items:
+                downloaded_files[source.file_name] = source.url
+                response = requests.get(source.url, headers=headers)
+                if response.status_code == 200:
+                    file_bytes = response.content
+                    downloaded_files[source.file_name] = file_bytes
         self.ids = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_ids.json.gz"]), 'utf-8'))
         self.offsets = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_offs.json.gz"]), 'utf-8'))
         self.avs = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_avs.json.gz"]), 'utf-8'))

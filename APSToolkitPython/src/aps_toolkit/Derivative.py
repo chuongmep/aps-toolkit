@@ -37,7 +37,7 @@ class Derivative:
         self.region = region
         self.host = "https://developer.api.autodesk.com"
 
-    def translate_job(self, root_file_name, type="svf"):
+    def translate_job(self, root_file_name, type="svf", generate_master_views=False):
         url = "https://developer.api.autodesk.com/modelderivative/v2/designdata/job"
         access_token = self.token.access_token
         payload = json.dumps({
@@ -54,8 +54,12 @@ class Derivative:
                     {
                         "type": type,
                         "views": [
+                            "2d"
                             "3d"
-                        ]
+                        ],
+                        "advanced": {
+                            "generateMasterViews": generate_master_views
+                        }
                     }
                 ]
             }

@@ -20,11 +20,12 @@ import pandas as pd
 import json
 import requests
 from .PropReader import PropReader
+from .ManifestItem import ManifestItem
 
 
 class PropDbReaderRevit(PropReader):
-    def __int__(self, urn, token, region="US"):
-        super().__init__(urn, token, region)
+    def __int__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
+        super().__init__(urn, token, region, manifest_item)
 
     def _get_recursive_child(self, output, id, name):
         children = self.get_children(id)
