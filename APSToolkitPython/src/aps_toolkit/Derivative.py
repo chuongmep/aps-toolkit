@@ -27,6 +27,8 @@ import os
 from .PathInfo import PathInfo
 from .Resource import Resource
 from .ManifestItem import ManifestItem
+import json
+
 
 class Derivative:
     def __init__(self, urn, token, region="US"):
@@ -34,6 +36,48 @@ class Derivative:
         self.token = token
         self.region = region
         self.host = "https://developer.api.autodesk.com"
+
+    def translate_job(self, root_file_name, type="svf"):
+        url = "https://developer.api.autodesk.com/modelderivative/v2/designdata/job"
+        access_token = self.token.access_token
+        payload = json.dumps({
+            "input": {
+                "urn": self.urn,
+                "rootFilename": root_file_name,
+                "compressedUrn": True
+            },
+            "output": {
+                "destination": {
+                    "region": self.region.lower()
+                },
+                "formats": [
+                    {
+                        "type": type,
+                        "views": [
+                            "3d"
+                        ]
+                    }
+                ]
+            }
+        })
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + access_token,
+            'x-ads-force': 'true'
+        }
+        response = requests.post(url, headers=headers, data=payload)
+        return response.text
+
+    def check_job_status(self):
+        url = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest"
+        access_token = self.token.access_token
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "region": self.region
+        }
+        response = requests.get(url, headers=headers)
+        return response.json()
 
     def read_svf_manifest_items(self) -> List[ManifestItem]:
         """
