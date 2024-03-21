@@ -6,16 +6,24 @@ from .context import Auth
 
 class TestPropDbReader(TestCase):
     def setUp(self):
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLlhUOFFRSk53UXhpTFE2VE1QbmZRTkE_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLm5KaEpjQkQ1UXd1bjlIV1ktNWViQmc_dmVyc2lvbj0x"
         self.token = Auth().auth2leg()
         self.prop_reader = PropReader(self.urn, self.token)
 
     def test_enumerate_properties(self):
-        properties = self.prop_reader.enumerate_properties(1)
+        properties = self.prop_reader.enumerate_properties(14)
         self.assertNotEquals(properties, 0)
 
+    def test_get_recursive_ids(self):
+        ids = self.prop_reader.get_recursive_ids([14, 15])
+        self.assertNotEquals(len(ids), 0)
+
+    def test_read_all_properties_name(self):
+        properties = self.prop_reader.read_all_properties_name()
+        self.assertNotEquals(len(properties), 0)
+
     def test_get_properties(self):
-        properties = self.prop_reader.get_properties(1)
+        properties = self.prop_reader.get_properties(14)
         self.assertNotEquals(properties, 0)
 
     def test_get_all_properties(self):

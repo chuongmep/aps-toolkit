@@ -7,12 +7,12 @@ import os
 
 class TestSVFReader(TestCase):
     def setUp(self):
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0yNA"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLm5KaEpjQkQ1UXd1bjlIV1ktNWViQmc_dmVyc2lvbj0x"
         self.token = Auth().auth2leg()
         self.reader = SVFReader(self.urn, self.token)
 
     def test_read_contents(self):
-        contents = self.reader._read_contents()
+        contents = self.reader.read_contents()
         self.assertTrue(len(contents) > 0)
 
     def test_read_contents_manifest(self):

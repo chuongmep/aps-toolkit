@@ -21,6 +21,8 @@ import codecs
 import requests
 from .Derivative import Derivative
 from .ManifestItem import ManifestItem
+import pandas as pd
+from typing import List
 
 
 class PropReader:
@@ -171,6 +173,55 @@ class PropReader:
         for prop in self.enumerate_properties(id):
             if prop.category == "__internalref__":
                 reference.append(int(prop.value))
+
+    # TODO : It too slow, need find another way to get all data with less time and cover all format : dwg, rvt, nwd, ifc, ...
+    # def get_all_data(self) -> pd.DataFrame:
+    #     db_index_ids = [i for i in range(len(self.offsets))]
+    #     return self.get_recursive_ids(db_index_ids)
+
+    def get_recursive_ids(self, db_ids: List[int]) -> pd.DataFrame:
+        dataframe = pd.DataFrame()
+        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
+        if len(db_ids) == 0:
+            return dataframe
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            properties = {}
+            for prop in props:
+                if prop.name not in props_ignore:
+                    properties[prop.name] = prop.value
+            db_id = id
+            external_id = self.ids[id]
+            properties['dbId'] = db_id
+            properties['external_id'] = external_id
+            ins = self.get_instance(id)
+            if len(ins) > 0:
+                for instance in ins:
+                    types = self.get_properties(instance)
+                    properties = {**properties, **types}
+            singleDF = pd.DataFrame(properties, index=[0])
+            dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            ids = self.get_children(id)
+            dataframe = pd.concat([dataframe, self.get_recursive_ids(ids)], ignore_index=True)
+        if 'dbId' in dataframe.columns and 'external_id' in dataframe.columns:
+            dataframe = dataframe[
+                ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+        return dataframe
+
+    def read_all_properties_name(self) -> List[str]:
+        props_names = []
+        for i in range(len(self.offsets)):
+            av_start = 2 * self.offsets[i]
+            av_end = len(self.avs) if i == len(self.offsets) - 1 else 2 * self.offsets[i + 1]
+            for j in range(av_start, av_end, 2):
+                attr_offset = self.avs[j]
+                attr_obj = self.attrs[attr_offset]
+                if isinstance(attr_obj, list) and len(attr_obj) >= 2:
+                    name = attr_obj[0]
+                    props_names.append(name)
+        props_names = list(set(props_names))
+        props_names.sort()
+        return props_names
 
 
 class Property():
