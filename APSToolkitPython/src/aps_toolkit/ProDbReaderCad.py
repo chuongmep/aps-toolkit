@@ -36,18 +36,16 @@ class PropDbReaderCad(PropReader):
         series = df.iloc[0]
         return series
 
-    # TODO : AcDbLayerTableRecord
     def get_all_layers(self):
         db_layers = []
+        df = pd.DataFrame()
         for i, s in enumerate(self.ids):
             properties = self.enumerate_properties(i)
-            if properties:
-                for p in properties:
-                    if p.name == "Layer":
-                        db_layers.append(p.value)
-        db_layers = list(set(db_layers))
-        db_layers.sort()
-        return db_layers
+            flag_layer = [p for p in properties if p.name == "type" and p.value == "AcDbLayerTableRecord"]
+            if flag_layer:
+                df_single = self.get_recursive_ids([i])
+                df = pd.concat([df, df_single])
+        return df
 
     def get_all_categories(self) -> dict:
         db_categories = {}
@@ -74,6 +72,6 @@ class PropDbReaderCad(PropReader):
         :return: pandas dataframe
         """
         db_categories = self.get_all_categories()
-        category_ids = [k for k, v in db_categories.items() if v == category]
+        category_ids = [k for k, v in db_categories.items() if v.lower() == category.lower()]
         childs = self.get_children(category_ids[0])
         return self.get_recursive_ids(childs)

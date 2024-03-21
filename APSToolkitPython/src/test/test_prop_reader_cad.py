@@ -23,5 +23,5 @@ class TestPropDbReader(TestCase):
         self.assertNotEquals(len(categories), 0)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("MText")
+        df = self.prop_reader.get_data_by_category("Lines")
         self.assertNotEquals(df.empty, True)
