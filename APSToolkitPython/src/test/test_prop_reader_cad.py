@@ -13,3 +13,15 @@ class TestPropDbReader(TestCase):
     def test_get_document_info(self):
         document_info = self.prop_reader.get_document_info()
         self.assertIsNotNone(document_info)
+
+    def test_get_all_layers(self):
+        layers = self.prop_reader.get_all_layers()
+        self.assertNotEquals(len(layers), 0)
+
+    def test_get_all_categories(self):
+        categories = self.prop_reader.get_all_categories()
+        self.assertNotEquals(len(categories), 0)
+
+    def test_get_data_by_category(self):
+        df = self.prop_reader.get_data_by_category("MText")
+        self.assertNotEquals(df.empty, True)
