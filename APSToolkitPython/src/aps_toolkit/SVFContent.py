@@ -14,12 +14,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+
+
 class SVFContent:
-    def __init__(self, metadata=None, fragments=None, geometry=None, meshpacks=None, materials=None, properties=None,
+    def __init__(self, metadata=None, fragments=None, geometries=None, meshpacks=None, materials=None, properties=None,
                  images=None):
         self.metadata = metadata
         self.fragments = fragments
-        self.geometry = geometry
+        self.geometries = geometries
         self.meshpacks = meshpacks
         self.materials = materials
         self.properties = properties
