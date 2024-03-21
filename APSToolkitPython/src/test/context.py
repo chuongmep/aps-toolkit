@@ -8,6 +8,7 @@ sys.path.append(src_dir)
 # Now you can import modules from the project folder
 from aps_toolkit import PropReader
 from aps_toolkit import PropDbReaderRevit
+from aps_toolkit import PropDbReaderCad
 from aps_toolkit import DbReader
 from aps_toolkit import Auth
 from aps_toolkit import Token
