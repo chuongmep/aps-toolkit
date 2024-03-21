@@ -188,6 +188,8 @@ class PropReader:
             props = self.enumerate_properties(id)
             properties = {}
             for prop in props:
+                if prop.name == 'name':
+                    continue
                 if prop.name not in props_ignore:
                     properties[prop.name] = prop.value
             db_id = id

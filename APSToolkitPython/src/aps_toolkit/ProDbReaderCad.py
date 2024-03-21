@@ -75,3 +75,25 @@ class PropDbReaderCad(PropReader):
         category_ids = [k for k, v in db_categories.items() if v.lower() == category.lower()]
         childs = self.get_children(category_ids[0])
         return self.get_recursive_ids(childs)
+
+    def get_data_by_categories(self, categories: List[str]) -> pd.DataFrame:
+        """
+        Get data by multiple cad categories
+        :param categories: list of category names
+        :return: pandas dataframe
+        """
+        df = pd.DataFrame()
+        for category in categories:
+            df = pd.concat([df, self.get_data_by_category(category)])
+        return df
+    def get_all_data(self) -> pd.DataFrame:
+        """
+        Get all data from cad file
+        :return: pandas dataframe
+        """
+        cates = self.get_all_categories()
+        df = pd.DataFrame()
+        for k, v in cates.items():
+            childs = self.get_children(k)
+            df = pd.concat([df, self.get_recursive_ids(childs)])
+        return df
