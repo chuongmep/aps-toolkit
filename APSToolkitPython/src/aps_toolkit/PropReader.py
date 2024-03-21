@@ -193,9 +193,7 @@ class PropReader:
                 if prop.name not in props_ignore:
                     properties[prop.name] = prop.value
             db_id = id
-            external_id = self.ids[id]
             properties['dbId'] = db_id
-            properties['external_id'] = external_id
             ins = self.get_instance(id)
             if len(ins) > 0:
                 for instance in ins:
@@ -205,9 +203,9 @@ class PropReader:
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             ids = self.get_children(id)
             dataframe = pd.concat([dataframe, self.get_recursive_ids(ids)], ignore_index=True)
-        if 'dbId' in dataframe.columns and 'external_id' in dataframe.columns:
+        if 'dbId' in dataframe.columns:
             dataframe = dataframe[
-                ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+                ['dbId'] + [col for col in dataframe.columns if col not in ['dbId']]]
         return dataframe
 
     def get_recursive_ids_by_parameters(self, db_ids: List[int], params: List[str]) -> pd.DataFrame:
@@ -224,10 +222,8 @@ class PropReader:
                 if prop.name not in props_ignore:
                     properties[prop.name] = prop.value
             db_id = id
-            external_id = self.ids[id]
             properties = {k: v for k, v in properties.items() if k in params}
             properties['dbId'] = db_id
-            properties['external_id'] = external_id
             ins = self.get_instance(id)
             if len(ins) > 0:
                 for instance in ins:
@@ -238,12 +234,11 @@ class PropReader:
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             ids = self.get_children(id)
             dataframe = pd.concat([dataframe, self.get_recursive_ids_by_parameters(ids,params)], ignore_index=True)
-        if 'dbId' in dataframe.columns and 'external_id' in dataframe.columns:
-            dataframe = dataframe[
-                ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+        if 'dbId' in dataframe.columns:
+            dataframe = dataframe[['dbId'] + [col for col in dataframe.columns if col not in ['dbId']]]
         return dataframe
 
-    def read_all_properties_name(self) -> List[str]:
+    def get_all_properties_names(self) -> List[str]:
         props_names = []
         for i in range(len(self.offsets)):
             av_start = 2 * self.offsets[i]

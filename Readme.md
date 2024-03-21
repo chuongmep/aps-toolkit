@@ -122,6 +122,7 @@ All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSTo
 - [04. Explore General Metdadata With APSToolkit](./APSToolkitPython/Tutorials/04.%20Explore%20General%20Metdadata%20With%20APSToolkit.ipynb)
   - [04.01. Explore Revit Data With APSToolkit](./APSToolkitPython/Tutorials/04.01.%20Explore%20Revit%20Data%20With%20APSToolkit.ipynb)
   - [04.02. Explore Compare Revit Data Versions](./APSToolkitPython/Tutorials/04.02.%20Explore%20Compare%20Revit%20Data%20Versions.ipynb)
+  - [04.03. Explore Acad Data With APSToolkit](./APSToolkitPython/Tutorials/04.03.%20Explore%20Acad%20Data%20With%20APSToolkit.ipynb)
 - [05. Explore Access Database And Query Items](./APSToolkitPython/Tutorials/05.%20Explore%20Access%20Database%20And%20Query%20Items.ipynb)
 - [06. Data Visualization - Analyst BIM Model](./APSToolkitPython/Tutorials/06.%20Data%20Visualization%20-%20Analyst%20BIM%20Model.ipynb)
 - [07. Explore Big Data Format Storage](./APSToolkitPython/Tutorials/07.%20Explore%20Big%20Data%20Format%20Storage.ipynb)

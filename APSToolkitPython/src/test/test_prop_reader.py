@@ -18,8 +18,8 @@ class TestPropDbReader(TestCase):
         ids = self.prop_reader.get_recursive_ids([14, 15])
         self.assertNotEquals(len(ids), 0)
 
-    def test_read_all_properties_name(self):
-        properties = self.prop_reader.read_all_properties_name()
+    def test_get_all_properties_names(self):
+        properties = self.prop_reader.get_all_properties_names()
         self.assertNotEquals(len(properties), 0)
 
     def test_get_properties(self):
