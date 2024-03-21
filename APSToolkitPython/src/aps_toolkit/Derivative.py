@@ -54,7 +54,7 @@ class Derivative:
                     {
                         "type": type,
                         "views": [
-                            "2d"
+                            "2d",
                             "3d"
                         ],
                         "advanced": {
