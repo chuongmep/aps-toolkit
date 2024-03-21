@@ -29,6 +29,11 @@ class TestPropDbReader(TestCase):
     def test_get_data_by_category(self):
         df = self.prop_reader.get_data_by_category("Lines")
         self.assertNotEquals(df.empty, True)
+
     def test_get_data_by_categories(self):
         df = self.prop_reader.get_data_by_categories(["Lines", "Circles"])
+        self.assertNotEquals(df.empty, True)
+
+    def test_get_data_by_categories_and_params(self):
+        df = self.prop_reader.get_data_by_categories_and_params(["Lines", "Circles"], ["Name", "Layer", "Color", "type"])
         self.assertNotEquals(df.empty, True)

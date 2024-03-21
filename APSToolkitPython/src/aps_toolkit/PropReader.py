@@ -210,6 +210,39 @@ class PropReader:
                 ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
+    def get_recursive_ids_by_parameters(self, db_ids: List[int], params: List[str]) -> pd.DataFrame:
+        dataframe = pd.DataFrame()
+        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
+        if len(db_ids) == 0:
+            return dataframe
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            properties = {}
+            for prop in props:
+                if prop.name == 'name':
+                    continue
+                if prop.name not in props_ignore:
+                    properties[prop.name] = prop.value
+            db_id = id
+            external_id = self.ids[id]
+            properties = {k: v for k, v in properties.items() if k in params}
+            properties['dbId'] = db_id
+            properties['external_id'] = external_id
+            ins = self.get_instance(id)
+            if len(ins) > 0:
+                for instance in ins:
+                    types = self.get_properties(instance)
+                    types = {k: v for k, v in types.items() if k in params}
+                    properties = {**properties, **types}
+            singleDF = pd.DataFrame(properties, index=[0])
+            dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            ids = self.get_children(id)
+            dataframe = pd.concat([dataframe, self.get_recursive_ids_by_parameters(ids,params)], ignore_index=True)
+        if 'dbId' in dataframe.columns and 'external_id' in dataframe.columns:
+            dataframe = dataframe[
+                ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+        return dataframe
+
     def read_all_properties_name(self) -> List[str]:
         props_names = []
         for i in range(len(self.offsets)):

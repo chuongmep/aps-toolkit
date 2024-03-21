@@ -86,6 +86,22 @@ class PropDbReaderCad(PropReader):
         for category in categories:
             df = pd.concat([df, self.get_data_by_category(category)])
         return df
+
+    def get_data_by_categories_and_params(self, categories: List[str], params: List[str]) -> pd.DataFrame:
+        """
+        Get data by multiple cad categories and multiple parameters
+        :param categories: list of category names
+        :param params: list of parameters
+        :return: pandas dataframe
+        """
+        db_categories = self.get_all_categories()
+        category_ids = [k for k, v in db_categories.items() if v.lower() in [c.lower() for c in categories]]
+        childs = [self.get_children(category_id) for category_id in category_ids]
+        # flatten list of list
+        childs = [item for sublist in childs for item in sublist]
+        df = self.get_recursive_ids_by_parameters(childs, params)
+        return df
+
     def get_all_data(self) -> pd.DataFrame:
         """
         Get all data from cad file
