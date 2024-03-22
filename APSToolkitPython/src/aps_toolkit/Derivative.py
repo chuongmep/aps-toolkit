@@ -113,6 +113,8 @@ class Derivative:
                         path_info.files = self._get_assets(json_content)
                         guid = c["guid"]
                         mime = c["mime"]
+                        # add svf files
+                        path_info.files.append(path_info.root_file_name)
                         manifest_items.append(ManifestItem(guid, mime, path_info))
                     # case mapping image with svf
                     if "type" in c and c["role"] == "thumbnail":
