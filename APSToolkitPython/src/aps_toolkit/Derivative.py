@@ -101,6 +101,7 @@ class Derivative:
         json_response = response.json()
         children = json_response['derivatives'][0]["children"]
         manifest_items = []
+        image_items = []
         for child in children:
             if child["type"] == "geometry":
                 for c in child["children"]:
@@ -113,6 +114,18 @@ class Derivative:
                         guid = c["guid"]
                         mime = c["mime"]
                         manifest_items.append(ManifestItem(guid, mime, path_info))
+                    # case mapping image with svf
+                    if "type" in c and c["role"] == "thumbnail":
+                        guid = c["guid"]
+                        mime = c["mime"]
+                        path_info = self._decompose_urn(c["urn"])
+                        image_items.append(ManifestItem(guid, mime, path_info))
+        # add files images to manifest items by mapp with local_path
+        for image in image_items:
+            for manifest_item in manifest_items:
+                if image.path_info.local_path == manifest_item.path_info.local_path:
+                    manifest_item.path_info.files.append(image.path_info.root_file_name)
+                    continue
         return manifest_items
 
     def read_svf_resource_item(self, manifest_item) -> List[Resource]:

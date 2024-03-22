@@ -19,6 +19,7 @@ from aps_toolkit import SVFMesh
 from aps_toolkit import Derivative
 from aps_toolkit import SVFReader
 from aps_toolkit import SVFMaterials
+from aps_toolkit import SVFImage
 
 APS_CLIENT_ID = os.environ["APS_CLIENT_ID"]
 APS_CLIENT_SECRET = os.environ["APS_CLIENT_SECRET"]
