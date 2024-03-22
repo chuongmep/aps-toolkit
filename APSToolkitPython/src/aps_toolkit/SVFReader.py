@@ -27,6 +27,7 @@ from .SVFMesh import SVFMesh
 from .Materials import Materials
 from .SVFMaterials import SVFMaterials
 from .SVFImage import SVFImage
+from .SVFMetadata import SVFMetadata
 
 
 class SVFReader:
@@ -56,8 +57,7 @@ class SVFReader:
         content.meshpacks = self.read_meshes(manifest_item).items().__iter__().__next__()[1]
         content.materials = self.read_materials(manifest_item).items().__iter__().__next__()[1]
         content.images = self.read_images(manifest_item).items().__iter__().__next__()[1]
-        # TODO: add other missing contents
-        content.metadata = None
+        content.metadata = self.read_meta_data(manifest_item).items().__iter__().__next__()[1]
         return content
 
     def read_sources(self) -> dict[str, Resource]:
@@ -117,6 +117,15 @@ class SVFReader:
         else:
             images = SVFImage.parse_images_from_urn(self.urn, self.token, self.region)
         return images
+
+    def read_meta_data(self, manifest_item: [ManifestItem] = None) -> dict:
+        meta_datas = {}
+        if manifest_item:
+            meta_data = SVFMetadata.parse_metadata_from_derivative(self.derivative, manifest_item)
+            meta_datas[manifest_item.guid] = meta_data
+        else:
+            meta_datas = SVFMetadata.parse_metadata_from_urn(self.urn, self.token, self.region)
+        return meta_datas
 
     def read_properties(self) -> PropReader:
         return PropReader(self.urn, self.token, self.region)

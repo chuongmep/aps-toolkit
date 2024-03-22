@@ -115,13 +115,14 @@ class Derivative:
                         mime = c["mime"]
                         # add svf files
                         path_info.files.append(path_info.root_file_name)
-                        manifest_items.append(ManifestItem(guid, mime, path_info))
+                        manifest_items.append(ManifestItem(guid, mime, path_info, urn_json))
                     # case mapping image with svf
                     if "type" in c and c["role"] == "thumbnail":
                         guid = c["guid"]
                         mime = c["mime"]
-                        path_info = self._decompose_urn(c["urn"])
-                        image_items.append(ManifestItem(guid, mime, path_info))
+                        urn = c["urn"]
+                        path_info = self._decompose_urn(urn)
+                        image_items.append(ManifestItem(guid, mime, path_info, urn))
         # add files images to manifest items by mapp with local_path
         for image in image_items:
             for manifest_item in manifest_items:
@@ -168,7 +169,7 @@ class Derivative:
             resources[manifest_item.guid] = source_items
         return resources
 
-    def _unzip_svf(self, urn):
+    def _unzip_svf(self, svf_urn):
         """
         Retrieves and unzips the manifest associated with the given URN.
 
@@ -178,7 +179,7 @@ class Derivative:
         Returns:
         dict: The contents of the unzipped manifest in JSON format.
         """
-        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest/{urn}"
+        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest/{svf_urn}"
         access_token = self.token.access_token
         headers = {
             "Authorization": f"Bearer {access_token}",
@@ -196,6 +197,37 @@ class Derivative:
                     manifest_json = json_loads(manifest_data.read().decode("utf-8"))
 
         return manifest_json
+
+    def read_svf_metadata(self, svf_urn):
+        """
+        Retrieves and unzips the manifest associated with the given URN.
+
+        Parameters:
+        urn (str): The URN of the manifest to retrieve and unzip.
+
+        Returns:
+        dict: The contents of the unzipped manifest in JSON format.
+        """
+        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest/{svf_urn}"
+        access_token = self.token.access_token
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "region": self.region
+        }
+        response = requests.get(URL, headers=headers)
+        if response.status_code == 404:
+            raise Exception(response.content)
+        meta_data_json = None
+        # unzip it
+        if ".gz" in response.headers.get("Content-Type", ""):
+            with gzip.GzipFile(fileobj=BytesIO(response.content), mode="rb") as gzip_file:
+                meta_data_json = json_loads(gzip_file.read().decode("utf-8"))
+        else:
+            with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
+                with zip_file.open("metadata.json") as manifest_data:
+                    meta_data_json = json_loads(manifest_data.read().decode("utf-8"))
+
+        return meta_data_json
 
     def _get_assets(self, manifest) -> List[str]:
         """

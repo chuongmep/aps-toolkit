@@ -36,3 +36,10 @@ class TestDerivative(TestCase):
         manifest_items = derivative.read_svf_manifest_items()
         svf_resources = derivative.read_svf_resource_item(manifest_items[0])
         self.assertNotEquals(len(svf_resources), 0)
+
+    def test_read_metadata(self):
+        derivative = Derivative(self.urn, self.token)
+        manifest_items = derivative.read_svf_manifest_items()
+        for manifest_item in manifest_items:
+            metadata = derivative.read_svf_metadata(manifest_item.urn)
+            self.assertNotEquals(metadata, "")

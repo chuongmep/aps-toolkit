@@ -18,7 +18,8 @@ from .PathInfo import PathInfo
 
 
 class ManifestItem:
-    def __init__(self, guid, mime, path_info: [PathInfo]):
+    def __init__(self, guid, mime, path_info: [PathInfo], urn):
         self.guid = guid
         self.mime = mime
+        self.urn = urn
         self.path_info = path_info

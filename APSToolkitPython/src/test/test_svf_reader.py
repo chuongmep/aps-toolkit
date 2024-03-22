@@ -64,6 +64,10 @@ class TestSVFReader(TestCase):
         images = self.reader.read_images()
         self.assertTrue(len(images) > 0)
 
+    def test_read_meta_data(self):
+        meta_data = self.reader.read_meta_data()
+        self.assertTrue(len(meta_data) > 0)
+
     def test_read_materials_item(self):
         manifest_items = self.reader.read_svf_manifest_items()
         materials = self.reader.read_materials(manifest_items[0])
