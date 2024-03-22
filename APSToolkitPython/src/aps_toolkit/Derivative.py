@@ -40,6 +40,8 @@ class Derivative:
     def translate_job(self, root_file_name, type="svf", generate_master_views=False):
         url = "https://developer.api.autodesk.com/modelderivative/v2/designdata/job"
         access_token = self.token.access_token
+        if not access_token:
+            raise Exception("Have no access token to translate job.")
         payload = json.dumps({
             "input": {
                 "urn": self.urn,
@@ -75,6 +77,8 @@ class Derivative:
     def check_job_status(self):
         url = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest"
         access_token = self.token.access_token
+        if not access_token:
+            raise Exception("Have no access token to check job status.")
         headers = {
             "Authorization": f"Bearer {access_token}",
             "region": self.region
@@ -91,12 +95,16 @@ class Derivative:
         """
         URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest"
         access_token = self.token.access_token
+        if not access_token:
+            raise Exception("Have no access token to get manifest items.")
         headers = {
             "Authorization": f"Bearer {access_token}",
             "region": self.region
         }
         # request
         response = requests.get(URL, headers=headers)
+        if response.status_code == 404:
+            raise Exception(response.content)
         json_response = response.json()
         children = json_response['derivatives'][0]["children"]
         manifest_items = []
@@ -185,6 +193,8 @@ class Derivative:
             "region": self.region
         }
         response = requests.get(URL, headers=headers)
+        if response.status_code == 404:
+            raise Exception(response.content)
         manifest_json = None
         # unzip it
         if ".gz" in response.headers.get("Content-Type", ""):
@@ -280,6 +290,8 @@ class Derivative:
         """
         url = resource.url
         access_token = self.token.access_token
+        if not access_token:
+            raise Exception("Have no access token to download resource.")
         headers = {
             "Authorization": f"Bearer {access_token}",
             "region": self.region
@@ -300,6 +312,8 @@ class Derivative:
         """
         url = resource.url
         access_token = self.token.access_token
+        if not access_token:
+            raise Exception("Have no access token to download resource.")
         headers = {
             "Authorization": f"Bearer {access_token}",
             "region": self.region

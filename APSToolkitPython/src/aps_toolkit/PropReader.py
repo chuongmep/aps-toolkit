@@ -60,6 +60,8 @@ class PropReader:
         # filters just get items
         downloaded_files = {}
         access_token = self.token.access_token
+        if not access_token:
+            raise Exception("No access token found")
         headers = {
             "Authorization": f"Bearer {access_token}",
             "region": self.region

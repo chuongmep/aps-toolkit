@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import requests
 from .Token import Token
+
+
 class Auth:
     def __init__(self, client_id=None, client_secret=None):
         if client_id and client_secret:
@@ -38,6 +40,8 @@ class Auth:
             "scope": "data:read data:write data:search data:create bucket:read bucket:create user:read"
         }
         response = requests.post(Host + url, data=body)
+        if response.status_code != 200:
+            raise Exception(response.content)
         content = response.json()
         access_token = content['access_token']
         expires_in = content['expires_in']

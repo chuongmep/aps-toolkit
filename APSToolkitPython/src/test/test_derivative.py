@@ -10,13 +10,13 @@ class TestDerivative(TestCase):
         self.token = Auth().auth2leg()
 
     def test_translate_job(self):
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLlhUOFFRSk53UXhpTFE2VE1QbmZRTkE_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Y2h1b25nX2J1Y2tldC9NeUhvdXNlLmlmYw"
         derivative = Derivative(self.urn, self.token)
-        response = derivative.translate_job("Project Completion.nwd")
+        response = derivative.translate_job("Project Completion.ifc")
         self.assertNotEquals(response, "")
 
     def test_check_job_status(self):
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLlhUOFFRSk53UXhpTFE2VE1QbmZRTkE_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Y2h1b25nX2J1Y2tldC9NeUhvdXNlLmlmYw"
         derivative = Derivative(self.urn, self.token)
         response = derivative.check_job_status()
         self.assertNotEquals(response, "")

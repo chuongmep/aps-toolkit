@@ -35,6 +35,8 @@ class DbReader:
             "Authorization": f"Bearer {self.token.access_token}"
         }
         response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
         json_response = response.json()
         childrens = json_response['derivatives'][0]["children"]
         self.path = ""
