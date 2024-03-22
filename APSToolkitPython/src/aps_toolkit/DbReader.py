@@ -38,6 +38,8 @@ class DbReader:
         if response.status_code != 200:
             raise Exception(response.content)
         json_response = response.json()
+        if json_response["status"] != "success":
+            raise Exception(json_response)
         childrens = json_response['derivatives'][0]["children"]
         self.path = ""
         for child in childrens:
