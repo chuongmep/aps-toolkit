@@ -42,7 +42,10 @@ class PropReader:
     def _read_metadata(self):
         derivative = Derivative(self.urn, self.token, self.region)
         manifest_items = derivative.read_svf_manifest_items()
-        self._read_metadata_item(derivative, manifest_items[0])
+        if len(manifest_items) > 0:
+            self._read_metadata_item(derivative, manifest_items[0])
+        else:
+            raise Exception("No manifest item found")
 
     def _read_metadata_item(self, derivative, manifest_item):
         items = [
@@ -233,7 +236,7 @@ class PropReader:
             singleDF = pd.DataFrame(properties, index=[0])
             dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             ids = self.get_children(id)
-            dataframe = pd.concat([dataframe, self.get_recursive_ids_by_parameters(ids,params)], ignore_index=True)
+            dataframe = pd.concat([dataframe, self.get_recursive_ids_by_parameters(ids, params)], ignore_index=True)
         if 'dbId' in dataframe.columns:
             dataframe = dataframe[['dbId'] + [col for col in dataframe.columns if col not in ['dbId']]]
         return dataframe
