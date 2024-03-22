@@ -1,0 +1,74 @@
+"""
+Copyright (C) 2024  chuongmep.com
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+from typing import List
+import re
+import pandas as pd
+import json
+import requests
+from .PropReader import PropReader
+from .ManifestItem import ManifestItem
+
+
+class PropDbReaderNavis(PropReader):
+    def __int__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
+        super().__init__(urn, token, region, manifest_item)
+
+    def _get_recursive_child(self, output, id, name):
+        children = self.get_children(id)
+        for child in children:
+            properties = self.enumerate_properties(child)
+            property = [prop.value for prop in properties if prop.name == name]
+            if len(property) == 0:
+                self._get_recursive_child(output, child, name)
+            else:
+                if str(property[0]) == "": continue
+                output[child] = property[0].strip()
+
+    def get_external_id(self, id) -> str:
+        return self.ids[id]
+
+    def get_document_info(self) -> pd.DataFrame:
+        properties = self.get_all_properties(1)
+        df = pd.DataFrame.from_dict(properties, orient='index')
+        df = df.rename(columns={0: "value"})
+        df = df.reset_index()
+        df = df.rename(columns={"index": "property"})
+        return df
+
+    # def get_data_by_category(self, category) -> pd.DataFrame:
+    #     db_ids = [1]
+    #     df = self._get_recursive_ids_by_category(db_ids, category)
+    #     return df
+    #
+    # def _get_recursive_ids_by_category(self, db_ids: List[int], category) -> pd.DataFrame:
+    #     dataframe = pd.DataFrame()
+    #     props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
+    #     if len(db_ids) == 0:
+    #         return dataframe
+    #     for id in db_ids:
+    #         props = self.enumerate_properties(id)
+    #         properties = {}
+    #         flag = [p for p in props if p.value == category]
+    #         if flag:
+    #             for p in props:
+    #                 if p.name not in props_ignore:
+    #                     properties[p.name] = p.value
+    #             dataframe = dataframe.append(properties, ignore_index=True)
+    #         children = self.get_children(id)
+    #         df = self._get_recursive_ids_by_category(children, category)
+    #         dataframe = pd.concat([dataframe, df])
+    #     return dataframe

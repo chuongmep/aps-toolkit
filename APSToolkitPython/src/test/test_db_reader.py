@@ -10,7 +10,7 @@ class TestDbReader(TestCase):
         self.client_secret = os.environ['APS_CLIENT_SECRET']
         self.auth = Auth(self.client_id, self.client_secret)
         self.token = self.auth.auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLm5KaEpjQkQ1UXd1bjlIV1ktNWViQmc_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Y2h1b25nX2J1Y2tldC9NeUhvdXNlLm53Yw"
 
     def test_reader(self):
         db_reader = DbReader(self.urn, self.token)
