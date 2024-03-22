@@ -43,8 +43,7 @@ class Derivative:
         payload = json.dumps({
             "input": {
                 "urn": self.urn,
-                "rootFilename": root_file_name,
-                "compressedUrn": True
+                "rootFilename": root_file_name
             },
             "output": {
                 "destination": {
