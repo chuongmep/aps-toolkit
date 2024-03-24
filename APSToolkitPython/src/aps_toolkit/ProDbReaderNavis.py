@@ -42,8 +42,10 @@ class PropDbReaderNavis(PropReader):
         return self.ids[id]
 
     def get_document_info(self) -> pd.DataFrame:
-        properties = self.get_all_properties(1)
-        df = pd.DataFrame.from_dict(properties, orient='index')
+        props = {}
+        for prop in self.enumerate_properties(1):
+            props[prop.display_name] = prop.value
+        df = pd.DataFrame.from_dict(props, orient='index')
         df = df.rename(columns={0: "value"})
         df = df.reset_index()
         df = df.rename(columns={"index": "property"})
