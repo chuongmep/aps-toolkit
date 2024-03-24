@@ -60,6 +60,7 @@ class PropDbReaderNavis(PropReader):
     def get_data_by_category(self, category) -> pd.DataFrame:
         db_ids = [1]
         df = self._get_recursive_ids_by_category(db_ids, category)
+        df = df.drop_duplicates(subset=df.columns.difference(['DbId']))
         return df
 
     def _get_recursive_ids_by_category(self, db_ids: List[int], category) -> pd.DataFrame:
@@ -81,5 +82,4 @@ class PropDbReaderNavis(PropReader):
             children = self.get_children(id)
             df = self._get_recursive_ids_by_category(children, category)
             dataframe = pd.concat([dataframe, df], ignore_index=True)
-
         return dataframe

@@ -18,5 +18,5 @@ class TestPropDbReaderNavis(TestCase):
         self.assertIsNotNone(categories)
 
     def test_get_data_by_property(self):
-        data = self.prop_reader.get_data_by_category("Type")
+        data = self.prop_reader.get_data_by_category("Item")
         self.assertIsNotNone(data)
