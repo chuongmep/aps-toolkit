@@ -173,8 +173,3 @@ This is not an official Autodesk product to support for Autodesk Platform Servic
 I'm not responsible for any data loss or any other issues caused by using this library, some features need require cost for using. Please read carefully the [Autodesk Forge](https://forge.autodesk.com/) and [Autodesk Platform Services](https://aps.autodesk.com/) terms of use. I'm just doing, testing , maintaining in free time, so feel free to contribute and make it better. 
 
 Update : There is a new, official [Node.js/TypeScript SDK](https://github.com/autodesk-platform-services/aps-sdk-node) that's currently in beta but will be stabilized soon. That SDK will offer various benefits over forge-server-utils, for example, it will be easier to maintain and extend in the future as it's being auto-generated from OpenAPI specs. As soon as it's ready to use (which should be really soon), I would archive this project and point to the official SDK instead.
-
-## News
-
-- [https://thebuildingcoder.typepad.com](https://thebuildingcoder.typepad.com/blog/2024/03/api-context-aps-toolkit-and-da4r-debugging.html)
-
