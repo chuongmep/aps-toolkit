@@ -49,26 +49,37 @@ class PropDbReaderNavis(PropReader):
         df = df.rename(columns={"index": "property"})
         return df
 
-    # def get_data_by_category(self, category) -> pd.DataFrame:
-    #     db_ids = [1]
-    #     df = self._get_recursive_ids_by_category(db_ids, category)
-    #     return df
-    #
-    # def _get_recursive_ids_by_category(self, db_ids: List[int], category) -> pd.DataFrame:
-    #     dataframe = pd.DataFrame()
-    #     props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
-    #     if len(db_ids) == 0:
-    #         return dataframe
-    #     for id in db_ids:
-    #         props = self.enumerate_properties(id)
-    #         properties = {}
-    #         flag = [p for p in props if p.value == category]
-    #         if flag:
-    #             for p in props:
-    #                 if p.name not in props_ignore:
-    #                     properties[p.name] = p.value
-    #             dataframe = dataframe.append(properties, ignore_index=True)
-    #         children = self.get_children(id)
-    #         df = self._get_recursive_ids_by_category(children, category)
-    #         dataframe = pd.concat([dataframe, df])
-    #     return dataframe
+    def get_all_categories(self) -> List[str]:
+        categories = []
+        rg = re.compile(r'^__\w+__$')
+        for i in range(1, len(self.attrs)):
+            if self.attrs[i][1] not in categories and not rg.match(self.attrs[i][1]):
+                categories.append(self.attrs[i][1])
+        return categories
+
+    def get_data_by_category(self, category) -> pd.DataFrame:
+        db_ids = [1]
+        df = self._get_recursive_ids_by_category(db_ids, category)
+        return df
+
+    def _get_recursive_ids_by_category(self, db_ids: List[int], category) -> pd.DataFrame:
+        dataframe = pd.DataFrame()
+        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
+        if len(db_ids) == 0:
+            return dataframe
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            properties = {}
+            flag = [p for p in props if p.category == category]
+            if flag:
+                properties["DbId"] = id
+                for p in props:
+                    if p.name not in props_ignore and p.category == category:
+                        properties[p.display_name] = p.value
+                singleDF = pd.DataFrame(properties, index=[0])
+                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            children = self.get_children(id)
+            df = self._get_recursive_ids_by_category(children, category)
+            dataframe = pd.concat([dataframe, df], ignore_index=True)
+
+        return dataframe

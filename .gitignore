@@ -401,3 +401,5 @@ output
 **/_trial_temp-[0-9]/
 **/_trial_temp-[0-9].lock
 database
+
+**/_trial_temp*

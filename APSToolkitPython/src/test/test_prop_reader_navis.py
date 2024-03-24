@@ -13,6 +13,10 @@ class TestPropDbReaderNavis(TestCase):
         document_info = self.prop_reader.get_document_info()
         self.assertIsNotNone(document_info)
 
-    # def test_get_data_by_property(self):
-    #     data = self.prop_reader.get_data_by_category("Item")
-    #     self.assertIsNotNone(data)
+    def test_get_all_categories(self):
+        categories = self.prop_reader.get_all_categories()
+        self.assertIsNotNone(categories)
+
+    def test_get_data_by_property(self):
+        data = self.prop_reader.get_data_by_category("Type")
+        self.assertIsNotNone(data)
