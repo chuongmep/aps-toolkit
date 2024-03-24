@@ -4,8 +4,9 @@
 
 [![Publish](../../actions/workflows/dotnet.yml/badge.svg)](../../actions)
 [![Nuget Version](https://img.shields.io/nuget/v/APSToolkit)](https://www.nuget.org/packages/APSToolkit)
-![pypi](https://img.shields.io/pypi/v/aps-toolkit.svg)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/APSToolkit.svg)](https://www.nuget.org/packages/APSToolkit/)
+![PyPI](https://img.shields.io/pypi/v/aps-toolkit?label=pypi%20aps-toolkit-python)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/aps-toolkit?label=pipy-download)
 
 <a href="https://twitter.com/intent/follow?screen_name=chuongmep">
 <img src="https://img.shields.io/twitter/follow/chuongmep?style=social&logo=twitter"
