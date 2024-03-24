@@ -1,10 +1,11 @@
-![Platform](https://img.shields.io/badge/platform-Windows/MacOS/Linux-lightgray.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Platform](https://img.shields.io/badge/platform-Windows/MacOS/Linux-lightgray.svg) [![License: GNU v3](https://img.shields.io/badge/License-GNU-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ![ReSharper](https://img.shields.io/badge/ReSharper-2023-yellow) ![Rider](https://img.shields.io/badge/Rider-2023-yellow) ![Visual Studio 2022](https://img.shields.io/badge/Visual_Studio_2022-yellow) ![.NET Framework](https://img.shields.io/badge/.NET_6-yellow)
 
 [![Publish](../../actions/workflows/dotnet.yml/badge.svg)](../../actions)
 [![Nuget Version](https://img.shields.io/nuget/v/APSToolkit)](https://www.nuget.org/packages/APSToolkit)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/APSToolkit.svg)](https://www.nuget.org/packages/APSToolkit/)
+
 ![PyPI](https://img.shields.io/pypi/v/aps-toolkit?label=pypi%20aps-toolkit-python)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/aps-toolkit?label=pipy-download)
 
