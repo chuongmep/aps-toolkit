@@ -42,17 +42,14 @@ public class RevitDataConfiguration
     {
         this.Urn = urn;
         this.Token = token;
-        InitConfiguration();
     }
     public RevitDataConfiguration(string urn) : this()
     {
         this.Urn = urn;
         this.Token = Authentication.Get2LeggedToken().Result;
-        InitConfiguration();
     }
 
-
-    private async void InitConfiguration()
+    public void RebuildConfiguration()
     {
         if (IsAddUnits)
         {
@@ -61,7 +58,7 @@ public class RevitDataConfiguration
 
         if (IsGetBBox)
         {
-            Dictionary<int,ISvfFragment> svfFragments = await GetFragments(Token.access_token);
+            Dictionary<int,ISvfFragment> svfFragments = GetFragments(Token.access_token).Result;
             Fragments = svfFragments;
         }
     }

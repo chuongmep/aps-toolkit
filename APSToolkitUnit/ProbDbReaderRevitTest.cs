@@ -73,11 +73,12 @@ public class ProbDbReaderRevitTest
         dataTable.ExportDataToExcel("result.xlsx");
     }
     [Test]
-    [TestCase("Generic Models")]
-    [TestCase("Doors")]
+    [TestCase("Mechanical Equipment")]
     public void TestExportAllDataToExcelByCategory(string category)
     {
         RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
+        RevitPropDbReader.Configuration.IsGetBBox = true;
+        RevitPropDbReader.Configuration.RebuildConfiguration();
         RevitPropDbReader.ExportAllDataToExcelByCategory("result.xlsx",category,category);
     }
     [Test]
