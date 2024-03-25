@@ -136,7 +136,7 @@ All Tutorials are available under Jupyter Notebook at [Python Tutorials](./APSTo
 
 Many source codes here are collected from open-source authors under the MIT License. Without their sharing and contributions, I wouldn't be able to do this. I am deeply grateful to them, and therefore, I hope that if you are using this tool, please thank them before thanking me and follow their licenses.
 
-This project is licensed under the terms of the [gnu-gpl-v3.0](License.md). Some part of the project base on the licese follow the original project :
+This project is licensed under the terms of the [gnu-gpl-v3.0](License). Some part of the project base on the licese follow the original project :
 
 - [forge-convert-utils](https://github.com/petrbroz/forge-convert-utils)
 - [UnityForgeImporter](https://github.com/chuongmep/UnityForgeImporter)
