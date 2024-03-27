@@ -69,3 +69,15 @@ class Bucket:
         data = response.json()
         df = pd.DataFrame(data["items"])
         return df
+
+    def upload_object(self, bucket_name: str, file_path: str, object_name: str) -> dict:
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}",
+            "Content-Type": "application/octet-stream"
+        }
+        url = f"{self.host}/{bucket_name}/objects/{object_name}"
+        with open(file_path, "rb") as file:
+            response = requests.put(url, headers=headers, data=file)
+            if response.status_code != 200:
+                raise Exception(response.content)
+            return response.json()

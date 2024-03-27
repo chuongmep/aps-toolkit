@@ -32,3 +32,11 @@ class TestBucket(unittest.TestCase):
         bucket_name = "chuong_bucket"
         objects = bucket.get_objects(bucket_name)
         self.assertNotEqual(len(objects), 0)
+
+    def test_upload_object(self):
+        bucket = Bucket(self.token)
+        bucket_name = "chuong_bucket"
+        file_path = "/Users/chuongmep/Downloads/008950495344-Sep_2023.pdf"
+        object_name = "chuong.pdf"
+        response = bucket.upload_object(bucket_name, file_path, object_name)
+        self.assertEqual(response["bucketKey"], bucket_name)
