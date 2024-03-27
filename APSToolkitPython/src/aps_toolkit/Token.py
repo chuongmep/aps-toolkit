@@ -14,9 +14,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+
+
 class Token():
     def __init__(self, access_token, token_type, expires_in, refresh_token=None):
         self.access_token = access_token
         self.token_type = token_type
         self.expires_in = expires_in
         self.refresh_token = refresh_token
+
+    def is_expired(self) -> bool:
+        return self.expires_in <= 0

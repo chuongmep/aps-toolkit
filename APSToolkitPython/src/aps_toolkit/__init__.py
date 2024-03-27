@@ -5,6 +5,7 @@ from .ProDbReaderCad import PropDbReaderCad
 from .ProDbReaderNavis import PropDbReaderNavis
 from .PropReader import PropReader
 from .DbReader import DbReader
+from .Bucket import Bucket
 from .Token import Token
 from .InputStream import InputStream
 from .PackFileReader import PackFileReader

@@ -37,7 +37,7 @@ class Auth:
             "client_id": self.client_id,
             "client_secret": self.client_secret,
             "grant_type": "client_credentials",
-            "scope": "data:read data:write data:search data:create bucket:read bucket:create user:read"
+            "scope": "data:read data:write data:search data:create bucket:read bucket:create user:read bucket:update bucket:delete code:all"
         }
         response = requests.post(Host + url, data=body)
         if response.status_code != 200:

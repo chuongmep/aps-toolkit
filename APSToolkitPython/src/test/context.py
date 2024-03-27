@@ -22,6 +22,7 @@ from aps_toolkit import SVFReader
 from aps_toolkit import SVFMaterials
 from aps_toolkit import SVFImage
 from aps_toolkit import SVFMetadata
+from aps_toolkit import Bucket
 
 APS_CLIENT_ID = os.environ["APS_CLIENT_ID"]
 APS_CLIENT_SECRET = os.environ["APS_CLIENT_SECRET"]

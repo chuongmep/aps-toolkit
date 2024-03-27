@@ -1,0 +1,28 @@
+import unittest
+
+from aps_toolkit.Bucket import PublicKey
+from .context import Bucket
+from .context import Auth
+
+
+class TestBucket(unittest.TestCase):
+    def setUp(self):
+        self.token = Auth().auth2leg()
+
+    def test_get_all_buckets(self):
+        bucket = Bucket(self.token)
+        buckets = bucket.get_all_buckets()
+        self.assertNotEqual(len(buckets), 0)
+
+    def test_create_bucket(self):
+        bucket = Bucket(self.token)
+        bucket_name = "hello_world_23232"
+        policy_key = PublicKey.transient
+        response = bucket.create_bucket(bucket_name, policy_key)
+        self.assertEqual(response["bucketKey"], bucket_name)
+
+    def test_delete_bucket(self):
+        bucket = Bucket(self.token)
+        bucket_name = "hello_world_23232"
+        result = bucket.delete_bucket(bucket_name)
+        self.assertEqual(result, b'')
