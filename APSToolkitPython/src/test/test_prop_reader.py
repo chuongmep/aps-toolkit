@@ -30,6 +30,14 @@ class TestPropDbReader(TestCase):
         properties = self.prop_reader.get_all_properties(1)
         self.assertNotEquals(properties, 0)
 
+    def test_get_property_values_by_names(self):
+        values = self.prop_reader.get_property_values_by_names(["Comments", "name"])
+        self.assertNotEquals(len(values), 0)
+
+    def test_get_property_values_by_display_names(self):
+        values = self.prop_reader.get_property_values_by_display_names(["Category", "Name"])
+        self.assertNotEquals(len(values), 0)
+
     def test_get_instance(self):
         instance = self.prop_reader.get_instance(1)
         self.assertEquals(len(instance), 0)

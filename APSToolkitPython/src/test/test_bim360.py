@@ -37,6 +37,10 @@ class TestBIM360(TestCase):
         folder_contents = self.bim360.get_folder_contents(projects['data'][0]['id'], top_folders['data'][0]['id'])
         self.assertNotEquals(folder_contents, 0)
 
+    def test_get_top_folder_project_files(self):
+        project_files = self.bim360.get_top_folder_project_files(self.hub_id, self.project_id)
+        self.assertNotEquals(project_files, 0)
+
     def test_get_item_info(self):
         item_info = self.bim360.get_item_info(self.project_id, self.item_id)
         self.assertNotEquals(item_info, 0)

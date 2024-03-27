@@ -130,6 +130,43 @@ class PropReader:
             props[prop.name] = prop.value
         return props
 
+    def get_property_values_by_names(self, names: List[str]) -> dict:
+        result = {}
+        for i in range(len(self.offsets)):
+            av_start = 2 * self.offsets[i]
+            av_end = len(self.avs) if i == len(self.offsets) - 1 else 2 * self.offsets[i + 1]
+            for j in range(av_start, av_end, 2):
+                attr_offset = self.avs[j]
+                attr_obj = self.attrs[attr_offset]
+                if isinstance(attr_obj, list) and len(attr_obj) >= 2:
+                    name = attr_obj[0]
+                    if name in names:
+                        value = self.vals[self.avs[j + 1]]
+                        values = result.get(name, [])
+                        if value not in values:
+                            values.append(value)
+                            result[name] = values
+        return result
+
+    def get_property_values_by_display_names(self, display_names: List[str]) -> dict:
+        result = {}
+        for i in range(len(self.offsets)):
+            av_start = 2 * self.offsets[i]
+            av_end = len(self.avs) if i == len(self.offsets) - 1 else 2 * self.offsets[i + 1]
+            for j in range(av_start, av_end, 2):
+                attr_offset = self.avs[j]
+                attr_obj = self.attrs[attr_offset]
+                if isinstance(attr_obj, list) and len(attr_obj) >= 2:
+                    display_name = attr_obj[5]
+                    if display_name in display_names:
+                        value = self.vals[self.avs[j + 1]]
+                        values = result.get(display_name, [])
+                        if value not in values:
+                            values.append(value)
+                            result[display_name] = values
+
+        return result
+
     def get_properties_group_by_category(self, id) -> dict:
         properties = {}
         rg = re.compile(r'^__\w+__$')

@@ -52,6 +52,13 @@ class BIM360:
             raise Exception(response.content)
         return response.json()
 
+    def get_top_folder_project_files(self, hub_id, project_id):
+        data = self.get_top_folders(hub_id, project_id)
+        for item in data['data']:
+            if item['attributes']['name'] == "Project Files":
+                return item
+        return None
+
     def get_folder_contents(self, project_id, folder_id):
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         url = f"{self.host}/data/v1/projects/{project_id}/folders/{folder_id}/contents"
