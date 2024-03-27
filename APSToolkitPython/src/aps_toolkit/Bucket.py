@@ -1,10 +1,7 @@
-import pandas as pd
-
-from .Token import Token
-import requests
-import pandas
-from datetime import datetime
 from enum import Enum
+import pandas as pd
+import requests
+from .Token import Token
 
 
 class PublicKey(Enum):
@@ -20,6 +17,16 @@ class Bucket:
         self.host = "https://developer.api.autodesk.com/oss/v2/buckets"
 
     def get_all_buckets(self) -> pd.DataFrame:
+        """
+          Retrieves all the buckets from the Autodesk OSS API.
+
+          This method sends a GET request to the Autodesk OSS API and includes an Authorization header with a bearer token for authentication. If the response status code is not 200, it raises an exception with the response content.
+
+          If the request is successful, it processes the JSON response to create a pandas DataFrame. The 'createdDate' field, which is in milliseconds since epoch, is converted to a real date and updated in the DataFrame.
+
+          Returns:
+              pd.DataFrame: A DataFrame containing all the buckets.
+          """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}"
         }
@@ -35,6 +42,20 @@ class Bucket:
         return df
 
     def create_bucket(self, bucket_name: str, policy_key: PublicKey) -> dict:
+        """
+            Creates a new bucket in the Autodesk OSS API.
+
+            This method sends a POST request to the Autodesk OSS API. It includes an Authorization header with a
+            bearer token for authentication and a Content-Type header set to "application/json". The bucket name and
+            policy key are passed in the body of the request as JSON data. If the response status code is not 200,
+            it raises an exception with the response content.
+
+            Args: bucket_name (str): The name of the bucket to be created. policy_key (PublicKey): The policy key for
+            the bucket. It can be one of the following: 'transient', 'temporary', or 'persistent'.
+
+            Returns:
+                dict: A dictionary containing the response from the Autodesk OSS API.
+            """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}",
             "Content-Type": "application/json"
@@ -49,6 +70,17 @@ class Bucket:
         return response.json()
 
     def delete_bucket(self, bucket_name: str) -> dict:
+        """
+            Deletes a bucket in the Autodesk OSS API.
+
+            This method sends a DELETE request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication. The bucket name is passed in the URL of the request. If the response status code is not 200, it raises an exception with the response content.
+
+            Args:
+                bucket_name (str): The name of the bucket to be deleted.
+
+            Returns:
+                dict: A dictionary containing the response from the Autodesk OSS API.
+            """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}"
         }
@@ -59,6 +91,17 @@ class Bucket:
         return response.content
 
     def get_objects(self, bucket_name: str) -> pd.DataFrame:
+        """
+          Retrieves all the objects in a specified bucket from the Autodesk OSS API.
+
+          This method sends a GET request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication. The bucket name is passed in the URL of the request. If the response status code is not 200, it raises an exception with the response content.
+
+          Args:
+              bucket_name (str): The name of the bucket from which to retrieve objects.
+
+          Returns:
+              pd.DataFrame: A DataFrame containing all the objects in the specified bucket.
+          """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}"
         }
@@ -71,6 +114,19 @@ class Bucket:
         return df
 
     def upload_object(self, bucket_name: str, file_path: str, object_name: str) -> dict:
+        """
+           Uploads an object to a specified bucket in the Autodesk OSS API.
+
+           This method sends a PUT request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication and a Content-Type header set to "application/octet-stream". The bucket name and object name are passed in the URL of the request, and the file to be uploaded is passed in the body of the request as binary data. If the response status code is not 200, it raises an exception with the response content.
+
+           Args:
+               bucket_name (str): The name of the bucket to which the object will be uploaded.
+               file_path (str): The path of the file to be uploaded.
+               object_name (str): The name of the object to be created in the bucket.
+
+           Returns:
+               dict: A dictionary containing the response from the Autodesk OSS API.
+           """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}",
             "Content-Type": "application/octet-stream"
@@ -83,6 +139,18 @@ class Bucket:
             return response.json()
 
     def delete_object(self, bucket_name: str, object_name: str) -> dict:
+        """
+            Deletes an object from a specified bucket in the Autodesk OSS API.
+
+            This method sends a DELETE request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication. The bucket name and object name are passed in the URL of the request. If the response status code is not 200, it raises an exception with the response content.
+
+            Args:
+                bucket_name (str): The name of the bucket from which the object will be deleted.
+                object_name (str): The name of the object to be deleted.
+
+            Returns:
+                dict: A dictionary containing the response from the Autodesk OSS API.
+            """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}"
         }
@@ -93,6 +161,21 @@ class Bucket:
         return response.content
 
     def download_object(self, bucket_name: str, object_name: str, file_path: str) -> None:
+        """
+            Downloads an object from a specified bucket in the Autodesk OSS API.
+
+            This method sends a GET request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication. The bucket name and object name are passed in the URL of the request. If the response status code is not 200, it raises an exception with the response content.
+
+            The downloaded content is written to a file at the specified file path.
+
+            Args:
+                bucket_name (str): The name of the bucket from which the object will be downloaded.
+                object_name (str): The name of the object to be downloaded.
+                file_path (str): The path where the downloaded file will be saved.
+
+            Returns:
+                None
+            """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}"
         }
