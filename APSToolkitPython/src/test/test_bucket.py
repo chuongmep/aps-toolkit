@@ -40,3 +40,10 @@ class TestBucket(unittest.TestCase):
         object_name = "chuong.pdf"
         response = bucket.upload_object(bucket_name, file_path, object_name)
         self.assertEqual(response["bucketKey"], bucket_name)
+
+    def test_delete_object(self):
+        bucket = Bucket(self.token)
+        bucket_name = "chuong_bucket"
+        object_name = "chuong.pdf"
+        result = bucket.delete_object(bucket_name, object_name)
+        self.assertEqual(result, b'')

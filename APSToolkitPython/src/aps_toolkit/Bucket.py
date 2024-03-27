@@ -81,3 +81,13 @@ class Bucket:
             if response.status_code != 200:
                 raise Exception(response.content)
             return response.json()
+
+    def delete_object(self, bucket_name: str, object_name: str) -> dict:
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}"
+        }
+        url = f"{self.host}/{bucket_name}/objects/{object_name}"
+        response = requests.delete(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        return response.content
