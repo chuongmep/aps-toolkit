@@ -47,3 +47,11 @@ class TestBucket(unittest.TestCase):
         object_name = "chuong.pdf"
         result = bucket.delete_object(bucket_name, object_name)
         self.assertEqual(result, b'')
+
+    def test_download_object(self):
+        bucket = Bucket(self.token)
+        bucket_name = "chuong_bucket"
+        object_name = "chuong.pdf"
+        file_path = "/Users/chuongmep/Downloads/hello.pdf"
+        bucket.download_object(bucket_name, object_name, file_path)
+        self.assertTrue(True)

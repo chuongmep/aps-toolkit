@@ -91,3 +91,16 @@ class Bucket:
         if response.status_code != 200:
             raise Exception(response.content)
         return response.content
+
+    def download_object(self, bucket_name: str, object_name: str, file_path: str) -> None:
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}"
+        }
+        url = f"{self.host}/{bucket_name}/objects/{object_name}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        with open(file_path, "wb") as file:
+            file.write(response.content)
+            file.close()
+        return None
