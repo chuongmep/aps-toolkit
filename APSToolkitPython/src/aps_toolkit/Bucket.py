@@ -57,3 +57,15 @@ class Bucket:
         if response.status_code != 200:
             raise Exception(response.content)
         return response.content
+
+    def get_objects(self, bucket_name: str) -> pd.DataFrame:
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}"
+        }
+        url = f"{self.host}/{bucket_name}/objects"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        data = response.json()
+        df = pd.DataFrame(data["items"])
+        return df

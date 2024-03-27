@@ -26,3 +26,9 @@ class TestBucket(unittest.TestCase):
         bucket_name = "hello_world_23232"
         result = bucket.delete_bucket(bucket_name)
         self.assertEqual(result, b'')
+
+    def test_get_objects(self):
+        bucket = Bucket(self.token)
+        bucket_name = "chuong_bucket"
+        objects = bucket.get_objects(bucket_name)
+        self.assertNotEqual(len(objects), 0)
