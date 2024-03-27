@@ -144,6 +144,8 @@ class BIM360:
             if folder_content['type'] == "items":
                 item_id = folder_content['id']
                 item_name = folder_content['attributes']['displayName']
+                if not item_name.endswith(extension):
+                    continue
                 item_versions = self._get_latest_version(project_id, item_id)
                 # getfrom dict with keys : version
                 last_version = item_versions["version"]
