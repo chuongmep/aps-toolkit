@@ -15,3 +15,12 @@ class TestAuth(TestCase):
         auth = Auth()
         token = auth.auth2leg()
         self.assertNotEquals(token.access_token, "")
+
+    def test_auth3leg(self):
+        auth = Auth()
+        redirect_uri = "http://localhost:8080/api/auth/callback"
+        # https://aps.autodesk.com/en/docs/oauth/v2/developers_guide/scopes
+        scopes = 'data:read viewables:read'
+        token = auth.auth3leg(redirect_uri, scopes)
+        print(token.refresh_token)
+        self.assertNotEquals(token.access_token, "")
