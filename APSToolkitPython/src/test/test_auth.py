@@ -24,3 +24,14 @@ class TestAuth(TestCase):
         token = auth.auth3leg(redirect_uri, scopes)
         print(token.refresh_token)
         self.assertNotEquals(token.access_token, "")
+
+    def test_refresh_token(self):
+        auth = Auth()
+        token = auth.auth3leg()
+        self.assertNotEquals(token.access_token, "")
+        print("Refresh token: ", token.refresh_token)
+        print("Start refresh token")
+        new_token = auth.refresh_new_token(token.refresh_token)
+        print("New Fresh Token", new_token.refresh_token)
+        self.assertNotEquals(token.access_token, "")
+        self.assertNotEquals(token.refresh_token, "")

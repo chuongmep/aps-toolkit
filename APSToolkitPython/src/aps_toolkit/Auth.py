@@ -117,3 +117,25 @@ class Auth:
 
         # Return the token object using the global variables
         return Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
+
+    def refresh_new_token(self, old_refresh_token) -> Token:
+        Host = "https://developer.api.autodesk.com"
+        url = "/authentication/v2/token"
+
+        # body
+        body = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "grant_type": "refresh_token",
+            "refresh_token": old_refresh_token
+        }
+        response = requests.post(Host + url, data=body)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        content = response.json()
+        access_token = content['access_token']
+        expires_in = content['expires_in']
+        token_type = content['token_type']
+        refresh_token = content.get('refresh_token')
+        result = Token(access_token, token_type, expires_in, refresh_token)
+        return result
