@@ -104,8 +104,9 @@ class Auth:
             respJson = resp.json()
             return respJson
 
-        def start_callback_server():
-            server_address = ('', 8080)
+        def start_callback_server(callback_url):
+            parsed_url = urllib.parse.urlparse(callback_url)
+            server_address = ('', parsed_url.port if parsed_url.port else 8080)
             httpd = HTTPServer(server_address, CallbackHandler)
             httpd.handle_request()
 
@@ -113,7 +114,7 @@ class Auth:
 
         auth_url = f"https://developer.api.autodesk.com/authentication/v2/authorize?response_type=code&client_id={self.client_id}&redirect_uri={callback_url}&scope={scopes}"
         webbrowser.open(auth_url)
-        start_callback_server()
+        start_callback_server(callback_url)
 
         # Return the token object using the global variables
         return Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
