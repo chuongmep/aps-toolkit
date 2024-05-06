@@ -25,6 +25,16 @@ class TestAuth(TestCase):
         print(token.refresh_token)
         self.assertNotEquals(token.access_token, "")
 
+    def test_auth3legPkce(self):
+        auth = Auth()
+        redirect_uri = "http://localhost:8080/api/auth/callback"
+        # https://aps.autodesk.com/en/docs/oauth/v2/developers_guide/scopes
+        scopes = 'data:read viewables:read'
+        client_id = os.environ['APS_CLIENT_PKCE_ID']
+        token = auth.auth3legPkce(client_id, redirect_uri, scopes)
+        print(token.refresh_token)
+        self.assertNotEquals(token.access_token, "")
+
     def test_refresh_token(self):
         auth = Auth()
         token = auth.auth3leg()

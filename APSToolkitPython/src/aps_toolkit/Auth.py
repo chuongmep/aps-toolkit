@@ -24,6 +24,10 @@ import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import http.server
 from typing import Optional
+import hashlib
+import base64
+import random
+import string
 
 
 class Auth:
@@ -118,6 +122,91 @@ class Auth:
 
         # Return the token object using the global variables
         return Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
+
+    def auth3legPkce(self, clientId=None, callback_url=None, scopes=None) -> Token:
+        """
+            This method is used to authenticate a user using the 3-legged OAuth PKCE flow.
+            https://aps.autodesk.com/blog/new-application-types
+            Parameters:
+            clientId (str, optional): The client ID of the application. If not provided, it will use the client ID from the environment variables.
+            callback_url (str, optional): The callback URL where the user will be redirected after authentication. If not provided, it defaults to "http://localhost:8080/api/auth/callback".
+            scopes (str, optional): The scopes for which the application is requesting access. If not provided, it defaults to 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'.
+
+            Returns:
+            Token: An instance of the Token class containing the access token, token type, expiration time, and refresh token (if available).
+            """
+        if clientId:
+            self.client_id = clientId
+        if not scopes:
+            scopes = 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'
+        if not callback_url:
+            # Default callback url
+            callback_url = "http://localhost:8080/api/auth/callback"
+
+        code_verifier = self.random_string(64)
+        code_challenge = self.generate_code_challenge(code_verifier)
+
+        class CallbackHandler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                nonlocal auth_instance
+                query = urllib.parse.urlparse(self.path).query
+                params = urllib.parse.parse_qs(query)
+                code = params.get('code', [''])[0]
+                if code:
+                    self.send_response(200)
+                    self.end_headers()
+                    self.wfile.write(b"Authentication successful. You can close this window now.")
+                    result_token = handle_callback(callback_url, code, auth_instance.client_id, code_verifier)
+                    auth_instance.access_token = result_token['access_token']
+                    auth_instance.token_type = result_token['token_type']
+                    auth_instance.expires_in = result_token['expires_in']
+                    auth_instance.refresh_token = result_token.get('refresh_token')
+
+                else:
+                    self.send_response(400)
+                    self.end_headers()
+                    self.wfile.write(b"Bad Request")
+
+        def handle_callback(callback_url, code, client_id, code_verifier):
+            token_url = "https://developer.api.autodesk.com/authentication/v2/token"
+            payload = {
+                "grant_type": "authorization_code",
+                "code": code,
+                "client_id": client_id,
+                "code_verifier": code_verifier,
+                "redirect_uri": callback_url
+            }
+            resp = requests.post(token_url, data=payload)
+            if resp.status_code != 200:
+                raise Exception(resp.content)
+            resp_json = resp.json()
+            return resp_json
+
+        def start_callback_server(callback_url):
+            parsed_url = urllib.parse.urlparse(callback_url)
+            server_address = ('', parsed_url.port if parsed_url.port else 8080)
+            httpd = HTTPServer(server_address, CallbackHandler)
+            httpd.handle_request()
+
+        auth_instance = self  # Reference to the Auth instance
+
+        auth_url = f"https://developer.api.autodesk.com/authentication/v2/authorize?response_type=code&client_id={self.client_id}&redirect_uri={callback_url}&scope={scopes}&code_challenge={code_challenge}&code_challenge_method=S256"
+        webbrowser.open(auth_url)
+        start_callback_server(callback_url)
+
+        # Return the token object using the global variables
+        return Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
+
+    @staticmethod
+    def random_string(length):
+        chars = string.ascii_letters + string.digits + '-._~'
+        return ''.join(random.choice(chars) for _ in range(length))
+
+    @staticmethod
+    def generate_code_challenge(code_verifier):
+        sha256 = hashlib.sha256(code_verifier.encode()).digest()
+        code_challenge = base64.urlsafe_b64encode(sha256).rstrip(b'=')
+        return code_challenge.decode()
 
     def refresh_new_token(self, old_refresh_token) -> Token:
         Host = "https://developer.api.autodesk.com"

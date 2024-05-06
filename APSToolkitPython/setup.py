@@ -6,7 +6,7 @@ with open("Readme.md") as f:
 
 setuptools.setup(
     name="aps-toolkit",
-    version="0.5.5",
+    version="0.5.6",
     author="chuong mep",
     author_email="chuongpqvn@gmail.com",
     description="A Toolkit Autodesk Platform Services for Python",
