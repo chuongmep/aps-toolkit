@@ -55,10 +55,10 @@ class Auth:
         if response.status_code != 200:
             raise Exception(response.content)
         content = response.json()
-        access_token = content['access_token']
-        expires_in = content['expires_in']
-        token_type = content['token_type']
-        result = Token(access_token, token_type, expires_in)
+        self.access_token = content['access_token']
+        self.expires_in = content['expires_in']
+        self.token_type = content['token_type']
+        result = Token(self.access_token, self.token_type, self.expires_in)
         return result
 
     def auth3leg(self, callback_url=None, scopes=None) -> Token:
@@ -134,9 +134,9 @@ class Auth:
         if response.status_code != 200:
             raise Exception(response.content)
         content = response.json()
-        access_token = content['access_token']
-        expires_in = content['expires_in']
-        token_type = content['token_type']
-        refresh_token = content.get('refresh_token')
-        result = Token(access_token, token_type, expires_in, refresh_token)
+        self.access_token = content['access_token']
+        self.expires_in = content['expires_in']
+        self.token_type = content['token_type']
+        self.refresh_token = content.get('refresh_token')
+        result = Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
         return result
