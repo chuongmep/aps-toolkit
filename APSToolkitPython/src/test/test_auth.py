@@ -35,3 +35,9 @@ class TestAuth(TestCase):
         print("New Fresh Token", new_token.refresh_token)
         self.assertNotEquals(token.access_token, "")
         self.assertNotEquals(token.refresh_token, "")
+
+    def test_get_user_info(self):
+        auth = Auth()
+        token = auth.auth3leg()
+        user_info = auth.get_user_info()
+        self.assertNotEquals(user_info, "")

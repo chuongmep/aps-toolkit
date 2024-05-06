@@ -140,3 +140,15 @@ class Auth:
         self.refresh_token = content.get('refresh_token')
         result = Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
         return result
+
+    def get_user_info(self):
+        if not self.access_token:
+            raise Exception("Access token is required, please authenticate first. Use auth2leg or auth3leg method.")
+        url = "https://api.userprofile.autodesk.com/userinfo"
+        headers = {
+            "Authorization": f"{self.token_type} {self.access_token}"
+        }
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        return response.json()
