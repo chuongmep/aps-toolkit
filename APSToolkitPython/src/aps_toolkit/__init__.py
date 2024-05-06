@@ -1,4 +1,5 @@
 from .Auth import Auth
+from .AuthGoogleColab import AuthGoogleColab
 from .BIM360 import BIM360
 from .ProDbReaderRevit import PropDbReaderRevit
 from .ProDbReaderCad import PropDbReaderCad
