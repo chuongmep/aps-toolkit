@@ -44,16 +44,19 @@ class Auth:
         self.expires_in = None
         self.refresh_token = None
 
-    def auth2leg(self) -> Token:
+    def auth2leg(self, scopes=None) -> Token:
         Host = "https://developer.api.autodesk.com"
         url = "/authentication/v2/token"
-
+        if not scopes:
+            scopes = "data:read data:write data:search data:create bucket:read bucket:create user:read bucket:update bucket:delete code:all"
+        else:
+            scopes = scopes
         # body
         body = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
             "grant_type": "client_credentials",
-            "scope": "data:read data:write data:search data:create bucket:read bucket:create user:read bucket:update bucket:delete code:all"
+            "scope": scopes
         }
         response = requests.post(Host + url, data=body)
         if response.status_code != 200:
