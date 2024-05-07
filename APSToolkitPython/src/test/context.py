@@ -24,6 +24,7 @@ from aps_toolkit import SVFMaterials
 from aps_toolkit import SVFImage
 from aps_toolkit import SVFMetadata
 from aps_toolkit import Bucket
+from aps_toolkit import Webhooks
 
 APS_CLIENT_ID = os.environ["APS_CLIENT_ID"]
 APS_CLIENT_SECRET = os.environ["APS_CLIENT_SECRET"]
