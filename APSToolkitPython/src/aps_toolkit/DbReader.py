@@ -58,6 +58,6 @@ class DbReader:
             file.write(response.content)
             file.close()
 
-    def execute_query(self, query):
+    def execute_query(self, query: str):
         conn = sqlite3.connect(self.db_path)
         return pd.read_sql_query(query, conn)

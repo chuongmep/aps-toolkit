@@ -19,10 +19,11 @@ from typing import List
 import pandas as pd
 from .ManifestItem import ManifestItem
 from .PropReader import PropReader
+from .Token import Token
 
 
 class PropDbReaderCad(PropReader):
-    def __int__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
+    def __int__(self, urn: str, token: Token, region: str = "US", manifest_item: [ManifestItem] = None):
         super().__init__(urn, token, region, manifest_item)
 
     def get_document_info(self) -> pd.Series:

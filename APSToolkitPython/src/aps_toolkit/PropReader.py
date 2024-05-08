@@ -24,11 +24,12 @@ from .ManifestItem import ManifestItem
 import pandas as pd
 from typing import List
 from .units.DisplayUnits import DisplayUnits
+from .Token import Token
 
 
 class PropReader:
 
-    def __init__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
+    def __init__(self, urn: str, token: Token, region: str = "US", manifest_item: [ManifestItem] = None):
         # get manifest
         self.host = "https://developer.api.autodesk.com"
         self.urn = urn

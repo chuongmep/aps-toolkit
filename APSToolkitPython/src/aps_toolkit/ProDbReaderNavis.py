@@ -21,10 +21,11 @@ import json
 import requests
 from .PropReader import PropReader
 from .ManifestItem import ManifestItem
+from .Token import Token
 
 
 class PropDbReaderNavis(PropReader):
-    def __int__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
+    def __int__(self, urn, token: Token, region="US", manifest_item: [ManifestItem] = None):
         super().__init__(urn, token, region, manifest_item)
 
     def _get_recursive_child(self, output, id, name):

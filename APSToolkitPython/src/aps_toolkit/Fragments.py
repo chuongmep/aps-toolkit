@@ -17,6 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from .PackFileReader import PackFileReader
 from .Derivative import Derivative
 from .ManifestItem import ManifestItem
+from .Token import Token
+
+
 class Fragments:
     def __init__(self):
         self.visible = False
@@ -27,7 +30,7 @@ class Fragments:
         self.bbox = [0, 0, 0, 0, 0, 0]
 
     @staticmethod
-    def parse_fragments_from_urn(urn, token, region="US") -> dict:
+    def parse_fragments_from_urn(urn: str, token: Token, region: str = "US") -> dict:
         """
         Parse fragments from urn
         :param urn: the urn of the model

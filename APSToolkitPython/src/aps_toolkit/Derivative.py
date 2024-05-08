@@ -27,17 +27,18 @@ import os
 from .PathInfo import PathInfo
 from .Resource import Resource
 from .ManifestItem import ManifestItem
+from .Token import Token
 import json
 
 
 class Derivative:
-    def __init__(self, urn, token, region="US"):
+    def __init__(self, urn: str, token: Token, region: str = "US"):
         self.urn = urn
         self.token = token
         self.region = region
         self.host = "https://developer.api.autodesk.com"
 
-    def translate_job(self, root_file_name, type="svf", generate_master_views=False):
+    def translate_job(self, root_file_name: str, type: str = "svf", generate_master_views: bool = False):
         url = "https://developer.api.autodesk.com/modelderivative/v2/designdata/job"
         access_token = self.token.access_token
         if not access_token:
@@ -138,7 +139,7 @@ class Derivative:
                     continue
         return manifest_items
 
-    def read_svf_resource_item(self, manifest_item) -> List[Resource]:
+    def read_svf_resource_item(self, manifest_item: ManifestItem) -> List[Resource]:
         """
         Reads SVF resource items from the manifest item.
 
@@ -176,7 +177,7 @@ class Derivative:
             resources[manifest_item.guid] = source_items
         return resources
 
-    def _unzip_svf(self, svf_urn):
+    def _unzip_svf(self, svf_urn: str):
         """
         Retrieves and unzips the manifest associated with the given URN.
 
@@ -207,7 +208,7 @@ class Derivative:
 
         return manifest_json
 
-    def read_svf_metadata(self, svf_urn):
+    def read_svf_metadata(self, svf_urn: str):
         """
         Retrieves and unzips the manifest associated with the given URN.
 
@@ -258,7 +259,7 @@ class Derivative:
 
         return files
 
-    def _decompose_urn(self, encodedUrn):
+    def _decompose_urn(self, encodedUrn: str):
         """
             Decomposes the given encoded URN into its constituent parts.
 
@@ -278,7 +279,7 @@ class Derivative:
 
         return PathInfo(rootFileName, basePath, localPath, urn)
 
-    def download_stream_resource(self, resource) -> BytesIO:
+    def download_stream_resource(self, resource: Resource) -> BytesIO:
         """
         Downloads a resource from a URL and returns it as a stream.
 
@@ -299,7 +300,7 @@ class Derivative:
         response = requests.get(url, headers=headers)
         return BytesIO(response.content)
 
-    def download_resource(self, resource, local_path) -> str:
+    def download_resource(self, resource: Resource, local_path: str) -> str:
         """
         Downloads a resource from a URL and saves it to a local path.
 

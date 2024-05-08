@@ -17,10 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import requests
 import pandas as pd
 from .Auth import Auth
+from .Token import Token
 
 
 class BIM360:
-    def __init__(self, token=None):
+    def __init__(self, token: Token = None):
         self.token = token
         if self.token is None:
             auth = Auth()
