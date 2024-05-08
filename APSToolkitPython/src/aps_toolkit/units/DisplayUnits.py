@@ -29,12 +29,11 @@ class DisplayUnits:
                 self.units = json.load(file)
                 # convert to dict
                 self.units = {unit["TypeId"]: unit["UnitLabel"] for unit in self.units}
-            print("Units loaded")
         except FileNotFoundError:
             print(f"Error: File '{file_path}' not found.")
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON file: {e}")
 
-    def parse_symbol(self, type_id):
+    def parse_symbol(self, type_id: str):
         type_id = type_id.split("-")[0]
         return self.units.get(type_id, "Unknown")

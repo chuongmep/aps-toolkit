@@ -65,7 +65,7 @@ class PropDbReaderCad(PropReader):
                             db_categories[child] = p.value
         return db_categories
 
-    def get_data_by_category(self, category) -> pd.DataFrame:
+    def get_data_by_category(self, category: str) -> pd.DataFrame:
         """
         Get data by cad category : eg: MText, Line, Circle, ...
         :param category: the category name of cad file, e.g : MText, Line, Circle,Tables ...

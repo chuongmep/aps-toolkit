@@ -49,7 +49,7 @@ class PropReader:
         else:
             raise Exception("No manifest item found")
 
-    def _read_metadata_item(self, derivative, manifest_item):
+    def _read_metadata_item(self, derivative: Derivative, manifest_item: ManifestItem):
         items = [
             "objects_attrs.json.gz",
             "objects_vals.json.gz",

@@ -139,7 +139,7 @@ class PropDbReaderRevit(PropReader):
         self._get_recursive_child(categories, 1, "_RC")
         return categories
 
-    def get_all_data(self, is_get_sub_family=False, display_unit=False) -> pd.DataFrame:
+    def get_all_data(self, is_get_sub_family: bool = False, display_unit: bool = False) -> pd.DataFrame:
         """
         Get all data from model, include all categories
         :param is_get_sub_family: the flag to get sub family or not, default is False
@@ -172,7 +172,8 @@ class PropDbReaderRevit(PropReader):
         self._get_recursive_child(families_types, 1, "_RFT")
         return families_types
 
-    def get_data_by_category(self, category, is_get_sub_family=False, display_unit=False) -> pd.DataFrame:
+    def get_data_by_category(self, category: str, is_get_sub_family: bool = False,
+                             display_unit: bool = False) -> pd.DataFrame:
         """
         Get data by category in model
         :param category: the category name need get data, e.g: Walls, Doors, Windows, etc
@@ -188,8 +189,8 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids(category_id, is_get_sub_family, display_unit)
         return dataframe
 
-    def get_data_by_categories(self, categories: List[str], is_get_sub_family=False,
-                               display_unit=False) -> pd.DataFrame:
+    def get_data_by_categories(self, categories: List[str], is_get_sub_family: bool = False,
+                               display_unit: bool = False) -> pd.DataFrame:
         """
         Get data by list of categories in model
         :param categories: the list of categories need get data, e.g: ["Walls", "Doors", "Windows"]
@@ -204,7 +205,7 @@ class PropDbReaderRevit(PropReader):
         return dataframe
 
     def get_data_by_categories_and_params(self, categories: List[str], params: List[str],
-                                          is_get_sub_family=False, display_unit=False) -> pd.DataFrame:
+                                          is_get_sub_family: bool = False, display_unit: bool = False) -> pd.DataFrame:
         """
         Get data by list of categories and list of parameters in model
         :param categories: the list of categories need get data, e.g: ["Walls", "Doors", "Windows"]
@@ -225,7 +226,8 @@ class PropDbReaderRevit(PropReader):
                                      subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
         return dataframe
 
-    def get_data_by_family(self, family_name, is_get_sub_family=False, display_unit=False) -> pd.DataFrame:
+    def get_data_by_family(self, family_name: str, is_get_sub_family: bool = False,
+                           display_unit: bool = False) -> pd.DataFrame:
         """
         Get data by family name in model
         :param family_name: the family name need get data, e.g: "Seating-LAMMHULTS-PENNE-Chair"
@@ -238,7 +240,8 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids(category_id, is_get_sub_family, display_unit)
         return dataframe
 
-    def get_data_by_family_type(self, family_type, is_get_sub_family=False, display_unit=False) -> pd.DataFrame:
+    def get_data_by_family_type(self, family_type: str, is_get_sub_family: bool = False,
+                                display_unit: bool = False) -> pd.DataFrame:
         """
         Get data by family type in model
         :param family_type:  the family type name need get data, e.g: "Plastic-Seat"
@@ -251,7 +254,7 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids(type_id, is_get_sub_family, display_unit)
         return dataframe
 
-    def _get_recursive_ids(self, db_ids: List[int], get_sub_family, display_unit=False) -> pd.DataFrame:
+    def _get_recursive_ids(self, db_ids: List[int], get_sub_family: bool, display_unit: bool = False) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
         if len(db_ids) == 0:
@@ -308,8 +311,8 @@ class PropDbReaderRevit(PropReader):
                 ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
-    def _get_recursive_ids_prams(self, childs: List[int], params: List[str], get_sub_family,
-                                 display_unit=False) -> pd.DataFrame:
+    def _get_recursive_ids_prams(self, childs: List[int], params: List[str], get_sub_family: bool,
+                                 display_unit: bool = False) -> pd.DataFrame:
         """
         Get recursive ids by list of parameters
         :param childs:  List of child ids, ids is database id
@@ -387,7 +390,8 @@ class PropDbReaderRevit(PropReader):
                 ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
         return dataframe
 
-    def get_data_by_external_id(self, external_id, is_get_sub_family=False, display_unit=False) -> pd.DataFrame:
+    def get_data_by_external_id(self, external_id: str, is_get_sub_family: bool = False,
+                                display_unit: bool = False) -> pd.DataFrame:
         """
         Get data by external id(UniqueId Element) in model
         :param external_id:  The unique id of element in model
@@ -405,7 +409,7 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids([db_id], is_get_sub_family, display_unit)
         return dataframe
 
-    def get_data_by_element_id(self, element_id) -> dict:
+    def get_data_by_element_id(self, element_id: str) -> dict:
         """
         Get data by element id in model
         :param element_id:  the element id of element in model. e.g: 9895625

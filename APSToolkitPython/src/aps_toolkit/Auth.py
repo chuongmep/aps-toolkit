@@ -244,6 +244,7 @@ class Auth:
     def get_user_info(self) -> dict:
         """
         This method is used to get user information.
+        It requires OAuth 2.0 authentication with 3-legged flow.
         https://developer.api.autodesk.com/userprofile/v1/userinfo
         :return:  A dictionary containing user information.
         """
