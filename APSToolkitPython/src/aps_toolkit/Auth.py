@@ -45,6 +45,11 @@ class Auth:
         self.refresh_token = None
 
     def auth2leg(self) -> Token:
+        """
+        This method is used to authenticate an application using the 2-legged OAuth flow.
+        https://aps.autodesk.com/en/docs/oauth/v2/tutorials/get-2-legged-token/
+       :return: :class:`Token`: An instance of the Token class containing the access token, token type, and expiration time.
+        """
         Host = "https://developer.api.autodesk.com"
         url = "/authentication/v2/token"
 
@@ -66,6 +71,13 @@ class Auth:
         return result
 
     def auth3leg(self, callback_url=None, scopes=None) -> Token:
+        """
+        This method is used to authenticate a user using the 3-legged OAuth flow.
+        https://aps.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token/
+        :param callback_url: This is the URL-encoded callback URL you want the user redirected to after they grant consent. In this example, that URL is http://localhost:8080/oauth/callback/. Replace the value here with the appropriate URL for your web app. Note that it must match the pattern specified for the callback URL in your app’s registration in the APS developer portal.
+        :param scopes: This requests the data:read scope. You can leave this value as it is for the purpose of this example, but in your own app, you should request one or more scopes you actually need. If you need to include multiple scopes, you can include them all as space-delimited items. For example: scope=data:create%20data:read%20data:write includes data:read, data:write, and data:create scopes.
+        :return: :class:`Token`:  An instance of the Token class containing the access token, token type, expiration time, and refresh token (if available).
+        """
         if not scopes:
             scopes = 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'
         if not callback_url:
@@ -123,18 +135,17 @@ class Auth:
         # Return the token object using the global variables
         return Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
 
-    def auth3legPkce(self, clientId=None, callback_url=None, scopes=None) -> Token:
+    def auth3legPkce(self, clientId: Optional[str] = None, callback_url: Optional[str] = None,
+                     scopes: Optional[str] = None) -> Token:
         """
-            This method is used to authenticate a user using the 3-legged OAuth PKCE flow.
-            https://aps.autodesk.com/blog/new-application-types
-            Parameters:
-            clientId (str, optional): The client ID of the application. If not provided, it will use the client ID from the environment variables.
-            callback_url (str, optional): The callback URL where the user will be redirected after authentication. If not provided, it defaults to "http://localhost:8080/api/auth/callback".
-            scopes (str, optional): The scopes for which the application is requesting access. If not provided, it defaults to 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'.
-
-            Returns:
-            Token: An instance of the Token class containing the access token, token type, expiration time, and refresh token (if available).
-            """
+        This method is used to authenticate a user using the 3-legged OAuth PKCE flow.
+        https://aps.autodesk.com/blog/new-application-types
+        Parameters:
+        :param clientId: The client ID of the application. If not provided, it will use the client ID from the environment variables.
+        :param callback_url: The callback URL where the user will be redirected after authentication. If not provided, it defaults to "http://localhost:8080/api/auth/callback".
+        :param scopes: The scopes for which the application is requesting access. If not provided, it defaults to 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'.
+        :Returns: :class:`Token`: An instance of the Token class containing the access token, token type, expiration time, and refresh token (if available).
+        """
         if clientId:
             self.client_id = clientId
         if not scopes:
@@ -230,7 +241,12 @@ class Auth:
         result = Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
         return result
 
-    def get_user_info(self):
+    def get_user_info(self) -> dict:
+        """
+        This method is used to get user information.
+        https://developer.api.autodesk.com/userprofile/v1/userinfo
+        :return:  A dictionary containing user information.
+        """
         if not self.access_token:
             raise Exception("Access token is required, please authenticate first. Use auth2leg or auth3leg method.")
         url = "https://api.userprofile.autodesk.com/userinfo"
