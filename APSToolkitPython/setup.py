@@ -6,7 +6,7 @@ with open("Readme.md") as f:
 
 setuptools.setup(
     name="aps-toolkit",
-    version="0.5.8",
+    version="0.6.1",
     author="chuong mep",
     author_email="chuongpqvn@gmail.com",
     description="A Toolkit Autodesk Platform Services for Python",
@@ -24,5 +24,7 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.9",
-    install_requires=['requests', 'pandas']
+    install_requires=['requests', 'pandas'],
+    include_package_data=True,
+    data_files=[('aps_toolkit/units', ['src/aps_toolkit/units/units.json'])]
 )

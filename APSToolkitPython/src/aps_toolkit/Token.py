@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 class Token():
-    def __init__(self, access_token, token_type, expires_in, refresh_token=None):
+    def __init__(self, access_token: str, token_type: str, expires_in: int, refresh_token: str = None):
         self.access_token = access_token
         self.token_type = token_type
         self.expires_in = expires_in

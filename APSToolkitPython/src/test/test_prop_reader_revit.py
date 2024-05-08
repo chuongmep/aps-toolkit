@@ -44,11 +44,11 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(families_types, 0)
 
     def test_get_all_data(self):
-        data = self.prop_reader.get_all_data()
+        data = self.prop_reader.get_all_data(display_unit=True)
         self.assertIsNotNone(data)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("Windows", True)
+        df = self.prop_reader.get_data_by_category("Furniture", True, True)
         # check if dataframe have rows = 1
         df_rows = df.shape[0]
         self.assertNotEquals(df_rows, 0)
@@ -70,7 +70,7 @@ class TestPropDbReaderRevit(TestCase):
     def test_get_data_by_categories_and_params(self):
         df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
                                                                 ["name", "Category", "ElementId", "Width", "Height",
-                                                                 "IfcGUID"], True)
+                                                                 "IfcGUID"], True, display_unit=True)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_external_id(self):

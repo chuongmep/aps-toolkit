@@ -69,7 +69,7 @@ class Bucket:
             raise Exception(response.content)
         return response.json()
 
-    def delete_bucket(self, bucket_name: str) -> dict:
+    def delete_bucket(self, bucket_name: str):
         """
             Deletes a bucket in the Autodesk OSS API.
 

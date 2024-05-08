@@ -59,13 +59,13 @@ class PropDbReaderNavis(PropReader):
                 categories.append(self.attrs[i][1])
         return categories
 
-    def get_data_by_category(self, category) -> pd.DataFrame:
+    def get_data_by_category(self, category: str) -> pd.DataFrame:
         db_ids = [1]
         df = self._get_recursive_ids_by_category(db_ids, category)
         df = df.drop_duplicates(subset=df.columns.difference(['DbId']))
         return df
 
-    def _get_recursive_ids_by_category(self, db_ids: List[int], category) -> pd.DataFrame:
+    def _get_recursive_ids_by_category(self, db_ids: List[int], category: str) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
         if len(db_ids) == 0:
