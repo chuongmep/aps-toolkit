@@ -1,0 +1,1642 @@
+[
+  {
+    "TypeId": "autodesk.unit.unit:1ToRatio",
+    "UnitLabel": "1:",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:acres",
+    "UnitLabel": "acres",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:amperes",
+    "UnitLabel": "A",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:atmospheres",
+    "UnitLabel": "atm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:bars",
+    "UnitLabel": "bar",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnits",
+    "UnitLabel": "Btu",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerDegreeFahrenheit",
+    "UnitLabel": "BTU/°F",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerHour",
+    "UnitLabel": "Btu/h",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerHourCubicFoot",
+    "UnitLabel": "Btu/(h·ft³)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerHourFootDegreeFahrenheit",
+    "UnitLabel": "BTU/(h·ft·°F)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerHourSquareFoot",
+    "UnitLabel": "Btu/(h·ft²)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerHourSquareFootDegreeFahrenheit",
+    "UnitLabel": "BTU/(h·ft²·°F)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerPound",
+    "UnitLabel": "BTU/lb",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerPoundDegreeFahrenheit",
+    "UnitLabel": "BTU/(lb·°F)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerSecond",
+    "UnitLabel": "Btu/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:britishThermalUnitsPerSquareFootDegreeFahrenheit",
+    "UnitLabel": "BTU/(ft²·°F)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:calories",
+    "UnitLabel": "cal",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:caloriesPerSecond",
+    "UnitLabel": "cal/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:candelas",
+    "UnitLabel": "cd",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:candelasPerSquareFoot",
+    "UnitLabel": "cd/ft²",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:candelasPerSquareMeter",
+    "UnitLabel": "cd/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:celsius",
+    "UnitLabel": "°C",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:celsiusInterval",
+    "UnitLabel": "°C",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:centimeters",
+    "UnitLabel": "cm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:centimetersPerMinute",
+    "UnitLabel": "cm/min",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:centimetersToTheFourthPower",
+    "UnitLabel": "cm⁴",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:centimetersToTheSixthPower",
+    "UnitLabel": "cm⁶",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:centipoises",
+    "UnitLabel": "cP",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicCentimeters",
+    "UnitLabel": "cm³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeet",
+    "UnitLabel": "CF",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerHour",
+    "UnitLabel": "CFH",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerKip",
+    "UnitLabel": "ft³/kip",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerMinute",
+    "UnitLabel": "CFM",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerMinuteCubicFoot",
+    "UnitLabel": "CFM/CF",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerMinutePerBritishThermalUnitPerHour",
+    "UnitLabel": "ft³·h/(min·Btu)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerMinuteSquareFoot",
+    "UnitLabel": "CFM/ft²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerMinuteTonOfRefrigeration",
+    "UnitLabel": "CFM/ton",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicFeetPerPoundMass",
+    "UnitLabel": "ft³/lb",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicInches",
+    "UnitLabel": "in³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMeters",
+    "UnitLabel": "m³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMetersPerHour",
+    "UnitLabel": "CMH",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMetersPerHourCubicMeter",
+    "UnitLabel": "m³/(h·m³)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMetersPerHourSquareMeter",
+    "UnitLabel": "m³/(h·m²)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMetersPerKilogram",
+    "UnitLabel": "m³/kg",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMetersPerKilonewton",
+    "UnitLabel": "m³/kN",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMetersPerSecond",
+    "UnitLabel": "CMS",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMetersPerWattSecond",
+    "UnitLabel": "m³/(W·s)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicMillimeters",
+    "UnitLabel": "mm³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cubicYards",
+    "UnitLabel": "CY",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:currency",
+    "UnitLabel": "฿",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:currencyPerBritishThermalUnit",
+    "UnitLabel": "$/Btu",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:currencyPerBritishThermalUnitPerHour",
+    "UnitLabel": "$·h/Btu",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:currencyPerSquareFoot",
+    "UnitLabel": "$/ft²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:currencyPerSquareMeter",
+    "UnitLabel": "$/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:currencyPerWatt",
+    "UnitLabel": "$/W",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:currencyPerWattHour",
+    "UnitLabel": "$/(W·h)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:cyclesPerSecond",
+    "UnitLabel": "cps",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:decimeters",
+    "UnitLabel": "dm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:degrees",
+    "UnitLabel": "°",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:dekanewtonMeters",
+    "UnitLabel": "daN-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:dekanewtonMetersPerMeter",
+    "UnitLabel": "daN-m/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:dekanewtons",
+    "UnitLabel": "daN",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:dekanewtonsPerMeter",
+    "UnitLabel": "daN/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:dekanewtonsPerSquareMeter",
+    "UnitLabel": "daN/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:fahrenheit",
+    "UnitLabel": "°F",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:fahrenheitInterval",
+    "UnitLabel": "°F",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feet",
+    "UnitLabel": "'",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetOfWater39.2DegreesFahrenheit",
+    "UnitLabel": "Feet",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetOfWater39.2DegreesFahrenheitPer100Feet",
+    "UnitLabel": "Feet/100ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetPerKip",
+    "UnitLabel": "ft/kip",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetPerMinute",
+    "UnitLabel": "FPM",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetPerSecond",
+    "UnitLabel": "FPS",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetPerSecondSquared",
+    "UnitLabel": "ft/s²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetToTheFourthPower",
+    "UnitLabel": "ft⁴",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetToTheSixthPower",
+    "UnitLabel": "ft⁶",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:footcandles",
+    "UnitLabel": "fc",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:footlamberts",
+    "UnitLabel": "fL",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:gradians",
+    "UnitLabel": "grad",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:grains",
+    "UnitLabel": "gr",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:grainsPerHourSquareFootInchMercury",
+    "UnitLabel": "gr/(h·ft²·inHg)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:grams",
+    "UnitLabel": "g",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:hectares",
+    "UnitLabel": "hectare",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:hectometers",
+    "UnitLabel": "hm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:hertz",
+    "UnitLabel": "Hz",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:horsepower",
+    "UnitLabel": "hp",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:hourSquareFootDegreesFahrenheitPerBritishThermalUnit",
+    "UnitLabel": "(h·ft²·°F)/BTU",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:hours",
+    "UnitLabel": "h",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inches",
+    "UnitLabel": "in",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inchesOfMercury32DegreesFahrenheit",
+    "UnitLabel": "inHg",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inchesOfWater60DegreesFahrenheit",
+    "UnitLabel": "in-wg",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inchesOfWater60DegreesFahrenheitPer100Feet",
+    "UnitLabel": "in-wg/100ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inchesPerSecond",
+    "UnitLabel": "in/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inchesPerSecondSquared",
+    "UnitLabel": "in/s²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inchesToTheFourthPower",
+    "UnitLabel": "in⁴",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inchesToTheSixthPower",
+    "UnitLabel": "in⁶",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inverseDegreesCelsius",
+    "UnitLabel": "1/°C",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inverseDegreesFahrenheit",
+    "UnitLabel": "1/°F",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inverseKilonewtons",
+    "UnitLabel": "1/kN",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:inverseKips",
+    "UnitLabel": "1/kip",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:joules",
+    "UnitLabel": "J",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:joulesPerGram",
+    "UnitLabel": "J/g",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:joulesPerGramDegreeCelsius",
+    "UnitLabel": "J/(g·°C)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:joulesPerKelvin",
+    "UnitLabel": "J/K",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:joulesPerKilogram",
+    "UnitLabel": "J/kg",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:joulesPerKilogramDegreeCelsius",
+    "UnitLabel": "J/(kg·°C)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:joulesPerSquareMeterKelvin",
+    "UnitLabel": "J/(m²·K)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kelvin",
+    "UnitLabel": "K",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kelvinInterval",
+    "UnitLabel": "deltaK",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kiloamperes",
+    "UnitLabel": "kA",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilocalories",
+    "UnitLabel": "kcal",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilocaloriesPerSecond",
+    "UnitLabel": "kcal/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramForceMeters",
+    "UnitLabel": "kgf-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramForceMetersPerMeter",
+    "UnitLabel": "kgf-m/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramKelvins",
+    "UnitLabel": "kg·K",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilograms",
+    "UnitLabel": "kg",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsForce",
+    "UnitLabel": "kgf",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsForcePerMeter",
+    "UnitLabel": "kgf/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsForcePerSquareMeter",
+    "UnitLabel": "kgf/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerCubicMeter",
+    "UnitLabel": "kg/m³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerHour",
+    "UnitLabel": "kg/h",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerKilogramKelvin",
+    "UnitLabel": "kg/(kg·K)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerMeter",
+    "UnitLabel": "kg/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerMeterHour",
+    "UnitLabel": "kg/(m·h)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerMeterSecond",
+    "UnitLabel": "kg/(m·s)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerMinute",
+    "UnitLabel": "kg/min",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerSecond",
+    "UnitLabel": "kg/s",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilogramsPerSquareMeter",
+    "UnitLabel": "kg/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilojoules",
+    "UnitLabel": "kJ",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilojoulesPerKelvin",
+    "UnitLabel": "kJ/K",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilojoulesPerSquareMeterKelvin",
+    "UnitLabel": "kJ/(m²·K)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilometers",
+    "UnitLabel": "km",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilometersPerHour",
+    "UnitLabel": "km/h",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilometersPerSecond",
+    "UnitLabel": "km/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilometersPerSecondSquared",
+    "UnitLabel": "km/s²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonMeters",
+    "UnitLabel": "kN-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonMetersPerDegree",
+    "UnitLabel": "kN-m/°",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonMetersPerDegreePerMeter",
+    "UnitLabel": "kN-m/°/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonMetersPerMeter",
+    "UnitLabel": "kN-m/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtons",
+    "UnitLabel": "kN",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonsPerCubicMeter",
+    "UnitLabel": "kN/m³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonsPerMeter",
+    "UnitLabel": "kN/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonsPerSquareCentimeter",
+    "UnitLabel": "kN/cm²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonsPerSquareMeter",
+    "UnitLabel": "kN/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilonewtonsPerSquareMillimeter",
+    "UnitLabel": "kN/mm²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilopascals",
+    "UnitLabel": "kPa",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilovoltAmperes",
+    "UnitLabel": "kVA",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilovolts",
+    "UnitLabel": "kV",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilowattHours",
+    "UnitLabel": "kWh",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kilowatts",
+    "UnitLabel": "kW",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipFeet",
+    "UnitLabel": "kip-ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipFeetPerDegree",
+    "UnitLabel": "kip-ft/°",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipFeetPerDegreePerFoot",
+    "UnitLabel": "kip-ft/°/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipFeetPerFoot",
+    "UnitLabel": "kip-ft/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kips",
+    "UnitLabel": "kip",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipsPerCubicFoot",
+    "UnitLabel": "kip/ft³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipsPerCubicInch",
+    "UnitLabel": "kip/in³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipsPerFoot",
+    "UnitLabel": "kip/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipsPerInch",
+    "UnitLabel": "kip/in",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipsPerSquareFoot",
+    "UnitLabel": "kip/ft²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:kipsPerSquareInch",
+    "UnitLabel": "kip/in²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:liters",
+    "UnitLabel": "L",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:litersPerHour",
+    "UnitLabel": "L/h",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:litersPerMinute",
+    "UnitLabel": "L/min",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:litersPerSecond",
+    "UnitLabel": "L/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:litersPerSecondCubicMeter",
+    "UnitLabel": "L/(s·m³)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:litersPerSecondKilowatt",
+    "UnitLabel": "L/(s·kW)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:litersPerSecondSquareMeter",
+    "UnitLabel": "L/(s·m²)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:lumens",
+    "UnitLabel": "lm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:lumensPerWatt",
+    "UnitLabel": "lm/W",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:lux",
+    "UnitLabel": "lx",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:meganewtonMeters",
+    "UnitLabel": "MN-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:meganewtonMetersPerMeter",
+    "UnitLabel": "MN-m/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:meganewtons",
+    "UnitLabel": "MN",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:meganewtonsPerMeter",
+    "UnitLabel": "MN/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:meganewtonsPerSquareMeter",
+    "UnitLabel": "MN/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:megapascals",
+    "UnitLabel": "MPa",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:meters",
+    "UnitLabel": "m",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersOfWaterColumn",
+    "UnitLabel": "mH2O",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersOfWaterColumnPerMeter",
+    "UnitLabel": "mH2O/m",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersPerKilonewton",
+    "UnitLabel": "m/kN",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersPerSecond",
+    "UnitLabel": "m/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersPerSecondSquared",
+    "UnitLabel": "m/s²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersToTheFourthPower",
+    "UnitLabel": "m⁴",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersToTheSixthPower",
+    "UnitLabel": "m⁶",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:microinchesPerInchDegreeFahrenheit",
+    "UnitLabel": "µin/(in·°F)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:micrometersPerMeterDegreeCelsius",
+    "UnitLabel": "µm/(m·°C)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:miles",
+    "UnitLabel": "mi",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:milesPerHour",
+    "UnitLabel": "mph",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:milesPerSecond",
+    "UnitLabel": "mi/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:milesPerSecondSquared",
+    "UnitLabel": "mi/s²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:milliamperes",
+    "UnitLabel": "mA",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:milligrams",
+    "UnitLabel": "mg",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:millimeters",
+    "UnitLabel": "mm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:millimetersOfMercury",
+    "UnitLabel": "mmHg",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:millimetersOfWaterColumn",
+    "UnitLabel": "mmH2O",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:millimetersOfWaterColumnPerMeter",
+    "UnitLabel": "mmH2O/m",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:millimetersToTheFourthPower",
+    "UnitLabel": "mm⁴",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:millimetersToTheSixthPower",
+    "UnitLabel": "mm⁶",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:milliseconds",
+    "UnitLabel": "ms",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:millivolts",
+    "UnitLabel": "mV",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:minutes",
+    "UnitLabel": "min",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:nanograms",
+    "UnitLabel": "ng",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:nanogramsPerPascalSecondSquareMeter",
+    "UnitLabel": "ng/(Pa·s·m²)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:newtonMeters",
+    "UnitLabel": "N-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:newtonMetersPerMeter",
+    "UnitLabel": "N-m/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:newtonSecondsPerSquareMeter",
+    "UnitLabel": "N·s/m²",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:newtons",
+    "UnitLabel": "N",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:newtonsPerMeter",
+    "UnitLabel": "N/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:newtonsPerSquareMeter",
+    "UnitLabel": "N/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:newtonsPerSquareMillimeter",
+    "UnitLabel": "N/mm²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ohmMeters",
+    "UnitLabel": "ohm·m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ohms",
+    "UnitLabel": "ohm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:pascalSeconds",
+    "UnitLabel": "Pa-s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:pascals",
+    "UnitLabel": "Pa",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:pascalsPerMeter",
+    "UnitLabel": "Pa/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:perMille",
+    "UnitLabel": "‰",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:percentage",
+    "UnitLabel": "%",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:pi",
+    "UnitLabel": "π",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poises",
+    "UnitLabel": "P",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundForceFeet",
+    "UnitLabel": "lb-ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundForceFeetPerFoot",
+    "UnitLabel": "lb-ft/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundForceSecondsPerSquareFoot",
+    "UnitLabel": "lb·s/ft²",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundMassDegreesFahrenheit",
+    "UnitLabel": "lb·°F",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsForce",
+    "UnitLabel": "lb",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsForcePerCubicFoot",
+    "UnitLabel": "lb/ft³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsForcePerFoot",
+    "UnitLabel": "lb/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsForcePerSquareFoot",
+    "UnitLabel": "lb/ft²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsForcePerSquareInch",
+    "UnitLabel": "lb/in²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMass",
+    "UnitLabel": "lb",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerCubicFoot",
+    "UnitLabel": "lb/ft³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerCubicInch",
+    "UnitLabel": "lb/in³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerFoot",
+    "UnitLabel": "lb/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerFootHour",
+    "UnitLabel": "lb/ft-h",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerFootSecond",
+    "UnitLabel": "lb/ft-s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerHour",
+    "UnitLabel": "lb/h",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerMinute",
+    "UnitLabel": "lb/min",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerPoundDegreeFahrenheit",
+    "UnitLabel": "lb/(lb·°F)",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerSecond",
+    "UnitLabel": "lb/s",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:poundsMassPerSquareFoot",
+    "UnitLabel": "lb/ft²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:radians",
+    "UnitLabel": "rad",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:radiansPerSecond",
+    "UnitLabel": "rad/s",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:rankine",
+    "UnitLabel": "°R",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:rankineInterval",
+    "UnitLabel": "°R",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ratioTo1",
+    "UnitLabel": ":1",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ratioTo10",
+    "UnitLabel": ":10",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ratioTo12",
+    "UnitLabel": ":12",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:revolutionsPerMinute",
+    "UnitLabel": "RPM",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:revolutionsPerSecond",
+    "UnitLabel": "RPS",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:seconds",
+    "UnitLabel": "s",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareCentimeters",
+    "UnitLabel": "cm²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareCentimetersPerMeter",
+    "UnitLabel": "cm²/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareFeet",
+    "UnitLabel": "ft²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareFeetPer1000BritishThermalUnitsPerHour",
+    "UnitLabel": "ft²·h/kBtu",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareFeetPerFoot",
+    "UnitLabel": "ft²/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareFeetPerKip",
+    "UnitLabel": "ft²/kip",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareFeetPerSecond",
+    "UnitLabel": "ft²/s",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareFeetPerTonOfRefrigeration",
+    "UnitLabel": "ft²/ton",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareHectometers",
+    "UnitLabel": "hm²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareInches",
+    "UnitLabel": "in²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareInchesPerFoot",
+    "UnitLabel": "in²/ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMeterKelvinsPerWatt",
+    "UnitLabel": "(m²·K)/W",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMeters",
+    "UnitLabel": "m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMetersPerKilonewton",
+    "UnitLabel": "m²/kN",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMetersPerKilowatt",
+    "UnitLabel": "m²/kW",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMetersPerMeter",
+    "UnitLabel": "m²/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMetersPerSecond",
+    "UnitLabel": "m²/s",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMillimeters",
+    "UnitLabel": "mm²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMillimetersPerMeter",
+    "UnitLabel": "mm²/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareYards",
+    "UnitLabel": "yd²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:standardGravity",
+    "UnitLabel": "𝘨",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:steradians",
+    "UnitLabel": "sr",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:therms",
+    "UnitLabel": "therm",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:thousandBritishThermalUnitsPerHour",
+    "UnitLabel": "MBH",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:tonneForceMeters",
+    "UnitLabel": "Tf-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:tonneForceMetersPerMeter",
+    "UnitLabel": "Tf-m/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:tonnes",
+    "UnitLabel": "t",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:tonnesForce",
+    "UnitLabel": "Tf",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:tonnesForcePerMeter",
+    "UnitLabel": "Tf/m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:tonnesForcePerSquareMeter",
+    "UnitLabel": "Tf/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:tonsOfRefrigeration",
+    "UnitLabel": "ton",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:turns",
+    "UnitLabel": "tr",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:usGallons",
+    "UnitLabel": "gal",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:usGallonsPerHour",
+    "UnitLabel": "gal/h",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:usGallonsPerMinute",
+    "UnitLabel": "gal/min",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:usSurveyFeet",
+    "UnitLabel": "USft",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:usTonnesForce",
+    "UnitLabel": "STf",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:usTonnesMass",
+    "UnitLabel": "ST",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:voltAmperes",
+    "UnitLabel": "VA",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:volts",
+    "UnitLabel": "V",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:watts",
+    "UnitLabel": "W",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerCubicFoot",
+    "UnitLabel": "W/ft³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerCubicFootPerMinute",
+    "UnitLabel": "W·min/ft³",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerCubicMeter",
+    "UnitLabel": "W/m³",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerCubicMeterPerSecond",
+    "UnitLabel": "W·s/m³",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerFoot",
+    "UnitLabel": "W/ft",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerMeter",
+    "UnitLabel": "W/m",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerMeterKelvin",
+    "UnitLabel": "W/(m·K)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerSquareFoot",
+    "UnitLabel": "W/ft²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerSquareMeter",
+    "UnitLabel": "W/m²",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:wattsPerSquareMeterKelvin",
+    "UnitLabel": "W/(m²·K)",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:yards",
+    "UnitLabel": "yd",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:slopeDegrees",
+    "UnitLabel": "°",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ampereHours",
+    "UnitLabel": "A-h",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ampereSeconds",
+    "UnitLabel": "A-s",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:circularMils",
+    "UnitLabel": "cmil",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:coulombs",
+    "UnitLabel": "C",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:dynes",
+    "UnitLabel": "dyn",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ergs",
+    "UnitLabel": "erg",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:farads",
+    "UnitLabel": "F",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:feetPerKipFoot",
+    "UnitLabel": "ft/kip-ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:gammas",
+    "UnitLabel": "gamma",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:gauss",
+    "UnitLabel": "Gs",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:henries",
+    "UnitLabel": "H",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:maxwells",
+    "UnitLabel": "Mx",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:metersPerKilonewtonMeter",
+    "UnitLabel": "m/kN-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:mhos",
+    "UnitLabel": "mho",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:microns",
+    "UnitLabel": "micron",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:mils",
+    "UnitLabel": "mil",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:nauticalMiles",
+    "UnitLabel": "M",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:oersteds",
+    "UnitLabel": "Oe",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ouncesForce",
+    "UnitLabel": "ozf",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:ouncesMass",
+    "UnitLabel": "oz",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:siemens",
+    "UnitLabel": "S",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:slugs",
+    "UnitLabel": "slug",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareFeetPerKipFoot",
+    "UnitLabel": "ft²/kip-ft",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMetersPerKilonewtonMeter",
+    "UnitLabel": "m²/kN-m",
+    "Version": "1.0.1"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:squareMils",
+    "UnitLabel": "mil^2",
+    "Version": "1.0.0"
+  },
+  {
+    "TypeId": "autodesk.unit.unit:webers",
+    "UnitLabel": "Wb",
+    "Version": "1.0.0"
+  }
+]

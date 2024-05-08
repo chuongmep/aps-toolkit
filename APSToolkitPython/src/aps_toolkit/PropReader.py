@@ -23,6 +23,7 @@ from .Derivative import Derivative
 from .ManifestItem import ManifestItem
 import pandas as pd
 from typing import List
+from .units.DisplayUnits import DisplayUnits
 
 
 class PropReader:
@@ -38,6 +39,7 @@ class PropReader:
             self._read_metadata_item(derivative, manifest_item)
         else:
             self._read_metadata()
+        self.units = DisplayUnits()
 
     def _read_metadata(self):
         derivative = Derivative(self.urn, self.token, self.region)
@@ -128,6 +130,18 @@ class PropReader:
         props = {}
         for prop in self.enumerate_properties(id):
             props[prop.name] = prop.value
+        return props
+
+    def get_all_properties_display_unit(self, id) -> dict:
+        props = {}
+        for prop in self.enumerate_properties(id):
+            value = prop.value
+            unit_type = prop.data_type_context
+            if unit_type not in ["", None]:
+                unit = self.units.parse_symbol(unit_type)
+                props[prop.name] = f"{value} {unit}"
+            else:
+                props[prop.name] = value
         return props
 
     def get_property_values_by_names(self, names: List[str]) -> dict:
