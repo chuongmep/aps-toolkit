@@ -82,6 +82,11 @@ class PropReader:
         self.vals = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_vals.json.gz"]), 'utf-8'))
 
     def enumerate_properties(self, id) -> list:
+        """
+        Get all properties of an object
+        :param id: database id storage in the manifest file
+        :return: list of properties
+        """
         properties = []
         if 0 < id < len(self.offsets):
             av_start = 2 * self.offsets[id]
@@ -115,6 +120,11 @@ class PropReader:
     """
 
     def get_properties(self, id) -> dict:
+        """
+        Get all properties exclude internal properties
+        :param id:
+        :return:
+        """
         props = {}
         rg = re.compile(r'^__\w+__$')
         for prop in self.enumerate_properties(id):
@@ -122,17 +132,21 @@ class PropReader:
                 props[prop.name] = prop.value
         return props
 
-    """
-    Get all properties include internal properties
-    """
-
     def get_all_properties(self, id) -> dict:
+        """
+            Get all properties include internal properties
+        """
         props = {}
         for prop in self.enumerate_properties(id):
             props[prop.name] = prop.value
         return props
 
     def get_all_properties_display_unit(self, id) -> dict:
+        """
+        Get all properties include internal properties with display unit value
+        :param id: database id storage in the manifest file
+        :return: :class:`dict` of properties, key is property name, value is property value with display unit
+        """
         props = {}
         for prop in self.enumerate_properties(id):
             value = prop.value
@@ -163,6 +177,11 @@ class PropReader:
         return result
 
     def get_property_values_by_display_names(self, display_names: List[str]) -> dict:
+        """
+        Get property values by display names. e.g. : ["Name", "Category,"Comments"]
+        :param display_names: list of display names to get values
+        :return:
+        """
         result = {}
         for i in range(len(self.offsets)):
             av_start = 2 * self.offsets[i]
@@ -182,6 +201,11 @@ class PropReader:
         return result
 
     def get_properties_group_by_category(self, id) -> dict:
+        """
+        Get all properties group by category Property.
+        :param id: database id storage in the manifest file
+        :return: :class:`dict` of properties, key is category name, value is list of properties
+        """
         properties = {}
         rg = re.compile(r'^__\w+__$')
         categories = []
@@ -204,6 +228,11 @@ class PropReader:
         return properties
 
     def get_children(self, id) -> list:
+        """
+        Get all children of an object
+        :param id: database id storage in the manifest file
+        :return: list of children (database id)
+        """
         children = []
         for prop in self.enumerate_properties(id):
             if prop.category == "__child__":
@@ -211,6 +240,11 @@ class PropReader:
         return children
 
     def get_parent(self, id) -> list:
+        """
+        Get all parent of an object
+        :param id: database id storage in the manifest file
+        :return: list of parent (database id)
+        """
         parent = []
         for prop in self.enumerate_properties(id):
             if prop.category == "__parent__":
@@ -218,6 +252,11 @@ class PropReader:
         return parent
 
     def get_instance(self, id) -> list:
+        """
+        Get all instance of an object
+        :param id:  database id storage in the manifest file
+        :return:  list of instance (database id)
+        """
         instance_of = []
         for prop in self.enumerate_properties(id):
             if prop.category == "__instanceof__":
@@ -236,6 +275,11 @@ class PropReader:
     #     return self.get_recursive_ids(db_index_ids)
 
     def get_recursive_ids(self, db_ids: List[int]) -> pd.DataFrame:
+        """
+        Get all properties of all objects
+        :param db_ids:  list of database id storage in the manifest file
+        :return:  :class:`pandas.DataFrame` of properties
+        """
         dataframe = pd.DataFrame()
         props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
         if len(db_ids) == 0:
@@ -265,6 +309,12 @@ class PropReader:
         return dataframe
 
     def get_recursive_ids_by_parameters(self, db_ids: List[int], params: List[str]) -> pd.DataFrame:
+        """
+        Get all properties of all objects by parameters
+        :param db_ids:  list of database id storage in the manifest file
+        :param params:  list of parameters to get
+        :return:  :class:`pandas.DataFrame` of properties
+        """
         dataframe = pd.DataFrame()
         props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
         if len(db_ids) == 0:
@@ -295,6 +345,10 @@ class PropReader:
         return dataframe
 
     def get_all_properties_names(self) -> List[str]:
+        """
+        Get all properties names of all objects
+        :return: :class:`list` of properties names
+        """
         props_names = []
         for i in range(len(self.offsets)):
             av_start = 2 * self.offsets[i]
