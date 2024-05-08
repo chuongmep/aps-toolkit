@@ -40,7 +40,7 @@ class Webhooks:
         response = requests.get(url, headers=headers)
         return response.json()
 
-    def get_hook_by_id(self, hook_id: str, event="dm.version.added", system="data") -> dict:
+    def get_hook_by_id(self, hook_id: str, event: str = "dm.version.added", system: str = "data") -> dict:
         """
         Get details of a webhook based on its webhook ID
         https://aps.autodesk.com/en/docs/webhooks/v1/reference/http/webhooks/systems-system-events-event-hooks-hook_id-GET/
@@ -57,7 +57,7 @@ class Webhooks:
         response = requests.get(url, headers=headers)
         return response.json()
 
-    def delete_hook_by_id(self, hook_id: str, event="dm.version.added", system="data"):
+    def delete_hook_by_id(self, hook_id: str, event: str = "dm.version.added", system: str = "data"):
         """
         Delete a webhook based on its webhook ID
         https://aps.autodesk.com/en/docs/webhooks/v1/reference/http/webhooks/systems-system-events-event-hooks-hook_id-DELETE/
@@ -73,8 +73,8 @@ class Webhooks:
         }
         return requests.delete(url, headers=headers)
 
-    def create_system_event_hook(self, scope, callback_url="http://localhost:8080/api/webhooks/callback",
-                                 event="dm.version.added", system="data", hookAttribute=None):
+    def create_system_event_hook(self, scope: str, callback_url: str = "http://localhost:8080/api/webhooks/callback",
+                                 event: str = "dm.version.added", system: str = "data", hookAttribute: str = None):
         """
         Add new webhooks to receive the notification on all the events.
         https://aps.autodesk.com/en/docs/webhooks/v1/reference/http/webhooks/systems-system-hooks-POST/
