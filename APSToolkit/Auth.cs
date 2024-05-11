@@ -2,9 +2,12 @@
 
 using System.Diagnostics;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Autodesk.Forge;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace APSToolkit;
 
@@ -14,13 +17,23 @@ public class Auth
     private string? ClientSecret { get; set; }
 
     private Token Token { get; set; }
-    public Auth(string? clientId, string? clientSecret)
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Auth"/> class.
+    /// </summary>
+    /// <param name="clientId"></param>
+    /// <param name="clientSecret"></param>
+    public Auth(string? clientId=null, string? clientSecret=null)
     {
         this.ClientId = clientId;
         this.ClientSecret = clientSecret;
         this.Token = new Token();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Auth"/> class.
+    ///  If the client ID and client secret are not provided, the constructor retrieves them from the environment variables.
+    /// </summary>
     public Auth()
     {
         this.ClientId = Environment.GetEnvironmentVariable("APS_CLIENT_ID",EnvironmentVariableTarget.User);
@@ -53,7 +66,12 @@ public class Auth
         {
             throw new Exception("Missing APS_CLIENT_ID environment variable.");
         }
-
+        Scope[] scope = new Scope[]
+        {
+            Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.DataSearch, Scope.BucketCreate,
+            Scope.BucketRead, Scope.CodeAll,
+            Scope.BucketUpdate, Scope.BucketDelete
+        };
         return clientId;
     }
 
@@ -171,7 +189,6 @@ public class Auth
         Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", Token.RefreshToken, EnvironmentVariableTarget.User);
         return Token;
     }
-
     private async Task<Token?> HandleCallback(string callbackUrl, string? code)
     {
         var tokenUrl = "https://developer.api.autodesk.com/authentication/v2/token";
@@ -203,6 +220,119 @@ public class Auth
             // Handle any exceptions, such as if there's no default browser set
             Console.WriteLine($"Error opening default browser: {ex.Message}");
         }
+    }
+    public async Task<Token> Get3LeggedTokenPkce(string? callbackUrl = null, string? scopes = null)
+    {
+        if (string.IsNullOrEmpty(scopes))
+        {
+            scopes = "data:read";
+        }
+
+        if (string.IsNullOrEmpty(callbackUrl))
+        {
+            callbackUrl = "http://localhost:8080/api/auth/callback";
+        }
+        string codeVerifier = RandomString(64);
+        string codeChallenge = GenerateCodeChallenge(codeVerifier);
+        string authUrl = $"https://developer.api.autodesk.com/authentication/v2/authorize?response_type=code&client_id={ClientId}&redirect_uri={callbackUrl}&scope={scopes}&prompt=login&code_challenge={codeChallenge}&code_challenge_method=S256";
+        OpenDefaultBrowser(authUrl);
+        // get prefix from callbackUrl just get http://localhost:8080/api/auth/ from http://localhost:8080/api/auth/callback
+        string prefix = callbackUrl.Substring(0, callbackUrl.LastIndexOf('/'))+"/";
+        var listenerTask = CallListener(prefix, codeVerifier, callbackUrl, scopes);
+        await listenerTask;
+        Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", Token.RefreshToken, EnvironmentVariableTarget.User);
+        return Token;
+    }
+    private async Task CallListener(string prefix,string codeVerifier,string callbackUrl,string scopes)
+    {
+        if (!HttpListener.IsSupported)
+        {
+            throw new NotSupportedException("HttpListener is not supported in this context!");
+        }
+        if (prefix == null || prefix.Length == 0)
+            throw new ArgumentException("prefixes");
+        HttpListener listener = new HttpListener();
+        listener.Prefixes.Add(prefix);
+        listener.Start();
+        HttpListenerContext context = await listener.GetContextAsync();
+        HttpListenerRequest request = context.Request;
+        // Obtain a response object.
+        HttpListenerResponse response = context.Response;
+
+        try
+        {
+            string? authCode = request.Url?.Query.ToString().Split('=')[1];
+            await GetPkceToken(authCode,codeVerifier,callbackUrl,scopes);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        // Construct a response.
+        string responseString = "<HTML><BODY> Authentication successful. You can close this window now.</BODY></HTML>";
+        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+        // Get a response stream and write the response to it.
+        response.ContentLength64 = buffer.Length;
+        System.IO.Stream output = response.OutputStream;
+        output.Write(buffer, 0, buffer.Length);
+        // You must close the output stream.
+        output.Close();
+        listener.Stop();
+    }
+    private async Task GetPkceToken(string? authCode,string codeVerifier,string callbackUrl,string scopes)
+    {
+        try
+        {
+            var client = new HttpClient();
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri("https://developer.api.autodesk.com/authentication/v2/token"),
+                Content = new FormUrlEncodedContent(new Dictionary<string, string?>
+                {
+                    { "client_id", ClientId },
+                    { "code_verifier", codeVerifier },
+                    { "code", authCode},
+                    { "scope", scopes },
+                    { "grant_type", "authorization_code" },
+                    { "redirect_uri", callbackUrl }
+                }),
+            };
+
+            using (var response = await client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                string bodystring = await response.Content.ReadAsStringAsync();
+                JObject bodyjson = JObject.Parse(bodystring);
+                this.Token.AccessToken = bodyjson["access_token"]!.Value<string>();
+                this.Token.TokenType = bodyjson["token_type"]!.Value<string>();
+                this.Token.ExpiresIn = bodyjson["expires_in"]!.Value<int>();
+                this.Token.RefreshToken = bodyjson["refresh_token"]!.Value<string>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    private string RandomString(int length)
+    {
+        Random random = new Random();
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    private string GenerateCodeChallenge(string codeVerifier)
+    {
+        var sha256 = SHA256.Create();
+        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+        var b64Hash = Convert.ToBase64String(hash);
+        var code = Regex.Replace(b64Hash, "\\+", "-");
+        code = Regex.Replace(code, "\\/", "_");
+        code = Regex.Replace(code, "=+$", "");
+        return code;
     }
 
     /// <summary>

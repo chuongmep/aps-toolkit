@@ -26,9 +26,19 @@ public class AuthTest
     public void TestAuthentication3Leg()
     {
         Token = Auth.Get3LeggedToken().Result;
+        Assert.IsNotNull(Token.AccessToken);
         Assert.IsNotEmpty(Token.AccessToken);
     }
-
+    [Test]
+    public Task TestAuthentication3LegPkce()
+    {
+        string clientId = Environment.GetEnvironmentVariable("APS_CLIENT_ID_PKCE", EnvironmentVariableTarget.User);
+        Auth = new Auth(clientId);
+        Token = Auth.Get3LeggedTokenPkce().Result;
+        Assert.IsNotNull(Token.AccessToken);
+        Assert.IsNotEmpty(Token.RefreshToken);
+        return Task.CompletedTask;
+    }
     [Test]
     public Task TestRefresh3LegToken()
     {
