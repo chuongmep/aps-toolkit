@@ -87,11 +87,12 @@ class TestBIM360(TestCase):
         self.assertNotEquals(result, 0)
 
     def test_upload_file_item(self):
-        path = r"C:\Users\chuongho\Downloads\Feature Summary - Macro Tools Renovation.pdf"
-        result = self.bim360.upload_file_item(self.project_id, self.folder_id, path)
+        path = r"./test/resources/Test.dwg"
+        full_path = os.path.abspath(path)
+        result = self.bim360.upload_file_item(self.project_id, self.folder_id, full_path)
         self.assertNotEquals(result, 0)
 
     def test_delete_file_item(self):
-        file_name = "Feature Summary - Macro Tools Renovation.pdf"
+        file_name = "Test.dwg"
         result = self.bim360.delete_file_item(self.project_id, self.folder_id, file_name)
         self.assertNotEquals(result, 0)

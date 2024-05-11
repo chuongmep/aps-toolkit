@@ -403,3 +403,4 @@ output
 database
 
 **/_trial_temp*
+*.DS_Store
