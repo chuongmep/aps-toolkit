@@ -515,3 +515,42 @@ class BIM360:
         if response.status_code != 201:
             raise Exception(response.content)
         return response.content
+
+    def download_file_item(self, file_path: str, project_id: str, folder_id: str, file_name: str, version: int = -1):
+        """
+        Download a file in BIM 360 Docs or Autodesk Construction Cloud
+        :param file_path:  :class:`str` the path of file need to download
+        :param project_id:  :class:`str` the unique identifier of a project
+        :param folder_id:  :class:`str` the unique identifier of a folder
+        :param file_name:  :class:`str` the name of file at the folder need to download
+        :param version:  :class:`int` the version of file need to download
+        :return:  :class:`str` the path of file after download
+        """
+        item_id = self._get_item_id(project_id, folder_id, file_name)
+        if item_id is None:
+            raise Exception("File not found")
+        url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        item_versions = response.json()
+        if version == -1:
+            url = item_versions['data'][0]['relationships']['storage']['data']['id']
+        else:
+            version = version - 1
+            if version < 0 or version >= len(item_versions['data']):
+                raise Exception("Version not found")
+            url = item_versions['data'][version]['relationships']['storage']['data']['id']
+        bucket_key = url.split("/").pop(0).split(":").pop()
+        object_key = url.split("/").pop()
+        s3_url = f"{self.host}/oss/v2/buckets/{bucket_key}/objects/{object_key}/signeds3download"
+        response = requests.get(s3_url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        download_url = response.json()['url']
+        print("Start Download File:", download_url)
+        response = requests.get(download_url)
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+        return file_path

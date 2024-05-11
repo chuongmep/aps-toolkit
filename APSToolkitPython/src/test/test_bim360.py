@@ -96,3 +96,11 @@ class TestBIM360(TestCase):
         file_name = "Test.dwg"
         result = self.bim360.delete_file_item(self.project_id, self.folder_id, file_name)
         self.assertNotEquals(result, 0)
+
+    def test_download_file_item(self):
+        file_name = "Test.dwg"
+        file_path = r"./test/resources/Test2.dwg"
+        file_path_result = self.bim360.download_file_item(file_path, self.project_id, self.folder_id, file_name, 2)
+        size = os.path.getsize(file_path)
+        size_result = os.path.getsize(file_path_result)
+        self.assertEqual(size, size_result)
