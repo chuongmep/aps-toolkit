@@ -18,6 +18,7 @@ import requests
 import pandas as pd
 from .Auth import Auth
 from .Token import Token
+import os
 
 
 class BIM360:
@@ -277,12 +278,41 @@ class BIM360:
                 return item_version['relationships']['derivatives']['data']['id']
         return None
 
-    def create_object_storage(self, project_id: str, folder_id: str, object_name: str):
+    def upload_file_item(self, project_id: str, folder_id: str, file_path: str):
+        """
+        Upload a file to BIM 360 Docs or Autodesk Construction Cloud
+        :param project_id:  :class:`str` the unique identifier of a project
+        :param folder_id:  :class:`str` the unique identifier of a folder
+        :param file_path:  :class:`str` the path of file need to upload
+        :return: :class:`dict` all information of file version
+        """
+        object_name = os.path.basename(file_path)
+        result = self._create_object_storage(project_id, folder_id, object_name)
+        id = result['data']['id']
+        sign = self._signeds_3_upload(id)
+        upload_key = sign['uploadKey']
+        url = sign['urls'][0]
+        self._upload_file_to_signed_url(url, file_path)
+        self._complete_upload(upload_key, id)
+        try:
+            file_version = self._create_first_version_file(project_id, folder_id, object_name, id)
+            return file_version
+        except Exception as e:
+            error = "Another object with the same name already exists in this container"
+            if error in str(e):
+                print("File already exists")
+                item_id = self._get_item_id(project_id, folder_id, object_name)
+                file_version = self._create_new_file_version(project_id, item_id, object_name, id)
+                return file_version
+            else:
+                raise e
+
+    def _create_object_storage(self, project_id: str, folder_id: str, file_name: str):
         """
         Create object storage in BIM 360 Docs
         :param project_id: :class:`str` the unique identifier of a project
         :param folder_id: :class:`str` the unique identifier of a folder
-        :param object_name: :class:`str` the name of object storage
+        :param file_name: :class:`str` the name of object storage
         :return: :class:`dict` all information of object storage
         """
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
@@ -294,7 +324,7 @@ class BIM360:
             "data": {
                 "type": "objects",
                 "attributes": {
-                    "name": object_name
+                    "name": file_name
                 },
                 "relationships": {
                     "target": {
@@ -311,3 +341,177 @@ class BIM360:
             raise Exception(response.content)
         return response.json()
 
+    def _signeds_3_upload(self, object_id):
+        bucket_key = object_id.split("/").pop(0).split(":").pop()
+        object_key = object_id.split("/").pop()
+        url = f"{self.host}/oss/v2/buckets/{bucket_key}/objects/{object_key}/signeds3upload"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        return response.json()
+
+    def _upload_file_to_signed_url(self, signed_upload_url, file_path):
+        with open(file_path, 'rb') as file:
+            response = requests.put(signed_upload_url, data=file)
+            return response
+
+    def _complete_upload(self, upload_key, object_id):
+        bucket_key = object_id.split("/").pop(0).split(":").pop()
+        object_key = object_id.split("/").pop()
+        url = f"{self.host}/oss/v2/buckets/{bucket_key}/objects/{object_key}/signeds3upload"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        data = {
+            "uploadKey": upload_key
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        return response.json()
+
+    def _create_first_version_file(self, project_id: str, folder_id: str, object_name: str, object_id: str):
+        url = f"{self.host}/data/v1/projects/{project_id}/items"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        data = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "items",
+                "attributes": {
+                    "displayName": object_name,
+                    "extension": {
+                        "type": "items:autodesk.bim360:File",
+                        "version": "1.0"
+                    }
+                },
+                "relationships": {
+                    "tip": {
+                        "data": {
+                            "type": "versions",
+                            "id": "1"
+                        }
+                    },
+                    "parent": {
+                        "data": {
+                            "type": "folders",
+                            "id": folder_id
+                        }
+                    }
+                }
+            },
+            "included": [
+                {
+                    "type": "versions",
+                    "id": "1",
+                    "attributes": {
+                        "name": object_name,
+                        "extension": {
+                            "type": "versions:autodesk.bim360:File",
+                            "version": "1.0"
+                        }
+                    },
+                    "relationships": {
+                        "storage": {
+                            "data": {
+                                "type": "objects",
+                                "id": object_id
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 201:
+            raise Exception(response.content)
+        return response.json()
+
+    def _get_item_id(self, project_id: str, folder_id: str, object_name: str):
+        url = f"{self.host}/data/v1/projects/{project_id}/folders/{folder_id}/contents"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        folder_contents = response.json()
+        for folder_content in folder_contents['data']:
+            if folder_content['type'] == "items":
+                item_name = folder_content['attributes']['displayName']
+                if item_name == object_name:
+                    return folder_content['id']
+        return None
+
+    def _create_new_file_version(self, project_id: str, item_id: str, object_name: str, object_id: str):
+        url = f"{self.host}/data/v1/projects/{project_id}/versions"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        data = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "versions",
+                "attributes": {
+                    "name": object_name,
+                    "extension": {
+                        "type": "versions:autodesk.bim360:File",
+                        "version": "1.0"
+                    }
+                },
+                "relationships": {
+                    "item": {
+                        "data": {
+                            "type": "items",
+                            "id": item_id
+                        }
+                    },
+                    "storage": {
+                        "data": {
+                            "type": "objects",
+                            "id": object_id
+                        }
+                    }
+                }
+            }
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 201:
+            raise Exception(response.content)
+        return response.json()
+
+    def delete_file_item(self, project_id: str, folder_id: str, file_name: str):
+        """
+        Delete a file in BIM 360 Docs or Autodesk Construction Cloud
+        :param project_id:  :class:`str` the unique identifier of a project
+        :param folder_id:  :class:`str` the unique identifier of a folder
+        :param file_name:  :class:`str` the name of file need to delete
+        :return: :class: `bytes` response content
+        """
+        item_id = self._get_item_id(project_id, folder_id, file_name)
+        url = f"{self.host}/data/v1/projects/{project_id}/versions"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        data = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "versions",
+                "attributes": {
+                    "extension": {
+                        "type": "versions:autodesk.core:Deleted",
+                        "version": "1.0"
+                    }
+                },
+                "relationships": {
+                    "item": {
+                        "data": {
+                            "type": "items",
+                            "id": item_id
+                        }
+                    }
+                }
+            }
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 201:
+            raise Exception(response.content)
+        return response.content

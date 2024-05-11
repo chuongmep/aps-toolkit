@@ -11,8 +11,8 @@ class TestBIM360(TestCase):
         self.token = Auth().auth2leg()
         self.bim360 = BIM360(self.token)
         self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
-        self.project_id = "b.1f7aa830-c6ef-48be-8a2d-bd554779e74b"
-        self.folder_id = "urn:adsk.wipprod:fs.folder:co.5ufH-U8yRjaZ-USJxxN_Mw"
+        self.project_id = "b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co.2yCTHGmWSvSCzlaIzdrFKA"
         self.item_id = "urn:adsk.wipprod:dm.lineage:DjXtlXoJQyS6D1R-gRhI8A"
 
     def test_get_hubs(self):
@@ -66,6 +66,32 @@ class TestBIM360(TestCase):
         self.assertNotEquals(item_name, "")
 
     def test_create_object_storage(self):
-        bucket_name = "hello.pdf"
-        result = self.bim360.create_object_storage(self.project_id, self.folder_id, bucket_name)
+        object_name = "hello.pdf"
+        result = self.bim360.create_object_storage(self.project_id, self.folder_id, object_name)
+        id = result['data']['id']
+        sign = self.bim360.signeds_3_upload(id)
+        upload_key = sign['uploadKey']
+        url = sign['urls'][0]
+        path = r"C:\Users\chuongho\Downloads\Feature Summary - Macro Tools Renovation.pdf"
+        upload = self.bim360.upload_file_to_signed_url(url, path)
+        complete = self.bim360.complete_upload(upload_key, id)
+        try:
+            file_version = self.bim360.create_first_version_file(self.project_id, self.folder_id, object_name, id)
+        except Exception as e:
+            error = "Another object with the same name already exists in this container"
+            if error in str(e):
+                print("File already exists")
+                item_id = self.bim360.get_item_id(self.project_id, self.folder_id, object_name)
+                file_version = self.bim360.create_new_file_version(self.project_id, item_id, object_name, id)
+
+        self.assertNotEquals(result, 0)
+
+    def test_upload_file_item(self):
+        path = r"C:\Users\chuongho\Downloads\Feature Summary - Macro Tools Renovation.pdf"
+        result = self.bim360.upload_file_item(self.project_id, self.folder_id, path)
+        self.assertNotEquals(result, 0)
+
+    def test_delete_file_item(self):
+        file_name = "Feature Summary - Macro Tools Renovation.pdf"
+        result = self.bim360.delete_file_item(self.project_id, self.folder_id, file_name)
         self.assertNotEquals(result, 0)
