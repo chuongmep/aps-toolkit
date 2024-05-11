@@ -64,3 +64,8 @@ class TestBIM360(TestCase):
     def test_get_item__display_name(self):
         item_name = self.bim360.get_item_display_name(self.project_id, self.item_id)
         self.assertNotEquals(item_name, "")
+
+    def test_create_object_storage(self):
+        bucket_name = "hello.pdf"
+        result = self.bim360.create_object_storage(self.project_id, self.folder_id, bucket_name)
+        self.assertNotEquals(result, 0)

@@ -276,3 +276,38 @@ class BIM360:
             if item_version['attributes']['versionNumber'] == version:
                 return item_version['relationships']['derivatives']['data']['id']
         return None
+
+    def create_object_storage(self, project_id: str, folder_id: str, object_name: str):
+        """
+        Create object storage in BIM 360 Docs
+        :param project_id: :class:`str` the unique identifier of a project
+        :param folder_id: :class:`str` the unique identifier of a folder
+        :param object_name: :class:`str` the name of object storage
+        :return: :class:`dict` all information of object storage
+        """
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{project_id}/storage"
+        data = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "objects",
+                "attributes": {
+                    "name": object_name
+                },
+                "relationships": {
+                    "target": {
+                        "data": {
+                            "type": "folders",
+                            "id": folder_id
+                        }
+                    }
+                }
+            }
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 201:
+            raise Exception(response.content)
+        return response.json()
+
