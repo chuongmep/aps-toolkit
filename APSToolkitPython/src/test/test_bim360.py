@@ -104,3 +104,8 @@ class TestBIM360(TestCase):
         size = os.path.getsize(file_path)
         size_result = os.path.getsize(file_path_result)
         self.assertEqual(size, size_result)
+
+    def test_restore_file_item(self):
+        item_id = "urn:adsk.wipprod:fs.file:vf.-wv2uodvSgaXmUZ4O0oYkw";
+        result = self.bim360.restore_file_item(self.project_id, item_id, 2)
+        self.assertNotEquals(result, 0)

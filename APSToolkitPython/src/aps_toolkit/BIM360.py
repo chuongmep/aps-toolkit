@@ -554,3 +554,31 @@ class BIM360:
         with open(file_path, 'wb') as file:
             file.write(response.content)
         return file_path
+
+    def restore_file_item(self, project_id, item_id, version=1):
+        """
+        Restore a file in BIM 360 Docs or Autodesk Construction Cloud
+        https://aps.autodesk.com/en/docs/data/v2/tutorials/delete-and-restore-file/
+        :param project_id:  :class:`str` the unique identifier of a project
+        :param item_id:  :class:`str` the unique identifier of an item
+        :param version:  :class:`int` the version of file need to restore
+        :return: :class:`dict` response content
+        """
+        url = f"https://developer.api.autodesk.com/data/v1/projects/{project_id}/versions?copyFrom={item_id}%3Fversion={version}"
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}",
+            "content-type": "application/vnd.api+json"
+        }
+        data = {
+            "data": {
+                "type": "versions"
+            }
+        }
+        response = requests.post(url, headers=headers, json=data)
+
+        if response.status_code == 201:
+            print("File restoration successful.")
+        else:
+            print(f"Failed to restore file. Status code: {response.status_code}")
+            print(response.text)
+        return response.content
