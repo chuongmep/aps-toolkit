@@ -549,7 +549,6 @@ class BIM360:
         if response.status_code != 200:
             raise Exception(response.content)
         download_url = response.json()['url']
-        print("Start Download File:", download_url)
         response = requests.get(download_url)
         with open(file_path, 'wb') as file:
             file.write(response.content)
