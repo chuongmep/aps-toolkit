@@ -1,4 +1,4 @@
-﻿using APSToolkit.Auth;
+﻿using APSToolkit;
 using Autodesk.Forge;
 using NUnit.Framework;
 
@@ -10,7 +10,8 @@ public class VersionTest
     [SetUp]
     public void Setup()
     {
-        Token = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
     }
 
     [Test]
@@ -19,9 +20,9 @@ public class VersionTest
     public void TestGetInfoVersion(string projectId,string itemid)
     {
         VersionsApi versionsApi = new VersionsApi();
-        versionsApi.Configuration.AccessToken = Token.access_token;
+        versionsApi.Configuration.AccessToken = Token.AccessToken;
         ItemsApi itemsApi = new ItemsApi();
-        itemsApi.Configuration.AccessToken = Token.access_token;
+        itemsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic versions = itemsApi.GetItemVersions(projectId, itemid);
         string versionId = versions.data[0].id;
         var version = versionsApi.GetVersion(projectId, versionId);

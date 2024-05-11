@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
-using APSToolkit.Auth;
+using APSToolkit;
 using APSToolkit.BIM360;
 using APSToolkit.Database;
 using APSToolkit.DesignAutomation;
@@ -27,7 +27,8 @@ public class BIM360Test
     [SetUp]
     public void SetUp()
     {
-        Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
     }
 
     [Test]
@@ -143,7 +144,8 @@ public class BIM360Test
             break;
         }
         if(string.IsNullOrEmpty(urn)) Assert.Fail("Can't get urn");
-        var token =  Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        var token =  auth.Get2LeggedToken().Result;
         PropDbReaderRevit propDbReaderRevit = new PropDbReaderRevit(urn,token);
         propDbReaderRevit.ExportAllDataToExcel("result.xlsx");
     }
@@ -172,7 +174,8 @@ public class BIM360Test
     public Task DownloadFileFromBIM360Test(string projectId, string folderUrn, string fileName)
     {
         BIM360 bim360 = new BIM360();
-        string token = Authentication.Get2LeggedToken().Result.access_token;
+        var Auth = new Auth();
+        string token = Auth.Get2LeggedToken().Result.AccessToken;
         string directory = "./";
         Task<string> derivativesUrn = bim360.DownloadFileFromBIM360(projectId, folderUrn, fileName, token, directory);
         Assert.IsNotEmpty(derivativesUrn.Result);
@@ -200,7 +203,7 @@ public class BIM360Test
         var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        string forgeToken3Leg = Authentication.Refresh3LeggedToken(clientID, clientSecret, scope).Result.access_token;
+        string forgeToken3Leg = new Auth().Refresh3LeggedToken(clientID, clientSecret, scope).Result.AccessToken;
         RestResponse restResponse = bim360.PublishModel(forgeToken3Leg, projectId, itemId);
         Assert.IsTrue(restResponse.IsSuccessful);
     }
@@ -224,7 +227,8 @@ public class BIM360Test
         string modelGuid, string bundlePath, string modelName)
     {
         BIM360 bim360 = new BIM360();
-        string token = Authentication.Get2LeggedToken().Result.access_token;
+        var Auth = new Auth();
+        string token = Auth.Get2LeggedToken().Result.AccessToken;
         string directory = "./";
         Task<string> filePath = bim360.DownloadFileFromBIM360(projectId, folderUrn, fileName, token, directory);
         Assert.IsNotEmpty(filePath.Result);
@@ -259,7 +263,7 @@ public class BIM360Test
         var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        string forgeToken3Leg = Authentication.Refresh3LeggedToken(clientID, clientSecret, scope).Result.access_token;
+        string forgeToken3Leg = Auth.Refresh3LeggedToken(clientID, clientSecret, scope).Result.AccessToken;
         if (string.IsNullOrEmpty(forgeToken3Leg)) Assert.Fail("Can't use forgeToken3Leg .");
         Status executeJob =
             await revitExtractDataAutomate.ExecuteJob(token, forgeToken3Leg, readParams, inputParams,
@@ -276,7 +280,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         List<BIMObject> allProperties = bim360.GetAllDataOriginalProperties(projectId,indexVersionId);
         Assert.IsNotEmpty(allProperties);
@@ -287,7 +291,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         BIMData[] allProperties = bim360.GetAllDataByIndexVersionId(projectId,indexId);
         Assert.IsNotEmpty(allProperties);
@@ -298,7 +302,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var  token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var  token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         BIMData[] bimDatas = bim360.GetAllDataByVersionId(projectId,versionId);
         BIMData bimData = bimDatas.FirstOrDefault(x => x.externalId == "5bb069ca-e4fe-4e63-be31-f8ac44e80d30-000471ee");
@@ -313,7 +317,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         BIMData[] bimDatas = bim360.GetAllDataByVersionId(projectId,versionId);
         DataTable dataTable = bim360.BimDataToDataTable(bimDatas);
@@ -327,7 +331,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         List<string> versions = new List<string>() { urnVersionId };
         var result = bim360.BuildPropertyIndexesAsync(projectId,versions).Result;
@@ -356,7 +360,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         var result = bim360.GetPropertyIndexesStatusAsync(projectId,indexId).Result;
         Assert.IsNotEmpty(result);
@@ -367,7 +371,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         var result = bim360.GetPropertyIndexesManifestAsync(projectId,indexId).Result;
         Assert.IsNotEmpty(result);
@@ -378,7 +382,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         var result = bim360.GetPropertyFieldsAsync(projectId,indexId).Result;
         Assert.IsNotEmpty(result);
@@ -389,7 +393,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         List<JObject> result = bim360.GetPropertiesResultsAsync(projectId,indexId).Result;
         Assert.IsNotEmpty(result);
@@ -400,7 +404,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         bim360.ExportRevitDataToParquet(projectId,indexId,filePath);
     }
@@ -410,7 +414,7 @@ public class BIM360Test
     {
         Scope[] scope = new Scope[]
             { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        var token3Leg = Authentication.Refresh3LeggedToken(scope).Result;
+        var token3Leg = Auth.Refresh3LeggedToken(scope).Result;
         BIM360 bim360 = new BIM360(token3Leg);
         List<Level> result = bim360.GetLevelsFromAecModelData(urn).Result;
         Assert.IsNotEmpty(result);

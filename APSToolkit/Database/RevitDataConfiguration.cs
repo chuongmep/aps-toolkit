@@ -1,5 +1,4 @@
-﻿using APSToolkit.Auth;
-using APSToolkit.Schema;
+﻿using APSToolkit.Schema;
 using APSToolkit.Utils;
 using OfficeOpenXml.Style;
 
@@ -46,7 +45,8 @@ public class RevitDataConfiguration
     public RevitDataConfiguration(string urn) : this()
     {
         this.Urn = urn;
-        this.Token = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        this.Token = auth.Get2LeggedToken().Result;
     }
 
     public void RebuildConfiguration()
@@ -58,7 +58,7 @@ public class RevitDataConfiguration
 
         if (IsGetBBox)
         {
-            Dictionary<int,ISvfFragment> svfFragments = GetFragments(Token.access_token).Result;
+            Dictionary<int,ISvfFragment> svfFragments = GetFragments(Token.AccessToken).Result;
             Fragments = svfFragments;
         }
     }

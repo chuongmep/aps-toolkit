@@ -1,26 +1,32 @@
 ﻿using System;
 using System.Threading.Tasks;
-using APSToolkit.Auth;
+using APSToolkit;
 using Autodesk.Forge;
 using NUnit.Framework;
 
 namespace ForgeToolkitUnit;
 
-public class AuthenticationTest
+public class AuthTest
 {
     private static Token Token { get; set; }
-
+    private Auth Auth { get; set; }
     [SetUp]
     public void Setup()
     {
-
+        Auth = new Auth();
     }
 
     [Test]
     public void TestAuthentication2Leg()
     {
-        Token = Authentication.Get2LeggedToken().Result;
-        Assert.IsNotEmpty(Token.access_token);
+        Token = Auth.Get2LeggedToken().Result;
+        Assert.IsNotEmpty(Token.AccessToken);
+    }
+    [Test]
+    public void TestAuthentication3Leg()
+    {
+        Token = Auth.Get3LeggedToken().Result;
+        Assert.IsNotEmpty(Token.AccessToken);
     }
 
     [Test]
@@ -34,7 +40,7 @@ public class AuthenticationTest
         if (string.IsNullOrEmpty(refreshToken)) Assert.Fail("Missing APS_REFRESH_TOKEN environment variable.");
         Scope[] scope = new Scope[]
             {Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate};
-        var Leg3Token = Authentication.Refresh3LeggedToken(clientID, clientSecret, scope).Result;
+        var Leg3Token = Auth.Refresh3LeggedToken(clientID, clientSecret, scope).Result;
         Assert.IsNotNull(Leg3Token);
         return Task.CompletedTask;
     }
@@ -42,7 +48,7 @@ public class AuthenticationTest
     [Test]
     public void TestTokenExpired()
     {
-        Token = Authentication.Get2LeggedToken().Result;
+        Token = Auth.Get2LeggedToken().Result;
         Assert.IsFalse(Token.IsExpired());
     }
 }

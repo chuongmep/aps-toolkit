@@ -1,6 +1,5 @@
 ﻿// Copyright (c) chuongmep.com. All rights reserved
 
-using APSToolkit.Auth;
 using APSToolkit.Database;
 using APSToolkit.Utils;
 using Autodesk.Forge;
@@ -332,7 +331,7 @@ public class DynamoRevitDesignAutomate
         string projectId, string versionId)
     {
         VersionsApi versionApi = new VersionsApi();
-        versionApi.Configuration.AccessToken = Authentication.Get2LeggedToken().Result.access_token;
+        versionApi.Configuration.AccessToken = new Auth().Get2LeggedToken().Result.AccessToken;
         dynamic version = await versionApi.GetVersionAsync(projectId, versionId).ConfigureAwait(false);
         dynamic versionItem = await versionApi.GetVersionItemAsync(projectId, versionId).ConfigureAwait(false);
         string modelName = version.data.attributes.name;

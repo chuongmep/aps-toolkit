@@ -2,7 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using APSToolkit.Auth;
+using APSToolkit;
 using APSToolkit.Database;
 using APSToolkit.Utils;
 using NUnit.Framework;
@@ -16,7 +16,8 @@ public class DbReaderTest
     [SetUp]
     public void Setup()
     {
-        Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
         DbReader = new DbReader(Settings._RevitTestUrn, Settings.Token2Leg);
     }
 

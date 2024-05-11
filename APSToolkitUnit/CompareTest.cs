@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.JsonDiffPatch;
 using System.Text.Json.Nodes;
-using APSToolkit.Auth;
+using APSToolkit;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -14,7 +14,8 @@ public class CompareTest
     [SetUp]
     public void SetUp()
     {
-        Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
     }
 
     [Test]

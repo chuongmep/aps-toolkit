@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Data.Common;
-using APSToolkit.Auth;
 using APSToolkit.Utils;
 using Microsoft.Data.Analysis;
 using NUnit.Framework;

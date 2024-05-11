@@ -1,6 +1,5 @@
 ﻿// Copyright (c) chuongmep.com. All rights reserved
 
-using APSToolkit.Auth;
 using Autodesk.Forge;
 
 namespace APSToolkit.DesignAutomation;
@@ -40,8 +39,8 @@ public class DesignAutomateConfiguration
     public DesignAutomateConfiguration()
     {
         // set client id and client secret from environment variables
-        ClientId = Authentication.GetClientId();
-        ClientSecret = Authentication.GetClientSecret();
+        ClientId = new Auth().GetClientId();
+        ClientSecret = new Auth().GetClientSecret();
     }
 
     public DesignAutomateConfiguration(string clientId, string clientSecret)

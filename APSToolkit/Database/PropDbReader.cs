@@ -3,7 +3,6 @@
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
-using APSToolkit.Auth;
 using APSToolkit.Utils;
 using ICSharpCode.SharpZipLib.GZip;
 using Newtonsoft.Json;
@@ -75,11 +74,13 @@ namespace APSToolkit.Database
         public PropDbReader(string urn)
         {
             this.Urn = urn;
-            Token = Authentication.Get2LeggedToken().Result;
+            var auth = new Auth();
+            Token = auth.Get2LeggedToken().Result;
         }
         public PropDbReader()
         {
-            Token = Authentication.Get2LeggedToken().Result;
+            var auth = new Auth();
+            Token = auth.Get2LeggedToken().Result;
         }
         /// <summary>
         /// Read All Information properties from urn model
@@ -91,7 +92,7 @@ namespace APSToolkit.Database
         {
             this.Urn = urn;
             Token = token;
-            DownloadStreamAsync(urn, token.access_token).Wait();
+            DownloadStreamAsync(urn, token.AccessToken).Wait();
         }
 
         /// <summary>

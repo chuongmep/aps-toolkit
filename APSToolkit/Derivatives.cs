@@ -2,7 +2,6 @@
 
 using System.IO.Compression;
 using System.Text.RegularExpressions;
-using APSToolkit.Auth;
 using APSToolkit.Schema;
 using Autodesk.Forge;
 using Autodesk.Forge.Model;

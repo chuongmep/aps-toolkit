@@ -1,8 +1,5 @@
 ﻿// Copyright (c) chuongmep.com. All rights reserved
 
-using System.Text;
-using APSToolkit.Auth;
-using APSToolkit.Utils;
 using Autodesk.Forge;
 using Autodesk.Forge.Core;
 using Autodesk.Forge.DesignAutomation;
@@ -72,9 +69,9 @@ public class RevitDesignAutomate
     public async Task<Status> ExecuteJob(string projectId, string versionId, string callBackUrl)
     {
         // access Token
-        Token token = Authentication
-            .Get2LeggedToken(_configuration.ClientId, _configuration.ClientSecret).Result;
-        string userAccessToken = token.access_token;
+        Token token = new Auth(_configuration.ClientId, _configuration.ClientSecret)
+            .Get2LeggedToken().Result;
+        string userAccessToken = token.AccessToken;
         bool isCompositeDesign = DAUtils.IsCompositeDesign(userAccessToken, projectId, versionId).Result;
         Console.WriteLine("Is Composite Design: " + isCompositeDesign);
         _configuration.Version = DAUtils.GetRevitVersionByVersionId(userAccessToken, projectId, versionId).Result;
@@ -346,7 +343,7 @@ public class RevitDesignAutomate
         string projectId, string versionId)
     {
         VersionsApi versionApi = new VersionsApi();
-        versionApi.Configuration.AccessToken = Authentication.Get2LeggedToken().Result.access_token;
+        versionApi.Configuration.AccessToken = new Auth(_configuration.ClientId, _configuration.ClientSecret).Get2LeggedToken().Result.AccessToken;
         dynamic version = await versionApi.GetVersionAsync(projectId, versionId).ConfigureAwait(false);
         dynamic versionItem = await versionApi.GetVersionItemAsync(projectId, versionId).ConfigureAwait(false);
         string modelName = version.data.attributes.name;

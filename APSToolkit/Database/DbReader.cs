@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
-using APSToolkit.Auth;
 using APSToolkit.Utils;
 using RestSharp;
 
@@ -59,7 +58,7 @@ public class DbReader
         {
             throw new Exception("urn require is derivative urn, not path");
         }
-        ReadData(urn,token.access_token).Wait();
+        ReadData(urn,token.AccessToken).Wait();
         IsClearCache = isClearCache;
     }
 

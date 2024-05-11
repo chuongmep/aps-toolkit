@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using APSToolkit.Auth;
+using APSToolkit;
 using APSToolkit.Database;
 using APSToolkit.Utils;
 using Newtonsoft.Json;
@@ -17,7 +17,8 @@ public class ProbDbReaderTest
     [SetUp]
     public void Setup()
     {
-        Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
         // start wath time
         var watch = System.Diagnostics.Stopwatch.StartNew();
         // PropDbReader = new PropDbReader(Settings._RevitUrn, Settings.Token2Leg);

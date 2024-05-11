@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Net;
-using APSToolkit.Auth;
 using APSToolkit.Database;
 using APSToolkit.Utils;
 using Autodesk.Forge;
@@ -20,7 +19,8 @@ public class BIM360
 
     public BIM360()
     {
-        this.Token = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        this.Token = auth.Get2LeggedToken().Result;
     }
     public BIM360(Token token)
     {
@@ -55,7 +55,7 @@ public class BIM360
     public DynamicDictionaryItems GetHubs()
     {
         var hubsApi = new HubsApi();
-        hubsApi.Configuration.AccessToken = Token.access_token;
+        hubsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = hubsApi.GetHubsAsync().Result;
         return new DynamicDictionaryItems(result.data);
     }
@@ -90,7 +90,7 @@ public class BIM360
     public DynamicDictionaryItems GetProjects(string hubId)
     {
         var projectsApi = new ProjectsApi();
-        projectsApi.Configuration.AccessToken = Token.access_token;
+        projectsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = projectsApi.GetHubProjectsAsync(hubId).Result;
         return new DynamicDictionaryItems(result.data);
     }
@@ -128,7 +128,7 @@ public class BIM360
     {
         var folders = new Dictionary<string, string>();
         var projectsApi = new ProjectsApi();
-        projectsApi.Configuration.AccessToken = Token.access_token;
+        projectsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = projectsApi.GetProjectTopFoldersAsync(hubId, projectId).Result;
         foreach (KeyValuePair<string, dynamic> folderInfo in new DynamicDictionaryItems(result.data))
         {
@@ -142,7 +142,7 @@ public class BIM360
     public (string,string) GetTopProjectFilesFolder(string hubId, string projectId)
     {
         var projectsApi = new ProjectsApi();
-        projectsApi.Configuration.AccessToken = Token.access_token;
+        projectsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = projectsApi.GetProjectTopFoldersAsync(hubId, projectId).Result;
         foreach (KeyValuePair<string, dynamic> folderInfo in new DynamicDictionaryItems(result.data))
         {
@@ -194,7 +194,7 @@ public class BIM360
     public dynamic? GetItemByFolder(string projectId, string folderId, string fileName)
     {
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = Token.access_token;
+        foldersApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
@@ -240,7 +240,7 @@ public class BIM360
     public DynamicDictionaryItems GetItemsByFolder(string projectId, string folderId)
     {
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = Token.access_token;
+        foldersApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         return new DynamicDictionaryItems(result.data);
     }
@@ -285,7 +285,7 @@ public class BIM360
         string TopFolderId = GetTopFolders(hubId, projectId)
             .FirstOrDefault(x => x.Value == "Project Files").Key;
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = Token.access_token;
+        foldersApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, TopFolderId).Result;
         bool isFounded = false;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
@@ -312,11 +312,12 @@ public class BIM360
     {
         if (IsFounded && isStopFirstFind) return;
         var foldersApi = new FoldersApi();
-        if(Token.expires_in <=0)
+        if(Token.ExpiresIn <=0)
         {
-            Token = Authentication.Get2LeggedToken().Result;
+            var auth = new Auth();
+            Token = auth.Get2LeggedToken().Result;
         }
-        foldersApi.Configuration.AccessToken = Token.access_token;
+        foldersApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
@@ -366,7 +367,7 @@ public class BIM360
     public DynamicDictionaryItems GetItemVersions(string projectId, string itemId)
     {
         var itemsApi = new ItemsApi();
-        itemsApi.Configuration.AccessToken = Token.access_token;
+        itemsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
         DynamicDictionaryItems dictionaryItems = new DynamicDictionaryItems(result.data);
         return dictionaryItems;
@@ -388,7 +389,7 @@ public class BIM360
     public dynamic? GetLatestVersionItem( string projectId, string itemId)
     {
         var itemsApi = new ItemsApi();
-        itemsApi.Configuration.AccessToken = Token.access_token;
+        itemsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
         if(result==null) return null;
         return result.data[0];
@@ -402,7 +403,7 @@ public class BIM360
     public string CheckStatusProcessingData(string urn)
     {
         var derivativeApi = new DerivativesApi();
-        derivativeApi.Configuration.AccessToken = Token.access_token;
+        derivativeApi.Configuration.AccessToken = Token.AccessToken;
         dynamic manifest = derivativeApi.GetManifestAsync(urn).Result;
         string status = manifest.progress;
         return status;
@@ -473,7 +474,7 @@ public class BIM360
     {
         string filename = Path.GetFileName(filePath);
         var fileMemoryStream = new MemoryStream(File.ReadAllBytes(filePath));
-        string accessToken = Token.access_token;
+        string accessToken = Token.AccessToken;
         string objectStorageId =
             await CreateFileStorage(projectId, folderUrn, filename, accessToken).ConfigureAwait(false);
         ObjectDetails objectDetails =
@@ -1035,7 +1036,7 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        string token3Leg = Token.access_token;
+        string token3Leg = Token.AccessToken;
         request.AddHeader("Authorization", $"Bearer {token3Leg}");
         var response = client.Execute(request);
         if (response.StatusCode == HttpStatusCode.NotFound)
@@ -1114,7 +1115,7 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        request.AddHeader("Authorization", $"Bearer + {Token.access_token}");
+        request.AddHeader("Authorization", $"Bearer + {Token.AccessToken}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
         string manifestUrl = version.manifestUrl;
@@ -1193,7 +1194,7 @@ public class BIM360
         RestClient client = new RestClient(Host);
         RestRequest request = new RestRequest($"/construction/index/v2/projects/{projectId}/indexes:batchStatus",
             RestSharp.Method.Post);
-        string accessToken = Token.access_token;
+        string accessToken = Token.AccessToken;
         request.AddHeader("Authorization", $"Bearer {accessToken}");
 
         var data = versionIds.Select(versionId => new
@@ -1360,7 +1361,7 @@ public class BIM360
     public async Task<List<Level>> GetLevelsFromAecModelData(string urn)
     {
         var derivativeApi = new DerivativesApi();
-        derivativeApi.Configuration.AccessToken = Token.access_token;
+        derivativeApi.Configuration.AccessToken = Token.AccessToken;
         string aecModelDataUrn = string.Empty;
         var data = await derivativeApi.GetManifestAsync(urn).ConfigureAwait(false);
         var result = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(data.ToString());
@@ -1580,7 +1581,7 @@ public class BIM360
         var client = new RestClient(versionUrl);
         var request = new RestRequest();
         request.Method = Method.Get;
-        string accessToken = Token.access_token;
+        string accessToken = Token.AccessToken;
         request.AddHeader("Authorization", $"Bearer {accessToken}");
         var response = client.Execute(request);
         dynamic version = JsonConvert.DeserializeObject(response.Content);
@@ -1768,7 +1769,8 @@ public class BIM360
     {
         var foldersApi = new FoldersApi();
         // refresh token
-        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result.access_token;
+        var auth = new Auth();
+        string? get2LeggedToken = auth.Get2LeggedToken().Result.AccessToken;
         foldersApi.Configuration.AccessToken = get2LeggedToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
@@ -1826,7 +1828,8 @@ public class BIM360
         dataTable.Columns.Add("LastModifiedTime", typeof(DateTime));
         var itemsApi = new ItemsApi();
         // refresh token
-        string get2LeggedToken = Auth.Authentication.Get2LeggedToken().Result.access_token;
+        var auth = new Auth();
+        string? get2LeggedToken = auth.Get2LeggedToken().Result.AccessToken;
         itemsApi.Configuration.AccessToken = get2LeggedToken;
         dynamic result = itemsApi.GetItemVersionsAsync(projectId, itemId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
@@ -1857,7 +1860,7 @@ public class BIM360
         (string, string) projectFilesFolder = GetTopProjectFilesFolder(hubId, projectId);
         string TopFolderId = projectFilesFolder.Item1;
         var foldersApi = new FoldersApi();
-        foldersApi.Configuration.AccessToken = Token.access_token;
+        foldersApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, TopFolderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {
@@ -1886,8 +1889,9 @@ public class BIM360
     {
         var foldersApi = new FoldersApi();
         // refresh token
-        if(Token.expires_in<=0) Token = Auth.Authentication.Get2LeggedToken().Result;
-        foldersApi.Configuration.AccessToken = Token.access_token;
+        var auth = new Auth();
+        if(Token.ExpiresIn<=0) Token = auth.Get2LeggedToken().Result;
+        foldersApi.Configuration.AccessToken = Token.AccessToken;
         dynamic result = foldersApi.GetFolderContentsAsync(projectId, folderId).Result;
         foreach (KeyValuePair<string, dynamic> itemInfo in new DynamicDictionaryItems(result.data))
         {

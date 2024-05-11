@@ -1,13 +1,26 @@
 using Autodesk.Forge;
 
-namespace APSToolkit.Auth;
+namespace APSToolkit;
 
 public class Token
 {
-    public string access_token { get; set; }
-    public string token_type { get; set; }
-    public long expires_in { get; set; }
-    public string refresh_token { get; set; }
+    public Token(string? accessToken, string? tokenType, long expiresIn, string refreshToken) :this()
+    {
+        this.AccessToken = accessToken;
+        this.TokenType = tokenType;
+        this.ExpiresIn = expiresIn;
+        this.RefreshToken = refreshToken;
+    }
+
+    public Token()
+    {
+
+    }
+
+    public string? AccessToken { get; set; }
+    public string? TokenType { get; set; }
+    public long? ExpiresIn { get; set; }
+    public string? RefreshToken { get; set; }
 
     /// <summary>
     /// Retrieves a 2-legged access token from the Autodesk Forge API using client credentials.
@@ -16,10 +29,11 @@ public class Token
     /// </summary>
     public Token Refresh2LegToken()
     {
-        Token token = Authentication.Get2LeggedToken().Result;
-        this.access_token = token.access_token;
-        this.token_type = token.token_type;
-        this.expires_in = token.expires_in;
+        var auth = new Auth();
+        Token token = auth.Get2LeggedToken().Result;
+        this.AccessToken = token.AccessToken;
+        this.TokenType = token.TokenType;
+        this.ExpiresIn = token.ExpiresIn;
         return this;
     }
 
@@ -37,16 +51,16 @@ public class Token
             Scope.BucketRead, Scope.CodeAll,
             Scope.BucketUpdate, Scope.BucketDelete
         };
-        Token token = Authentication.Refresh3LeggedToken(scopes).Result;
-        this.access_token = token.access_token;
-        this.token_type = token.token_type;
-        this.expires_in = token.expires_in;
-        this.refresh_token = token.refresh_token;
+        Token token = Auth.Refresh3LeggedToken(scopes).Result;
+        this.AccessToken = token.AccessToken;
+        this.TokenType = token.TokenType;
+        this.ExpiresIn = token.ExpiresIn;
+        this.RefreshToken = token.RefreshToken;
         return this;
     }
     public bool IsExpired()
     {
-        bool b = this.expires_in <= 60;
+        bool b = this.ExpiresIn <= 60;
         return b;
     }
 }

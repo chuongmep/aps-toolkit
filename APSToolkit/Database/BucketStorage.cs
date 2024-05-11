@@ -1,6 +1,5 @@
 ﻿// Copyright (c) chuongmep.com. All rights reserved
 
-using APSToolkit.Auth;
 using Autodesk.Forge;
 using Autodesk.Forge.Model;
 
@@ -15,7 +14,8 @@ public class BucketStorage
     }
     public BucketStorage()
     {
-        Token = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Token = auth.Get2LeggedToken().Result;
     }
     /// <summary>
     /// Creates a new bucket in Autodesk Forge Data Management service.
@@ -31,7 +31,7 @@ public class BucketStorage
     public dynamic CreateBucket(string bucketName, string region = "US",PostBucketsPayload.PolicyKeyEnum Policy=PostBucketsPayload.PolicyKeyEnum.Transient)
     {
         BucketsApi bucketsApi = new BucketsApi();
-        bucketsApi.Configuration.AccessToken = Token.access_token;
+        bucketsApi.Configuration.AccessToken = Token.AccessToken;
         PostBucketsPayload postBuckets = new PostBucketsPayload(bucketName, null, Policy);
         dynamic bucket = bucketsApi.CreateBucket(postBuckets, region);
         return bucket;
@@ -52,7 +52,7 @@ public class BucketStorage
     {
         // check if bucket exists
         BucketsApi bucketsApi = new BucketsApi();
-        bucketsApi.Configuration.AccessToken = Token.access_token;
+        bucketsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic buckets = bucketsApi.GetBuckets();
         bool bucketExist = false;
         foreach (KeyValuePair<string, dynamic> bucket in new DynamicDictionaryItems(buckets.items))
@@ -68,7 +68,7 @@ public class BucketStorage
             CreateBucket(bucketKey);
         }
         ObjectsApi objectsApi = new ObjectsApi();
-        objectsApi.Configuration.AccessToken = Token.access_token;
+        objectsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic file = objectsApi.UploadObject(bucketKey, Path.GetFileName(filePath),
             (int) new FileInfo(filePath).Length, new FileStream(filePath, FileMode.Open));
         return file;
@@ -87,7 +87,7 @@ public class BucketStorage
     public MemoryStream  GetFileFromBucket(string buketKey,string fileName)
     {
         ObjectsApi objectsApi = new ObjectsApi();
-        objectsApi.Configuration.AccessToken = Token.access_token;
+        objectsApi.Configuration.AccessToken = Token.AccessToken;
         MemoryStream stream = objectsApi.GetObject(buketKey, fileName);
         return stream;
     }
@@ -102,7 +102,7 @@ public class BucketStorage
     public void DeleteBucket(string bucketKey)
     {
         BucketsApi bucketsApi = new BucketsApi();
-        bucketsApi.Configuration.AccessToken = Token.access_token;
+        bucketsApi.Configuration.AccessToken = Token.AccessToken;
         bucketsApi.DeleteBucket(bucketKey);
     }
     /// <summary>
@@ -117,7 +117,7 @@ public class BucketStorage
     public void DeleteFile(string bucketKey,string fileName)
     {
         ObjectsApi objectsApi = new ObjectsApi();
-        objectsApi.Configuration.AccessToken = Token.access_token;
+        objectsApi.Configuration.AccessToken = Token.AccessToken;
         objectsApi.DeleteObject(bucketKey, fileName);
     }
     /// <summary>
@@ -134,7 +134,7 @@ public class BucketStorage
     public string GetFileSignedUrl(string bucketKey,string fileName)
     {
         ObjectsApi objectsApi = new ObjectsApi();
-        objectsApi.Configuration.AccessToken = Token.access_token;
+        objectsApi.Configuration.AccessToken = Token.AccessToken;
         dynamic signedUrl = objectsApi.CreateSignedResource(bucketKey, fileName, new PostBucketsSigned(10));
         return signedUrl.signedUrl;
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using APSToolkit.Auth;
+using APSToolkit;
 using APSToolkit.Database;
 using APSToolkit.Utils;
 using NUnit.Framework;
@@ -16,7 +16,8 @@ public class ProbDbReaderRevitTest
     [SetUp]
     public void Setup()
     {
-        Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
         var watch = System.Diagnostics.Stopwatch.StartNew();
         string ids ="Resources/objects_ids.json.gz";
         string offsets = "Resources/objects_offs.json.gz";

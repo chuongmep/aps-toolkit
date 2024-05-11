@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using APSToolkit.Auth;
+using APSToolkit;
 using APSToolkit.Database;
 using Autodesk.Forge.Model;
 using NUnit.Framework;
@@ -12,7 +12,8 @@ public class BucketTest
     [SetUp]
     public void Setup()
     {
-        Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
     }
     [Test]
     [TestCase("test_data")]

@@ -1,5 +1,4 @@
 ﻿using APSToolkit;
-using APSToolkit.Auth;
 using APSToolkit.Schema;
 using APSToolkit.Utils;
 using NUnit.Framework;
@@ -11,7 +10,8 @@ public class SvfReaderTest
     [SetUp]
     public void Setup()
     {
-        Settings.Token2Leg = Authentication.Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
     }
 
     [Test]
