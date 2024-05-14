@@ -123,6 +123,33 @@ class BIM360:
             raise Exception(response.content)
         return response.json()
 
+    def rename_folder(self, project_id: str, folder_id: str, folder_name: str):
+        """
+        rename a folder in a project. Folders are used to organize items in a project.
+        :param project_id:  :class:`str` The unique identifier of a project.
+        :param folder_id:  :class:`str` The unique identifier of a folder.
+        :return:  :class:`bytes` response content
+        """
+        url = f"{self.host}/data/v1/projects/{project_id}/folders/{folder_id}"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token, 'Content-Type': 'application/vnd.api+json'}
+        data = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "folders",
+                "id": folder_id,
+                "attributes": {
+                    "name": folder_name
+                }
+            }
+
+        }
+        response = requests.patch(url, headers=headers, json=data)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        return response.content
+
     def get_folder_contents(self, project_id: str, folder_id: str):
         """
         Returns a collection of items and folders within a folder. Items represent word documents, fusion design files, drawings, spreadsheets, etc.
