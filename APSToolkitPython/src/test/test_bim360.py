@@ -109,3 +109,10 @@ class TestBIM360(TestCase):
         item_id = "urn:adsk.wipprod:fs.file:vf.-wv2uodvSgaXmUZ4O0oYkw";
         result = self.bim360.restore_file_item(self.project_id, item_id, 2)
         self.assertNotEquals(result, 0)
+
+    def test_create_folder(self):
+        folder_name = "TestFolder"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co.2yCTHGmWSvSCzlaIzdrFKA"
+        self.project_id = "b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d"
+        result = self.bim360.create_folder(self.project_id, self.folder_id, folder_name)
+        self.assertNotEquals(result, 0)

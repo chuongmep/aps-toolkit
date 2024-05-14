@@ -85,6 +85,44 @@ class BIM360:
                 return item
         return None
 
+    def create_folder(self, project_id, parent_folder_id, folder_name):
+        """
+        Creates a folder in a project. Folders are used to organize items in a project.
+        :param project_id:  :class:`str` The unique identifier of a project.
+        :param parent_folder_id:  :class:`str` The unique identifier of a parent folder.
+        :param folder_name:  :class:`str` The name of the folder.
+        :return:  :class:`dict` all information of new folder
+        """
+        url = f"{self.host}/data/v1/projects/{project_id}/folders"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        data = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "folders",
+                "attributes": {
+                    "name": folder_name,
+                    "extension": {
+                        "type": "folders:autodesk.bim360:Folder",
+                        "version": "1.0"
+                    }
+                },
+                "relationships": {
+                    "parent": {
+                        "data": {
+                            "type": "folders",
+                            "id": parent_folder_id
+                        }
+                    }
+                }
+            }
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 201:
+            raise Exception(response.content)
+        return response.json()
+
     def get_folder_contents(self, project_id: str, folder_id: str):
         """
         Returns a collection of items and folders within a folder. Items represent word documents, fusion design files, drawings, spreadsheets, etc.
