@@ -239,7 +239,8 @@ class BIM360:
         Get batch all item versions with general information by project_id and item_id
         :param project_id:  :class:`str` the unique identifier of a project
         :param item_id:  :class:`str` the unique identifier of an item
-        :return:  :class:`pandas.DataFrame` all item versions with general information
+        :return:  :class:`pandas.DataFrame` all item versions with general information containing :
+        item_id,version,derivative_urn,last_modified_time
         """
         # create a dataframe to save data report with columns : item_id,version,derivative_urn,last_modified_time
         df = pd.DataFrame(columns=['item_id', 'version', 'derivative_urn', 'last_modified_time'])
@@ -283,7 +284,8 @@ class BIM360:
         :param folder_id:  :class:`str` the unique identifier of a folder
         :param extension:  :class:`str` the extension of file. e.g: .rvt, .dwg, .pdf
         :param is_sub_folder:  :class:`bool` if True, get all items in sub folders by recursive
-        :return:
+        :return: :class:`pandas.DataFrame` all items with general information containing :
+        project_id, folder_id, item_name, item_id, last_version, derivative_urn, last_modified_time
         """
         df = pd.DataFrame(columns=['project_id', 'folder_id', 'item_name', 'item_id', 'last_version', 'derivative_urn',
                                    'last_modified_time'])
