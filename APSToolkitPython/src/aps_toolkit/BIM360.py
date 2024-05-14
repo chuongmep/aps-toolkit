@@ -195,6 +195,21 @@ class BIM360:
             raise Exception(response.content)
         return response.json()
 
+    def get_latest_derivative_urn(self, project_id: str, item_id: str):
+        """
+        Get the latest derivative urn of an item by project_id and item_id
+        :param project_id: :class:`str` the unique identifier of a project
+        :param item_id: :class:`str` the unique identifier of an item
+        :return: :class:`str` the latest derivative urn of an item
+        """
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        item_versions = response.json()
+        return item_versions['data'][0]['relationships']['derivatives']['data']['id']
+
     def batch_report_projects(self, hub_id: str) -> pd.DataFrame:
         """
         Get batch all projects with general information by hub_id

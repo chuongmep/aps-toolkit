@@ -45,6 +45,10 @@ class TestBIM360(TestCase):
         item_info = self.bim360.get_item_info(self.project_id, self.item_id)
         self.assertNotEquals(item_info, 0)
 
+    def test_get_latest_derivative_urn(self):
+        urn = self.bim360.get_latest_derivative_urn(self.project_id, self.item_id)
+        self.assertNotEquals(urn, "")
+
     def test_get_item_versions(self):
         items = self.bim360.batch_report_items(self.project_id, self.folder_id)
         self.assertNotEquals(len(items), 0)
