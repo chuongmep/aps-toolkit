@@ -11,7 +11,7 @@ class PublicKey(Enum):
 
 
 class Bucket:
-    def __init__(self, token: Token, region="US"):
+    def __init__(self, token: Token, region: str = "US"):
         self.token = token
         self.region = region
         self.host = "https://developer.api.autodesk.com/oss/v2/buckets"
@@ -160,7 +160,7 @@ class Bucket:
             raise Exception(response.content)
         return response.content
 
-    def download_object(self, bucket_name: str, object_name: str, file_path: str) -> None:
+    def download_object(self, bucket_name: str, object_name: str, file_path: str) -> bool:
         """
             Downloads an object from a specified bucket in the Autodesk OSS API.
 
@@ -186,4 +186,4 @@ class Bucket:
         with open(file_path, "wb") as file:
             file.write(response.content)
             file.close()
-        return None
+        return True

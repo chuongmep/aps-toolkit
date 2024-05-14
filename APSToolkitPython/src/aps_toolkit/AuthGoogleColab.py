@@ -24,7 +24,7 @@ class AuthGoogleColab(Auth):
     def __init__(self, client_id: Optional[str] = None, client_secret: Optional[str] = None):
         super().__init__(client_id, client_secret)
 
-    def auth3leg(self, callback_url=None, scopes=None) -> Token:
+    def auth3leg(self, callback_url: str = None, scopes: str = None) -> Token:
         if not scopes:
             scopes = 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'
         if not callback_url:
@@ -56,7 +56,7 @@ class AuthGoogleColab(Auth):
             refresh_token=response_json.get('refresh_token')
         )
 
-    def auth3legPkce(self, clientId=None, callback_url=None, scopes=None) -> Token:
+    def auth3legPkce(self, clientId: str = None, callback_url: str = None, scopes: str = None) -> Token:
         """
         This method is used to authenticate a user using the 3-legged OAuth PKCE flow.
         https://aps.autodesk.com/blog/new-application-types

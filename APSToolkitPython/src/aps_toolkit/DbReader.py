@@ -19,10 +19,11 @@ import requests
 from .Auth import Auth
 import pandas as pd
 import sqlite3
+from .Token import Token
 
 
 class DbReader:
-    def __init__(self, urn, token=None):
+    def __init__(self, urn: str, token: Token = None):
         self.urn = urn
         if token is None:
             auth = Auth()

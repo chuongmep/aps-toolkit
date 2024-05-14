@@ -70,7 +70,7 @@ class Auth:
         result = Token(self.access_token, self.token_type, self.expires_in)
         return result
 
-    def auth3leg(self, callback_url=None, scopes=None) -> Token:
+    def auth3leg(self, callback_url: str = None, scopes: str = None) -> Token:
         """
         This method is used to authenticate a user using the 3-legged OAuth flow.
         https://aps.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token/
@@ -219,7 +219,7 @@ class Auth:
         code_challenge = base64.urlsafe_b64encode(sha256).rstrip(b'=')
         return code_challenge.decode()
 
-    def refresh_new_token(self, old_refresh_token) -> Token:
+    def refresh_new_token(self, old_refresh_token: str) -> Token:
         Host = "https://developer.api.autodesk.com"
         url = "/authentication/v2/token"
 
