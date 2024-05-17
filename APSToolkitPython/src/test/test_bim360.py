@@ -65,6 +65,11 @@ class TestBIM360(TestCase):
         df = self.bim360.batch_report_projects(self.hub_id)
         self.assertNotEquals(df.empty, True)
 
+    def test_batch_report_items(self):
+        self.bim360.token = Auth().auth3leg()
+        df = self.bim360.batch_report_items(self.project_id, self.folder_id, ".rvt", True)
+        self.assertNotEquals(df.empty, True)
+
     def test_get_item__display_name(self):
         item_name = self.bim360.get_item_display_name(self.project_id, self.item_id)
         self.assertNotEquals(item_name, "")

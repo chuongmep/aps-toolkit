@@ -295,26 +295,29 @@ class BIM360:
         if response.status_code != 200:
             raise Exception(response.content)
         folder_contents = response.json()
-        for folder_content in folder_contents['data']:
-            if folder_content['type'] == "items":
-                item_id = folder_content['id']
-                item_name = folder_content['attributes']['displayName']
+        if is_sub_folder:
+            for folder_content in folder_contents['data']:
+                if folder_content['type'] == "folders":
+                    df = pd.concat(
+                        [df, self.batch_report_items(project_id, folder_content['id'], extension, is_sub_folder)],
+                        ignore_index=True)
+        # if included not include or null,pass
+        if 'included' in folder_contents:
+            for include_content in folder_contents['included']:
+                item_name = include_content['attributes']['displayName']
                 if not item_name.endswith(extension):
                     continue
-                item_versions = self._get_latest_version(project_id, item_id)
-                # getfrom dict with keys : version
-                last_version = item_versions["version"]
-                derivative_urn = item_versions["derivative_urn"]
-                last_modified_time = folder_content['attributes']['lastModifiedTime']
+                relationship = include_content['relationships']
+                item_id = relationship['item']['data']['id']
+                last_version = include_content['attributes']['versionNumber']
+                derivative_urn = ""
+                if 'derivatives' in relationship:
+                    derivative_urn = include_content['relationships']['derivatives']['data']['id']
+                last_modified_time = include_content['attributes']['lastModifiedTime']
                 df = pd.concat([df, pd.DataFrame(
                     {'project_id': project_id, 'folder_id': folder_id, 'item_name': item_name, 'item_id': item_id,
                      'last_version': last_version, 'derivative_urn': derivative_urn,
                      'last_modified_time': last_modified_time}, index=[0])], ignore_index=True)
-            elif folder_content['type'] == "folders" and is_sub_folder:
-                if is_sub_folder:
-                    df = pd.concat(
-                        [df, self.batch_report_items(project_id, folder_content['id'], extension, is_sub_folder)],
-                        ignore_index=True)
         return df
 
     def _get_number_latest_item_version(self, project_id: str, item_id: str) -> int:
@@ -325,21 +328,6 @@ class BIM360:
             raise Exception(response.content)
         item_versions = response.json()
         return len(item_versions['data'])
-
-    def _get_latest_version(self, project_id: str, item_id: str) -> dict:
-        # dict with keys : version,derivative_urn,last_modified_time
-        latest_version = {}
-        url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
-        headers = {'Authorization': 'Bearer ' + self.token.access_token}
-        response = requests.get(url, headers=headers)
-        if response.status_code != 200:
-            raise Exception(response.content)
-        item_versions = response.json()
-        # add to latest_version
-        latest_version['version'] = item_versions['data'][0]['attributes']['versionNumber']
-        latest_version['last_modified_time'] = item_versions['data'][0]['attributes']['lastModifiedTime']
-        latest_version['derivative_urn'] = item_versions['data'][0]['relationships']['derivatives']['data']['id']
-        return latest_version
 
     def get_urn_item_version(self, project_id: str, item_id: str, version: str):
         """
