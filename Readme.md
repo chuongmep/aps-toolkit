@@ -56,7 +56,12 @@ Before start you need setup your environment:
 ```bash
 APS_CLIENT_ID = <your client id>
 APS_CLIENT_SECRET = <your client secret>
+```
+Advanced setup for APS Toolkit environment:
+
+```bash
 APS_REFRESH_TOKEN = <your refresh token>
+APS_ACCESS_TOKEN = <your access token>
 ```
 
 ## ⭐ Getting Started

@@ -14,14 +14,134 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import os
+import requests
+import base64
+from enum import Enum
+
+
+class RevokeType(Enum):
+    TOKEN_PUBLIC = 1
+    TOKEN_PRIVATE = 2
+    REFRESH_TOKEN_PUBLIC = 3
+    REFRESH_TOKEN_PRIVATE = 4
 
 
 class Token():
-    def __init__(self, access_token: str, token_type: str, expires_in: int, refresh_token: str = None):
+    def __init__(self, access_token: str, token_type: str, expires_in: int, refresh_token: str = None,
+                 SetEnv: bool = False):
+        """
+        Initialize Token
+        :param access_token: the access token used to authenticate
+        :param token_type:  the type of token
+        :param expires_in:  the time in seconds that the token will expire
+        :param refresh_token:  the refresh token used to get a new access token
+        :param SetEnv:  set the access token and refresh token to the environment variables
+        """
         self.access_token = access_token
         self.token_type = token_type
         self.expires_in = expires_in
         self.refresh_token = refresh_token
+        if SetEnv:
+            os.environ["APS_ACCESS_TOKEN"] = access_token
+            os.environ["APS_REFRESH_TOKEN"] = refresh_token
 
     def is_expired(self) -> bool:
         return self.expires_in <= 0
+
+    @staticmethod
+    def revoke(RevokeType: RevokeType = RevokeType.REFRESH_TOKEN_PRIVATE):
+        """
+        Revoke the token
+        :param :class:`RevokeType` the type of token to revoke \n
+        TOKEN_PUBLIC : use public APS_CLIENT_ID, APS_ACCESS_TOKEN \n
+        TOKEN_PRIVATE : use private APS_CLIENT_ID and APS_CLIENT_SECRET, APS_ACCESS_TOKEN \n
+        REFRESH_TOKEN_PUBLIC : use public APS_CLIENT_ID, APS_REFRESH_TOKEN \n
+        REFRESH_TOKEN_PRIVATE : use private APS_CLIENT_ID and APS_CLIENT_SECRET, APS_REFRESH_TOKEN \n
+        :return:  the response content
+        """
+        url = "https://developer.api.autodesk.com/authentication/v2/revoke"
+        if RevokeType == RevokeType.TOKEN_PUBLIC:
+            token = os.getenv("APS_ACCESS_TOKEN")
+            if token is None:
+                raise Exception("access_token is not provided.")
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+            client_id = os.getenv("APS_CLIENT_ID")
+            if client_id is None:
+                raise Exception("APS_CLIENT_ID is not provided.")
+            data = {
+                "token": token,
+                "token_type_hint": "access_token",
+                "client_id": client_id
+
+            }
+            result = requests.post(url, headers=headers, data=data)
+            if result.status_code != 200:
+                raise Exception(result.content)
+            return result.content
+        elif RevokeType == RevokeType.TOKEN_PRIVATE:
+            client_id = os.getenv("APS_CLIENT_ID")
+            if client_id is None:
+                raise Exception("APS_CLIENT_ID is not provided.")
+            client_secret = os.getenv("APS_CLIENT_SECRET")
+            if client_secret is None:
+                raise Exception("APS_ACCESS_TOKEN is not provided.")
+            auth = f"Basic {base64.b64encode(f'{client_id}:{client_secret}'.encode()).decode()}"
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": auth
+            }
+            token = os.getenv("APS_ACCESS_TOKEN")
+            if token is None:
+                raise Exception("APS_ACCESS_TOKEN is not provided.")
+            data = {
+                "token": token,
+                "token_type_hint": "access_token"
+            }
+            result = requests.post(url, headers=headers, data=data)
+            if result.status_code != 200:
+                raise Exception(result.content)
+            return result.content
+        elif RevokeType == RevokeType.REFRESH_TOKEN_PUBLIC:
+            refresh_token = os.getenv("APS_REFRESH_TOKEN")
+            if refresh_token is None:
+                raise Exception("APS_REFRESH_TOKEN is not provided.")
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+            data = {
+                "token": refresh_token,
+                "token_type_hint": "refresh_token"
+            }
+            client_id = os.getenv("APS_CLIENT_ID")
+            if client_id is None:
+                raise Exception("APS_CLIENT_ID is not provided.")
+            result = requests.post(url, headers=headers, data=data)
+            if result.status_code != 200:
+                raise Exception(result.content)
+            return result.content
+        elif RevokeType == RevokeType.REFRESH_TOKEN_PRIVATE:
+            client_id = os.getenv("APS_CLIENT_ID")
+            if client_id is None:
+                raise Exception("APS_CLIENT_ID is not provided.")
+            client_secret = os.getenv("APS_CLIENT_SECRET")
+            if client_secret is None:
+                raise Exception("APS_ACCESS_TOKEN is not provided.")
+            auth = f"Basic {base64.b64encode(f'{client_id}:{client_secret}'.encode()).decode()}"
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": auth
+            }
+            refresh_token = os.getenv("APS_REFRESH_TOKEN")
+            if refresh_token is None:
+                raise Exception("APS_REFRESH_TOKEN is not provided.")
+            data = {
+                "token": refresh_token,
+                "token_type_hint": "refresh_token"
+            }
+            result = requests.post(url, headers=headers, data=data)
+            if result.status_code != 200:
+                raise Exception(result.content)
+            return result.content
