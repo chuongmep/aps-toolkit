@@ -27,8 +27,14 @@ class RevokeType(Enum):
     REFRESH_TOKEN_PRIVATE = 4
 
 
+class ClientType(Enum):
+    PUBLIC = 1
+    PRIVATE = 2
+
+
 class Token():
-    def __init__(self, access_token: str, token_type: str, expires_in: int, refresh_token: str = None,
+    def __init__(self, access_token: str = None, token_type: str = None, expires_in: int = None,
+                 refresh_token: str = None,
                  SetEnv: bool = False):
         """
         Initialize Token
@@ -38,16 +44,73 @@ class Token():
         :param refresh_token:  the refresh token used to get a new access token
         :param SetEnv:  set the access token and refresh token to the environment variables
         """
+        if SetEnv:
+            os.environ["APS_ACCESS_TOKEN"] = access_token
+            os.environ["APS_REFRESH_TOKEN"] = refresh_token
         self.access_token = access_token
         self.token_type = token_type
         self.expires_in = expires_in
         self.refresh_token = refresh_token
-        if SetEnv:
-            os.environ["APS_ACCESS_TOKEN"] = access_token
-            os.environ["APS_REFRESH_TOKEN"] = refresh_token
+
+    def set_env(self):
+        """
+        Set the access token and refresh token to the environment variables
+        :return:
+        """
+        os.environ["APS_ACCESS_TOKEN"] = self.access_token if self.access_token is not None else ""
+        os.environ["APS_REFRESH_TOKEN"] = self.refresh_token if self.refresh_token is not None else ""
 
     def is_expired(self) -> bool:
         return self.expires_in <= 0
+
+    def introspect(self, client_type: ClientType) -> dict:
+        """
+        Examines an access token including the reference token and returns the status information of the tokens.
+        If the token is active, additional information is returned.
+        :param :class:`ClientType` : the type of client \n
+        PUBLIC : use public APS_CLIENT_ID, APS_ACCESS_TOKEN \n
+        PRIVATE : use private APS_CLIENT_ID , APS_CLIENT_SECRET and APS_ACCESS_TOKEN \n
+        :return:
+        """
+        if self.access_token is None:
+            self.access_token = os.getenv("APS_ACCESS_TOKEN")
+            if self.access_token is None:
+                raise Exception("access_token is not provided.")
+        url = "https://developer.api.autodesk.com/authentication/v2/introspect"
+        if client_type == ClientType.PUBLIC:
+            token = self.access_token
+            client_id = os.getenv("APS_CLIENT_ID")
+            if client_id is None:
+                raise Exception("APS_CLIENT_ID is not provided.")
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            data = {
+                "token": token,
+                "client_id": client_id
+            }
+            result = requests.post(url, headers=headers, data=data)
+            if result.status_code != 200:
+                raise Exception(result.content)
+            return result.json()
+        elif client_type == ClientType.PRIVATE:
+            token = self.access_token
+            client_id = os.getenv("APS_CLIENT_ID")
+            if client_id is None:
+                raise Exception("APS_CLIENT_ID is not provided.")
+            client_secret = os.getenv("APS_CLIENT_SECRET")
+            if client_secret is None:
+                raise Exception("APS_CLIENT_SECRET is not provided.")
+            auth = f"Basic {base64.b64encode(f'{client_id}:{client_secret}'.encode()).decode()}"
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Authorization": auth
+            }
+            data = {
+                "token": token
+            }
+            result = requests.post(url, headers=headers, data=data)
+            if result.status_code != 200:
+                raise Exception(result.content)
+            return result.json()
 
     @staticmethod
     def revoke(RevokeType: RevokeType = RevokeType.REFRESH_TOKEN_PRIVATE):

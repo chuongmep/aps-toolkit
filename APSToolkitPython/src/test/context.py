@@ -14,7 +14,7 @@ from aps_toolkit import DbReader
 from aps_toolkit import Auth
 from aps_toolkit import AuthGoogleColab
 from aps_toolkit import Token
-from aps_toolkit import RevokeType
+from aps_toolkit import RevokeType, ClientType
 from aps_toolkit import BIM360
 from aps_toolkit import Fragments
 from aps_toolkit import SVFGeometries

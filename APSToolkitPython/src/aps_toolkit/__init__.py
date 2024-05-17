@@ -9,7 +9,7 @@ from .PropReader import PropReader
 from .DbReader import DbReader
 from .Bucket import Bucket
 from .Token import Token
-from .Token import RevokeType
+from .Token import RevokeType, ClientType
 from .InputStream import InputStream
 from .PackFileReader import PackFileReader
 from .SVFReader import SVFReader
