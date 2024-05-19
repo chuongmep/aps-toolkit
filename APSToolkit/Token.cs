@@ -1,10 +1,12 @@
+using System.Runtime.Serialization;
+using Autodesk.Authentication.Model;
 using Autodesk.Forge;
 
 namespace APSToolkit;
 
 public class Token
 {
-    public Token(string? accessToken, string? tokenType, long expiresIn, string refreshToken) :this()
+    public Token(string? accessToken, string? tokenType, int? expiresIn, string refreshToken) :this()
     {
         this.AccessToken = accessToken;
         this.TokenType = tokenType;
@@ -17,9 +19,14 @@ public class Token
 
     }
 
+    [DataMember(Name = "access_token", EmitDefaultValue = false)]
     public string? AccessToken { get; set; }
+
+    [DataMember(Name = "token_type", EmitDefaultValue = false)]
     public string? TokenType { get; set; }
+    [DataMember(Name = "expires_in", EmitDefaultValue = false)]
     public long? ExpiresIn { get; set; }
+    [DataMember(Name = "refresh_token", EmitDefaultValue = false)]
     public string? RefreshToken { get; set; }
 
     /// <summary>
@@ -45,13 +52,15 @@ public class Token
     /// </summary>
     public Token Refresh3LegToken()
     {
-        Scope[] scopes = new Scope[]
+        var scopes = new List<Scopes>
         {
-            Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.DataSearch, Scope.BucketCreate,
-            Scope.BucketRead, Scope.CodeAll,
-            Scope.BucketUpdate, Scope.BucketDelete
+            Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate, Scopes.DataSearch, Scopes.BucketCreate,
+            Scopes.BucketRead, Scopes.CodeAll,
+            Scopes.BucketUpdate, Scopes.BucketDelete
         };
-        Token token = Auth.Refresh3LeggedToken(scopes).Result;
+        var refreshToken = Environment.GetEnvironmentVariable("APS_REFRESH_TOKEN", EnvironmentVariableTarget.User);
+        var auth = new Auth();
+        Token token = auth.Refresh3LeggedToken(refreshToken,scopes).Result;
         this.AccessToken = token.AccessToken;
         this.TokenType = token.TokenType;
         this.ExpiresIn = token.ExpiresIn;

@@ -2,12 +2,23 @@
 using System.Net;
 using APSToolkit.Database;
 using APSToolkit.Utils;
+using Autodesk.DataManagement.Http;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
+using Autodesk.ModelDerivative.Http;
+using Autodesk.Oss.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using DerivativesApi = Autodesk.Forge.DerivativesApi;
+using FoldersApi = Autodesk.Forge.FoldersApi;
+using HubsApi = Autodesk.Forge.HubsApi;
+using ItemsApi = Autodesk.Forge.ItemsApi;
+using ObjectDetails = Autodesk.Forge.Model.ObjectDetails;
+using ProjectsApi = Autodesk.Forge.ProjectsApi;
+using VersionsApi = Autodesk.Forge.VersionsApi;
+
 // Copyright (c) chuongmep.com. All rights reserved
 
 namespace APSToolkit.BIM360;

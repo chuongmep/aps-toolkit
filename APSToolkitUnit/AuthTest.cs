@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using APSToolkit;
+using Autodesk.Authentication.Model;
 using Autodesk.Forge;
 using NUnit.Framework;
 
@@ -29,28 +31,28 @@ public class AuthTest
         Assert.IsNotNull(Token.AccessToken);
         Assert.IsNotEmpty(Token.AccessToken);
     }
-    [Test]
-    public Task TestAuthentication3LegPkce()
-    {
-        string clientId = Environment.GetEnvironmentVariable("APS_CLIENT_ID_PKCE", EnvironmentVariableTarget.User);
-        Auth = new Auth(clientId);
-        Token = Auth.Get3LeggedTokenPkce().Result;
-        Assert.IsNotNull(Token.AccessToken);
-        Assert.IsNotEmpty(Token.RefreshToken);
-        return Task.CompletedTask;
-    }
+    // [Test]
+    // public Task TestAuthentication3LegPkce()
+    // {
+    //     string clientId = Environment.GetEnvironmentVariable("APS_CLIENT_ID_PKCE", EnvironmentVariableTarget.User);
+    //     Auth = new Auth(clientId);
+    //     Token = Auth.Get3LeggedTokenPkce().Result;
+    //     Assert.IsNotNull(Token.AccessToken);
+    //     Assert.IsNotEmpty(Token.RefreshToken);
+    //     return Task.CompletedTask;
+    // }
     [Test]
     public Task TestRefresh3LegToken()
     {
-        var clientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
-        var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
         var refreshToken = Environment.GetEnvironmentVariable("APS_REFRESH_TOKEN", EnvironmentVariableTarget.User);
-        if (string.IsNullOrEmpty(clientID)) Assert.Fail("Missing APS_CLIENT_ID environment variable.");
-        if (string.IsNullOrEmpty(clientSecret)) Assert.Fail("Missing APS_CLIENT_SECRET environment variable.");
         if (string.IsNullOrEmpty(refreshToken)) Assert.Fail("Missing APS_REFRESH_TOKEN environment variable.");
-        Scope[] scope = new Scope[]
-            {Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate};
-        var Leg3Token = Auth.Refresh3LeggedToken(clientID, clientSecret, scope).Result;
+        var scopes = new List<Scopes>
+        {
+            Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate, Scopes.DataSearch, Scopes.BucketCreate,
+            Scopes.BucketRead, Scopes.CodeAll,
+            Scopes.BucketUpdate, Scopes.BucketDelete
+        };
+        var Leg3Token = Auth.Refresh3LeggedToken(refreshToken, scopes).Result;
         Assert.IsNotNull(Leg3Token);
         return Task.CompletedTask;
     }

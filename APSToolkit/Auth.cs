@@ -5,7 +5,9 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Autodesk.Forge;
+using Autodesk.Authentication;
+using Autodesk.Authentication.Model;
+using Autodesk.SDKManager;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -23,7 +25,7 @@ public class Auth
     /// </summary>
     /// <param name="clientId"></param>
     /// <param name="clientSecret"></param>
-    public Auth(string? clientId=null, string? clientSecret=null)
+    public Auth(string? clientId = null, string? clientSecret = null)
     {
         this.ClientId = clientId;
         this.ClientSecret = clientSecret;
@@ -36,7 +38,7 @@ public class Auth
     /// </summary>
     public Auth()
     {
-        this.ClientId = Environment.GetEnvironmentVariable("APS_CLIENT_ID",EnvironmentVariableTarget.User);
+        this.ClientId = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
         this.ClientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
         this.Token = new Token();
     }
@@ -66,12 +68,7 @@ public class Auth
         {
             throw new Exception("Missing APS_CLIENT_ID environment variable.");
         }
-        Scope[] scope = new Scope[]
-        {
-            Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.DataSearch, Scope.BucketCreate,
-            Scope.BucketRead, Scope.CodeAll,
-            Scope.BucketUpdate, Scope.BucketDelete
-        };
+
         return clientId;
     }
 
@@ -114,27 +111,18 @@ public class Auth
     /// <exception cref="Exception">Thrown when APS_CLIENT_ID or APS_CLIENT_SECRET environment variables are missing.</exception>
     public async Task<Token> Get2LeggedToken()
     {
-        Autodesk.Forge.TwoLeggedApi twoLeggedApi = new Autodesk.Forge.TwoLeggedApi();
-        if (string.IsNullOrEmpty(ClientId) || string.IsNullOrEmpty(ClientSecret))
+        var sdkManager = SdkManagerBuilder.Create().Build();
+        var authenticationClient = new AuthenticationClient(sdkManager);
+        List<Scopes> scopes = new List<Scopes>
         {
-            throw new Exception("Missing APS_CLIENT_ID or APS_CLIENT_SECRET environment variables.");
-        }
-        dynamic token = await twoLeggedApi.AuthenticateAsync(ClientId, ClientSecret, "client_credentials",
-            new Scope[]
-            {
-                Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.DataSearch, Scope.BucketCreate,
-                Scope.BucketRead, Scope.CodeAll,
-                Scope.BucketUpdate, Scope.BucketDelete
-            }).ConfigureAwait(false);
-        this.Token.AccessToken = token.access_token;
-        this.Token.TokenType = token.token_type;
-        this.Token.ExpiresIn = token.expires_in;
-        if (string.IsNullOrEmpty(this.Token.AccessToken))
-        {
-            throw new Exception("can't get access_token, please check again value APS_CLIENT_ID and APS_CLIENT_SECRET");
-        }
-        return Token;
+            Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate, Scopes.DataSearch, Scopes.BucketCreate,
+            Scopes.BucketRead, Scopes.CodeAll,
+            Scopes.BucketUpdate, Scopes.BucketDelete
+        };
+        TwoLeggedToken? auth = await authenticationClient.GetTwoLeggedTokenAsync(ClientId, ClientSecret, scopes);
+        return new Token(auth.AccessToken, auth.TokenType, auth.ExpiresIn!, string.Empty);
     }
+
     public async Task<Token> Get3LeggedToken(string? callbackUrl = null, string? scopes = null)
     {
         if (string.IsNullOrEmpty(scopes))
@@ -148,7 +136,8 @@ public class Auth
             callbackUrl = "http://localhost:8080/api/auth/callback";
         }
 
-        var authUrl = $"https://developer.api.autodesk.com/authentication/v2/authorize?response_type=code&client_id={ClientId}&redirect_uri={callbackUrl}&scope={scopes}";
+        var authUrl =
+            $"https://developer.api.autodesk.com/authentication/v2/authorize?response_type=code&client_id={ClientId}&redirect_uri={callbackUrl}&scope={scopes}";
 
         OpenDefaultBrowser(authUrl);
 
@@ -185,14 +174,17 @@ public class Auth
 
             break;
         }
+
         listener.Stop();
         Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", Token.RefreshToken, EnvironmentVariableTarget.User);
         return Token;
     }
+
     private async Task<Token?> HandleCallback(string callbackUrl, string? code)
     {
         var tokenUrl = "https://developer.api.autodesk.com/authentication/v2/token";
-        var payload = $"grant_type=authorization_code&code={code}&client_id={ClientId}&client_secret={ClientSecret}&redirect_uri={callbackUrl}";
+        var payload =
+            $"grant_type=authorization_code&code={code}&client_id={ClientId}&client_secret={ClientSecret}&redirect_uri={callbackUrl}";
 
         using var client = new HttpClient();
         var content = new StringContent(payload, Encoding.UTF8, "application/x-www-form-urlencoded");
@@ -205,7 +197,12 @@ public class Auth
         }
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<Token>(jsonResponse);
+        var token = new Token();
+        token.RefreshToken = JObject.Parse(jsonResponse)["refresh_token"]!.Value<string>();
+        token.AccessToken = JObject.Parse(jsonResponse)["access_token"]!.Value<string>();
+        token.TokenType = JObject.Parse(jsonResponse)["token_type"]!.Value<string>();
+        token.ExpiresIn = JObject.Parse(jsonResponse)["expires_in"]!.Value<int>();
+        return token;
     }
 
     private void OpenDefaultBrowser(string url)
@@ -221,6 +218,7 @@ public class Auth
             Console.WriteLine($"Error opening default browser: {ex.Message}");
         }
     }
+
     public async Task<Token> Get3LeggedTokenPkce(string? callbackUrl = null, string? scopes = null)
     {
         if (string.IsNullOrEmpty(scopes))
@@ -232,23 +230,27 @@ public class Auth
         {
             callbackUrl = "http://localhost:8080/api/auth/callback";
         }
+
         string codeVerifier = RandomString(64);
         string codeChallenge = GenerateCodeChallenge(codeVerifier);
-        string authUrl = $"https://developer.api.autodesk.com/authentication/v2/authorize?response_type=code&client_id={ClientId}&redirect_uri={callbackUrl}&scope={scopes}&prompt=login&code_challenge={codeChallenge}&code_challenge_method=S256";
+        string authUrl =
+            $"https://developer.api.autodesk.com/authentication/v2/authorize?response_type=code&client_id={ClientId}&redirect_uri={callbackUrl}&scope={scopes}&prompt=login&code_challenge={codeChallenge}&code_challenge_method=S256";
         OpenDefaultBrowser(authUrl);
         // get prefix from callbackUrl just get http://localhost:8080/api/auth/ from http://localhost:8080/api/auth/callback
-        string prefix = callbackUrl.Substring(0, callbackUrl.LastIndexOf('/'))+"/";
+        string prefix = callbackUrl.Substring(0, callbackUrl.LastIndexOf('/')) + "/";
         var listenerTask = CallListener(prefix, codeVerifier, callbackUrl, scopes);
         await listenerTask;
         Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", Token.RefreshToken, EnvironmentVariableTarget.User);
         return Token;
     }
-    private async Task CallListener(string prefix,string codeVerifier,string callbackUrl,string scopes)
+
+    private async Task CallListener(string prefix, string codeVerifier, string callbackUrl, string scopes)
     {
         if (!HttpListener.IsSupported)
         {
             throw new NotSupportedException("HttpListener is not supported in this context!");
         }
+
         if (prefix == null || prefix.Length == 0)
             throw new ArgumentException("prefixes");
         HttpListener listener = new HttpListener();
@@ -262,7 +264,7 @@ public class Auth
         try
         {
             string? authCode = request.Url?.Query.ToString().Split('=')[1];
-            await GetPkceToken(authCode,codeVerifier,callbackUrl,scopes);
+            await GetPkceToken(authCode, codeVerifier, callbackUrl, scopes);
         }
         catch (Exception ex)
         {
@@ -280,7 +282,8 @@ public class Auth
         output.Close();
         listener.Stop();
     }
-    private async Task GetPkceToken(string? authCode,string codeVerifier,string callbackUrl,string scopes)
+
+    private async Task GetPkceToken(string? authCode, string codeVerifier, string callbackUrl, string scopes)
     {
         try
         {
@@ -293,7 +296,7 @@ public class Auth
                 {
                     { "client_id", ClientId },
                     { "code_verifier", codeVerifier },
-                    { "code", authCode},
+                    { "code", authCode },
                     { "scope", scopes },
                     { "grant_type", "authorization_code" },
                     { "redirect_uri", callbackUrl }
@@ -316,6 +319,7 @@ public class Auth
             Console.WriteLine(ex.Message);
         }
     }
+
     private string RandomString(int length)
     {
         Random random = new Random();
@@ -339,71 +343,38 @@ public class Auth
     /// Refreshes a 3-legged access token from the Autodesk Forge API using the refresh token grant type.
     /// </summary>
     /// <param name="refreshToken">The refresh token obtained during the initial authentication.</param>
-    /// <param name="scope">The array of scopes specifying the access permissions for the refreshed token.</param>
+    /// <param name="scopes">The array of scopes specifying the access permissions for the refreshed token.
+    /// </param>
     /// <returns>The refreshed 3-legged access token.</returns>
     /// <exception cref="Exception">Thrown when clientId, clientSecret, or refreshToken is null or empty.</exception>
     public async Task<Token> Refresh3LeggedToken(string refreshToken,
-        Scope[] scope)
+        List<Scopes>? scopes = null)
     {
-        Autodesk.Forge.ThreeLeggedApi threeLeggedApi = new Autodesk.Forge.ThreeLeggedApi();
+        var sdkManager = SdkManagerBuilder.Create().Build();
+        var authenticationClient = new AuthenticationClient(sdkManager);
         if (string.IsNullOrEmpty(ClientId) || string.IsNullOrEmpty(ClientSecret) || string.IsNullOrEmpty(refreshToken))
         {
-            throw new Exception("Missing required parameters: clientId, clientSecret, or refreshToken.");
+            throw new Exception("ClientId, ClientSecret, or RefreshToken is null or empty.");
         }
 
-        threeLeggedApi.Configuration.AccessToken = Get2LeggedToken().Result.AccessToken;
-        dynamic token = await threeLeggedApi
-            .RefreshtokenAsync(ClientId, ClientSecret, "refresh_token", refreshToken, scope).ConfigureAwait(false);
-        var accessToken = token.access_token;
-        // set refresh token
-        var newRefreshToken = token.refresh_token;
-        // set value to environment variable
-        Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", newRefreshToken, EnvironmentVariableTarget.User);
-        this.Token.AccessToken = accessToken;
-        this.Token.TokenType = token.token_type;
-        this.Token.ExpiresIn = token.expires_in;
-        this.Token.RefreshToken = newRefreshToken;
-        return Token;
-    }
-
-    /// <summary>
-    /// Refreshes a 3-legged access token from the Autodesk Forge API using the refresh token grant type.
-    /// </summary>
-    /// <param name="clientId">The client ID associated with the Forge application.</param>
-    /// <param name="clientSecret">The client secret associated with the Forge application.</param>
-    /// <param name="scope">The array of scopes specifying the access permissions for the refreshed token.</param>
-    /// <returns>The refreshed 3-legged access token.</returns>
-    /// <exception cref="Exception">Thrown when clientId, clientSecret, or APS_REFRESH_TOKEN is null or empty.</exception>
-    public async Task<Token> Refresh3LeggedToken(string clientId, string clientSecret, Scope[] scope)
-    {
-        var refreshToken = Environment.GetEnvironmentVariable("APS_REFRESH_TOKEN", EnvironmentVariableTarget.User);
-        if (string.IsNullOrEmpty(refreshToken)) throw new Exception("Missing APS_REFRESH_TOKEN environment variable.");
-        Autodesk.Forge.ThreeLeggedApi threeLeggedApi = new Autodesk.Forge.ThreeLeggedApi();
-        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-            throw new Exception("Missing required parameters: clientId, clientSecret.");
-        threeLeggedApi.Configuration.AccessToken = Get2LeggedToken().Result.AccessToken;
-        dynamic token = await threeLeggedApi
-            .RefreshtokenAsync(clientId, clientSecret, "refresh_token", refreshToken, scope).ConfigureAwait(false);
-        var accessToken = token.access_token;
-        // set refresh token
-        var newRefreshToken = token.refresh_token;
-        // set value to environment variable
-        Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", newRefreshToken, EnvironmentVariableTarget.User);
-        Token newToken = new Token()
+        if (scopes == null)
         {
-            AccessToken = accessToken,
-            TokenType = token.token_type,
-            ExpiresIn = token.expires_in,
-            RefreshToken = newRefreshToken
-        };
-        return newToken;
-    }
+            scopes = new List<Scopes>
+            {
+                Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate, Scopes.DataSearch, Scopes.BucketCreate,
+                Scopes.BucketRead, Scopes.CodeAll,
+                Scopes.BucketUpdate, Scopes.BucketDelete
+            };
+        }
 
-    public static Task<Token> Refresh3LeggedToken(Scope[] scope)
-    {
-        var clientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
-        var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
-        var Leg3Token = new Auth().Refresh3LeggedToken(clientID, clientSecret, scope).Result;
-        return Task.FromResult(Leg3Token);
+        RefreshToken tokenAsync =
+            await authenticationClient.GetRefreshTokenAsync(ClientId, ClientSecret, refreshToken, scopes);
+        Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", tokenAsync._RefreshToken,
+            EnvironmentVariableTarget.User);
+        this.Token.AccessToken = tokenAsync.AccessToken;
+        this.Token.TokenType = tokenAsync.TokenType;
+        this.Token.ExpiresIn = tokenAsync.ExpiresIn;
+        this.Token.RefreshToken = tokenAsync._RefreshToken;
+        return Token;
     }
 }

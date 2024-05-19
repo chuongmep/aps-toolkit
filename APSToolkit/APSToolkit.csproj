@@ -32,6 +32,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Autodesk.Authentication" Version="1.0.0" />
+        <PackageReference Include="Autodesk.ModelDerivative" Version="1.0.0" />
+        <PackageReference Include="Autodesk.DataManagement" Version="1.0.0" />
+        <PackageReference Include="Autodesk.OSS" Version="1.0.0" />
+        <PackageReference Include="Autodesk.SdkManager" Version="1.0.0" />
         <PackageReference Include="Autodesk.Forge" Version="1.9.9"/>
         <PackageReference Include="Autodesk.Forge.DesignAutomation" Version="5.1.2"/>
         <PackageReference Include="CsvHelper" Version="30.0.1"/>

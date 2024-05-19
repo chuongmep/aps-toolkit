@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Threading.Tasks;
 using APSToolkit;
 using APSToolkit.DesignAutomation;
+using Autodesk.Authentication.Model;
 using Autodesk.Forge;
 using Autodesk.Forge.DesignAutomation.Model;
 using NUnit.Framework;
@@ -15,12 +17,22 @@ namespace ForgeToolkitUnit;
 [TestFixture]
 public class DesignAutomationTest
 {
-    private static Token Token { get; set; }
 
     [SetUp]
     public void Setup()
     {
-        Token = new Auth().Get2LeggedToken().Result;
+        var auth = new Auth();
+        Settings.Token2Leg = auth.Get2LeggedToken().Result;
+        var scopes = new List<Scopes>
+        {
+            Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate, Scopes.DataSearch, Scopes.BucketCreate,
+            Scopes.BucketRead, Scopes.CodeAll,
+            Scopes.BucketUpdate, Scopes.BucketDelete
+        };
+        var refreshToken = Environment.GetEnvironmentVariable("APS_REFRESH_TOKEN", EnvironmentVariableTarget.User);
+        Assert.IsNotEmpty(refreshToken);
+
+        Settings.Token3Leg = auth.Refresh3LeggedToken(refreshToken,scopes).Result;
     }
 
     [TestCase("b.ca790fb5-141d-4ad5-b411-0461af2e9748", "urn:adsk.wipprod:fs.file:vf.HX2O7xKUQfukJ_hgHsrX_A", 35, 35)]
@@ -94,14 +106,9 @@ public class DesignAutomationTest
         Token token =
             new Auth(configuration.ClientId, configuration.ClientSecret).Get2LeggedToken().Result;
         string forgeToken2Leg = token.AccessToken;
-        var clientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
-        var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
-        Scope[] scope = new Scope[]
-            { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        string forgeToken3Leg = new Auth(configuration.ClientId, configuration.ClientSecret).Refresh3LeggedToken(clientID, clientSecret, scope).Result.AccessToken;
-        if (string.IsNullOrEmpty(forgeToken3Leg)) Assert.Fail("Can't use forgeToken3Leg .");
+        if (string.IsNullOrEmpty(Settings.Token3Leg.AccessToken)) Assert.Fail("Can't use forgeToken3Leg .");
         Status executeJob =
-            await revitExtractDataAutomate.ExecuteJob(forgeToken2Leg, forgeToken3Leg, paramsList, inputParams,
+            await revitExtractDataAutomate.ExecuteJob(forgeToken2Leg, Settings.Token3Leg.AccessToken, paramsList, inputParams,
                 callback);
         Assert.IsTrue(executeJob == Status.Success);
     }
@@ -129,18 +136,13 @@ public class DesignAutomationTest
             ResultFileExt = ".zip"
         };
         DynamoRevitDesignAutomate dynamoRevitDesignAutomate = new DynamoRevitDesignAutomate(configuration);
-        Token token =
-            new Auth(configuration.ClientId, configuration.ClientSecret).Get2LeggedToken().Result;
-        string forgeToken2Leg = token.AccessToken;
-        var clientID = Environment.GetEnvironmentVariable("APS_CLIENT_ID", EnvironmentVariableTarget.User);
-        var clientSecret = Environment.GetEnvironmentVariable("APS_CLIENT_SECRET", EnvironmentVariableTarget.User);
-        Scope[] scope = new Scope[]
-            { Scope.DataRead, Scope.DataWrite, Scope.DataCreate, Scope.BucketRead, Scope.BucketCreate, Scope.CodeAll };
-        string forgeToken3Leg = new Auth(configuration.ClientId, configuration.ClientSecret).Refresh3LeggedToken(clientID, clientSecret, scope).Result.AccessToken;
-        if (string.IsNullOrEmpty(forgeToken3Leg)) Assert.Fail("Can't use forgeToken3Leg .");
-        Status executeJob =
-            await dynamoRevitDesignAutomate.ExecuteJob(forgeToken2Leg, projectId, versionId,
-                inputZipPath);
-        Assert.IsTrue(executeJob == Status.Success);
+        if (string.IsNullOrEmpty(Settings.Token3Leg.AccessToken)) Assert.Fail("Can't use forgeToken3Leg .");
+        if (Settings.Token2Leg.AccessToken != null)
+        {
+            Status executeJob =
+                await dynamoRevitDesignAutomate.ExecuteJob(Settings.Token2Leg.AccessToken, projectId, versionId,
+                    inputZipPath);
+            Assert.IsTrue(executeJob == Status.Success);
+        }
     }
 }
