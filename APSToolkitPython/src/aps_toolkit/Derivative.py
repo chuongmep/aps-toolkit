@@ -107,6 +107,8 @@ class Derivative:
         if response.status_code == 404:
             raise Exception(response.content)
         json_response = response.json()
+        if "derivatives" not in json_response:
+            raise Exception("No derivatives found in the manifest.")
         children = json_response['derivatives'][0]["children"]
         manifest_items = []
         image_items = []
