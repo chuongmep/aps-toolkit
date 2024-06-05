@@ -49,6 +49,17 @@ class PropDbReaderRevit(PropReader):
         """
         return self.ids[id]
 
+    def get_db_id(self, external_id) -> int:
+        """
+        Get database id of element in model from external id
+        :param external_id:  The unique id of element in model
+        :return:  :class:`int` : Database id of element in model
+        """
+        for idx in range(0, len(self.ids)):
+            if self.ids[idx] == external_id:
+                return idx
+        return -1
+
     def get_document_info(self) -> pd.Series:
         properties = self.get_all_properties(1)
         return pd.Series(properties)

@@ -86,9 +86,9 @@ class Fragments:
             bbox_offset = [0, 0, 0]
             if entry_type.version > 3:
                 if transform is not None and transform.t is not None:
-                    bbox_offset[0] = transform.t[0]
-                    bbox_offset[1] = transform.t[1]
-                    bbox_offset[2] = transform.t[2]
+                    bbox_offset[0] = float(transform.t[0])
+                    bbox_offset[1] = float(transform.t[1])
+                    bbox_offset[2] = float(transform.t[2])
 
             for j in range(6):
                 bbox[j] = pfr.get_float32() + bbox_offset[j % 3]
