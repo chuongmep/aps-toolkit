@@ -1,3 +1,5 @@
+import pandas as pd
+
 from .Token import Token
 from .Auth import Auth
 import requests
@@ -25,7 +27,32 @@ class Webhooks:
             "x-ads-region": self.region
         }
         response = requests.get(url, headers=headers)
-        return response.json()
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise Exception(response.reason)
+
+    def batch_report_all_hooks(self) -> pd.DataFrame:
+        """
+        Return all hooks in a pandas DataFrame, include all the properties of the hooks
+        :return: :class:`pd.DataFrame` - A pandas DataFrame with all the hooks
+        """
+        data = self.get_all_hooks()["data"]
+        if not data:
+            raise Exception("No data found")
+        df = pd.DataFrame()
+        for item in data:
+            props_dict = {}
+            for key, value in item.items():
+                if isinstance(value, dict):
+                    for k, v in value.items():
+                        props_dict[k] = v
+                else:
+                    props_dict[key] = value
+            single_df = pd.DataFrame(props_dict, index=[0])
+            df = pd.concat([df, single_df], ignore_index=True)
+        df = df.dropna(axis=1, how='all')
+        return df
 
     def get_all_app_hooks(self) -> dict:
         """
@@ -38,7 +65,10 @@ class Webhooks:
             "x-ads-region": self.region
         }
         response = requests.get(url, headers=headers)
-        return response.json()
+        if response.status_code == 200:
+            return response.json()
+        else:
+            raise Exception(response.reason)
 
     def get_hook_by_id(self, hook_id: str, event: str = "dm.version.added", system: str = "data") -> dict:
         """
