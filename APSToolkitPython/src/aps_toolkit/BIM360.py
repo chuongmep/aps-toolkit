@@ -332,7 +332,8 @@ class BIM360:
             for include_content in folder_contents['included']:
                 item_name = include_content['attributes']['displayName']
                 if not item_name.endswith(extension):
-                    continue
+                    if not extension == "" or extension is not None:
+                        continue
                 relationship = include_content['relationships']
                 item_id = relationship['item']['data']['id']
                 last_version = include_content['attributes']['versionNumber']
