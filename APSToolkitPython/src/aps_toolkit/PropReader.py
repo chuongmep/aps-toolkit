@@ -26,6 +26,8 @@ from typing import List
 from .units.DisplayUnits import DisplayUnits
 from .Token import Token
 import concurrent.futures
+import aiohttp
+import asyncio
 
 
 class PropReader:
@@ -38,20 +40,28 @@ class PropReader:
         self.region = region
         if manifest_item:
             derivative = Derivative(self.urn, self.token, self.region)
-            self._read_metadata_item(derivative, manifest_item)
+            asyncio.run(self._read_metadata_item_async(derivative, manifest_item))
         else:
-            self._read_metadata()
+            asyncio.run(self._read_metadata_async())
         self.units = DisplayUnits()
 
-    def _read_metadata(self):
+    async def _read_metadata_async(self):
         derivative = Derivative(self.urn, self.token, self.region)
         manifest_items = derivative.read_svf_manifest_items()
         if len(manifest_items) > 0:
-            self._read_metadata_item(derivative, manifest_items[0])
+            await self._read_metadata_item_async(derivative, manifest_items[0])
         else:
             raise Exception("No manifest item found")
 
-    def _read_metadata_item(self, derivative, manifest_item):
+    async def download_file(self, session, url, headers, file_name, items):
+        if file_name in items:
+            async with session.get(url, headers=headers) as response:
+                if response.status == 200:
+                    file_bytes = await response.read()
+                    return file_name, file_bytes
+        return None, None
+
+    async def _read_metadata_item_async(self, derivative, manifest_item):
         items = [
             "objects_attrs.json.gz",
             "objects_vals.json.gz",
@@ -70,28 +80,14 @@ class PropReader:
             "region": self.region
         }
 
-        def download_file(source):
-            if source.file_name in items:
-                try:
-                    response = requests.get(source.url, headers=headers)
-                    if response.status_code == 200:
-                        return source.file_name, response.content
-                    else:
-                        print(f"Failed to download {source.file_name}: {response.status_code}")
-                except Exception as e:
-                    print(f"Error downloading {source.file_name}: {e}")
-            return None, None
+        async with aiohttp.ClientSession() as session:
+            tasks = [self.download_file(session, source.url, headers, source.file_name, items) for source in resources]
+            results = await asyncio.gather(*tasks)
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future_to_source = {executor.submit(download_file, source): source for source in resources}
-            for future in concurrent.futures.as_completed(future_to_source):
-                source = future_to_source[future]
-                try:
-                    file_name, file_bytes = future.result()
-                    if file_name and file_bytes:
-                        downloaded_files[file_name] = file_bytes
-                except Exception as e:
-                    print(f"Error processing {source.file_name}: {e}")
+            for file_name, file_bytes in results:
+                if file_name and file_bytes:
+                    downloaded_files[file_name] = file_bytes
+                    print(f"Downloaded {file_name} successfully.")
 
         required_files = ["objects_ids.json.gz", "objects_offs.json.gz", "objects_avs.json.gz", "objects_attrs.json.gz",
                           "objects_vals.json.gz"]
