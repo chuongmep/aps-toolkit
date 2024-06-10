@@ -43,6 +43,10 @@ class TestPropDbReaderRevit(TestCase):
         families_types = self.prop_reader.get_all_families_types()
         self.assertNotEquals(families_types, 0)
 
+    def test_get_categories_families_types(self):
+        categories_families_types = self.prop_reader.get_categories_families_types()
+        self.assertNotEquals(categories_families_types, 0)
+
     def test_get_all_data(self):
         data = self.prop_reader.get_all_data(display_unit=True)
         self.assertIsNotNone(data)
