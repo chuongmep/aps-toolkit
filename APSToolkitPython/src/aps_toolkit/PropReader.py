@@ -25,6 +25,7 @@ import pandas as pd
 from typing import List
 from .units.DisplayUnits import DisplayUnits
 from .Token import Token
+import concurrent.futures
 
 
 class PropReader:
@@ -50,7 +51,7 @@ class PropReader:
         else:
             raise Exception("No manifest item found")
 
-    def _read_metadata_item(self, derivative: Derivative, manifest_item: ManifestItem):
+    def _read_metadata_item(self, derivative, manifest_item):
         items = [
             "objects_attrs.json.gz",
             "objects_vals.json.gz",
@@ -60,7 +61,6 @@ class PropReader:
             "objects_ids.json.gz"
         ]
         resources = derivative.read_svf_resource_item(manifest_item)
-        # filters just get items
         downloaded_files = {}
         access_token = self.token.access_token
         if not access_token:
@@ -69,13 +69,38 @@ class PropReader:
             "Authorization": f"Bearer {access_token}",
             "region": self.region
         }
-        for source in resources:
+
+        def download_file(source):
             if source.file_name in items:
-                downloaded_files[source.file_name] = source.url
-                response = requests.get(source.url, headers=headers)
-                if response.status_code == 200:
-                    file_bytes = response.content
-                    downloaded_files[source.file_name] = file_bytes
+                try:
+                    response = requests.get(source.url, headers=headers)
+                    if response.status_code == 200:
+                        return source.file_name, response.content
+                    else:
+                        print(f"Failed to download {source.file_name}: {response.status_code}")
+                except Exception as e:
+                    print(f"Error downloading {source.file_name}: {e}")
+            return None, None
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future_to_source = {executor.submit(download_file, source): source for source in resources}
+            for future in concurrent.futures.as_completed(future_to_source):
+                source = future_to_source[future]
+                try:
+                    file_name, file_bytes = future.result()
+                    if file_name and file_bytes:
+                        downloaded_files[file_name] = file_bytes
+                except Exception as e:
+                    print(f"Error processing {source.file_name}: {e}")
+
+        required_files = ["objects_ids.json.gz", "objects_offs.json.gz", "objects_avs.json.gz", "objects_attrs.json.gz",
+                          "objects_vals.json.gz"]
+
+        # Ensure all required files are downloaded
+        missing_files = [file for file in required_files if file not in downloaded_files]
+        if missing_files:
+            raise Exception(f"Missing required files: {missing_files}")
+
         self.ids = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_ids.json.gz"]), 'utf-8'))
         self.offsets = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_offs.json.gz"]), 'utf-8'))
         self.avs = json.loads(codecs.decode(gzip.decompress(downloaded_files["objects_avs.json.gz"]), 'utf-8'))
