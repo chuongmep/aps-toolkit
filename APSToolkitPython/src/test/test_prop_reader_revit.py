@@ -7,7 +7,7 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0yNA"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnhXMnZPTVJzUTR1bXdmREd1UF9TSGc_dmVyc2lvbj0x"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
 
     def test_get_document_info(self):
@@ -42,6 +42,10 @@ class TestPropDbReaderRevit(TestCase):
     def test_get_all_families_types(self):
         families_types = self.prop_reader.get_all_families_types()
         self.assertNotEquals(families_types, 0)
+
+    def test_get_categories_families_types(self):
+        categories_families_types = self.prop_reader.get_categories_families_types()
+        self.assertNotEquals(categories_families_types, 0)
 
     def test_get_all_data(self):
         data = self.prop_reader.get_all_data(display_unit=True)

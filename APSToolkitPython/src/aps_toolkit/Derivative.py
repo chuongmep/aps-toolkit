@@ -29,6 +29,7 @@ from .Resource import Resource
 from .ManifestItem import ManifestItem
 from .Token import Token
 import json
+import pandas as pd
 
 
 class Derivative:
@@ -107,6 +108,8 @@ class Derivative:
         if response.status_code == 404:
             raise Exception(response.content)
         json_response = response.json()
+        if "derivatives" not in json_response:
+            raise Exception("No derivatives found in the manifest.")
         children = json_response['derivatives'][0]["children"]
         manifest_items = []
         image_items = []
@@ -326,3 +329,54 @@ class Derivative:
         with open(local_path, "wb") as f:
             f.write(response.content)
         return local_path
+
+    def get_metadata(self) -> pd.DataFrame:
+        """
+        Get metadata of the model
+        :return: a dictionary of metadata
+        """
+        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/metadata"
+        access_token = self.token.access_token
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "region": self.region
+        }
+        response = requests.get(URL, headers=headers)
+        if response.status_code == 404:
+            raise Exception(response.content)
+        result = response.json()
+        df = pd.DataFrame()
+        for item in result["data"]["metadata"]:
+            if isinstance(item, dict):
+                properties_values = {}
+                for i, v in item.items():
+                    properties_values[i] = v
+                df = pd.concat([df, pd.DataFrame(properties_values, index=[0])])
+        return df
+
+    def get_all_properties(self, model_guid) -> dict:
+        """
+        Get all properties of the model
+        :param model_guid: the guid of the model
+        :return: a dictionary of properties
+        """
+        URL = f"{self.host}/modelderivative/v2/designdata/{self.urn}/metadata/{model_guid}/properties"
+        access_token = self.token.access_token
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "region": self.region,
+            "x-ads-force": "true",
+            'Accept-Encoding': 'gzip',
+            "x-ads-derivative-format": "latest",
+
+        }
+        response = requests.get(URL, headers=headers)
+        if response.status_code == 404:
+            raise Exception(response.content)
+        if response.status_code == 202:
+            while True:
+                response = requests.get(URL, headers=headers)
+                if response.status_code == 200:
+                    break
+        result = response.json()
+        return result

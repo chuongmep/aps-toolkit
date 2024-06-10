@@ -12,6 +12,10 @@ class TestWebhooks(TestCase):
         result = self.hooks.get_all_hooks()
         self.assertIsNotNone(result)
 
+    def test_batch_report_all_hooks(self):
+        result = self.hooks.batch_report_all_hooks()
+        self.assertIsNotNone(result)
+
     def test_get_all_app_hooks(self):
         result = self.hooks.get_all_app_hooks()
         self.assertIsNotNone(result)

@@ -6,7 +6,7 @@ from .context import Auth
 
 class TestPropDbReader(TestCase):
     def setUp(self):
-        self.urn = "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Y2h1b25nX2J1Y2tldC9NeUhvdXNlLmlmYw"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnhXMnZPTVJzUTR1bXdmREd1UF9TSGc_dmVyc2lvbj0x"
         self.token = Auth().auth2leg()
         self.prop_reader = PropReader(self.urn, self.token)
 

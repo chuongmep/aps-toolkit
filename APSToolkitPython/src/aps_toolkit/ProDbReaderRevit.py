@@ -49,6 +49,17 @@ class PropDbReaderRevit(PropReader):
         """
         return self.ids[id]
 
+    def get_db_id(self, external_id) -> int:
+        """
+        Get database id of element in model from external id
+        :param external_id:  The unique id of element in model
+        :return:  :class:`int` : Database id of element in model
+        """
+        for idx in range(0, len(self.ids)):
+            if self.ids[idx] == external_id:
+                return idx
+        return -1
+
     def get_document_info(self) -> pd.Series:
         properties = self.get_all_properties(1)
         return pd.Series(properties)
@@ -171,6 +182,34 @@ class PropDbReaderRevit(PropReader):
         families_types = {}
         self._get_recursive_child(families_types, 1, "_RFT")
         return families_types
+
+    def get_categories_families_types(self) -> pd.DataFrame:
+        """
+        Get all categories, families, families types in model
+        :return: :class:`pandas.DataFrame` : Dataframe contains all dbid,category, family, family type
+        dbId: database id of family type
+        """
+        # create columns
+        df = pd.DataFrame(columns=["dbId", "Category", "Family", "FamilyType"])
+        self._get_recursive_child_types(df, 1, "_RFT")
+        df = df.sort_values(by=["Category", "Family", "FamilyType"])
+        return df
+
+    def _get_recursive_child_types(self, data_frame, id, name):
+        children = self.get_children(id)
+        for child in children:
+            properties = self.enumerate_properties(child)
+            property = [prop.value for prop in properties if prop.name == name]
+            if len(property) == 0:
+                self._get_recursive_child_types(data_frame, child, name)
+            else:
+                if str(property[0]) == "":
+                    continue
+                family_type = property[0].strip()
+                category = [prop.value for prop in properties if prop.name == "_RC"][0]
+                family = [prop.value for prop in properties if prop.name == "_RFN"][0]
+                new_row = {"dbId": child, "Category": category, "Family": family, "FamilyType": family_type}
+                data_frame.loc[len(data_frame)] = new_row
 
     def get_data_by_category(self, category: str, is_get_sub_family: bool = False,
                              display_unit: bool = False) -> pd.DataFrame:

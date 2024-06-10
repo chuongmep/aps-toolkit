@@ -75,7 +75,7 @@ class PackFileReader(InputStream):
             return None
         return self.types[type_index]
 
-    def get_vector3d(self):
+    def get_vector3d(self) -> tuple:
         return struct.unpack('<3d', self.buffer[self.offset:self.offset + 24])
 
     def get_quaternion(self):

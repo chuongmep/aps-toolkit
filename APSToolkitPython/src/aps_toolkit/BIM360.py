@@ -214,9 +214,9 @@ class BIM360:
         """
         Get batch all projects with general information by hub_id
         :param hub_id:  :class:`str` the unique identifier of a hub
-        :return:  :class:`pandas.DataFrame` all projects with general information
+        :return:  :class:`pandas.DataFrame` all projects with general information : id, name, type
         """
-        df = pd.DataFrame(columns=['project_id', 'project_name', "project_type", 'top_folder_id'])
+        df = pd.DataFrame(columns=['id', 'name', 'type'])
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         url = f"{self.host}/project/v1/hubs/{hub_id}/projects"
         response = requests.get(url, headers=headers)
@@ -226,12 +226,38 @@ class BIM360:
         for project in projects['data']:
             project_id = project['id']
             project_name = project['attributes']['name']
-            project_type = project['attributes']['extension']["data"]["projectType"]
-            top_folder = self.get_top_folders(hub_id, project_id)
-            top_folder_id = top_folder["data"][0]["id"]
-            df = pd.concat([df, pd.DataFrame(
-                {'project_id': project_id, 'project_name': project_name, 'project_type': project_type,
-                 'top_folder_id': top_folder_id}, index=[0])], ignore_index=True)
+            type = project['attributes']['extension']["data"]["projectType"]
+            df = pd.concat([df, pd.DataFrame({'id': project_id, 'name': project_name, 'type': type}, index=[0])],
+                           ignore_index=True)
+        df.sort_values(by='name', inplace=True)
+        return df
+
+    def batch_report_top_folders(self, hub_id: str, project_id: str) -> pd.DataFrame:
+        """
+        Get batch all top folders with general information by hub_id and project_id
+        :param hub_id:  :class:`str` the unique identifier of a hub
+        :param project_id:  :class:`str` the unique identifier of a project
+        :return:  :class:`pandas.DataFrame` all top folders with general information : id, name
+        """
+        df = pd.DataFrame(columns=['id'])
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/project/v1/hubs/{hub_id}/projects/{project_id}/topFolders"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        top_folders = response.json()
+        for top_folder in top_folders['data']:
+            top_folder_id = top_folder['id']
+            atts = top_folder['attributes']
+            properties_values = {}
+            for key in atts:
+                if isinstance(atts[key], dict):
+                    continue
+                properties_values[key] = atts[key]
+            properties_values['id'] = top_folder_id
+            df = pd.concat([df, pd.DataFrame(properties_values, index=[0])], ignore_index=True)
+        # drop all columns have null value
+        df.dropna(axis=1, how='all', inplace=True)
         return df
 
     def batch_report_item_versions(self, project_id: str, item_id: str) -> pd.DataFrame:
@@ -306,7 +332,8 @@ class BIM360:
             for include_content in folder_contents['included']:
                 item_name = include_content['attributes']['displayName']
                 if not item_name.endswith(extension):
-                    continue
+                    if not extension == "" or extension is not None:
+                        continue
                 relationship = include_content['relationships']
                 item_id = relationship['item']['data']['id']
                 last_version = include_content['attributes']['versionNumber']
