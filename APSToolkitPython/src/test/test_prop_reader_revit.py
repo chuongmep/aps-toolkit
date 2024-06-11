@@ -78,8 +78,8 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_family_types(self):
-        family_types = ["Plastic-Seat", "Sheet"]
-        df = self.prop_reader.test_get_data_by_family_types(family_types)
+        family_types = ["CL_W1"]
+        df = self.prop_reader.get_data_by_family_types(family_types)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_categories_and_params(self):
