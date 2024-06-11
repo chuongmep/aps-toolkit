@@ -20,6 +20,7 @@ import pandas as pd
 import requests
 from .PropReader import PropReader
 from .ManifestItem import ManifestItem
+import warnings
 
 
 class PropDbReaderRevit(PropReader):
@@ -267,6 +268,7 @@ class PropDbReaderRevit(PropReader):
 
     def get_data_by_family(self, family_name: str, is_get_sub_family: bool = False,
                            display_unit: bool = False) -> pd.DataFrame:
+        warnings.warn("This function is deprecated. Use data_revit_by_families instead.", DeprecationWarning)
         """
         Get data by family name in model
         :param family_name: the family name need get data, e.g: "Seating-LAMMHULTS-PENNE-Chair"
@@ -279,8 +281,23 @@ class PropDbReaderRevit(PropReader):
         dataframe = self._get_recursive_ids(category_id, is_get_sub_family, display_unit)
         return dataframe
 
+    def get_data_by_families(self, family_names: str, is_get_sub_family: bool = False,
+                             display_unit: bool = False) -> pd.DataFrame:
+        """
+        Get data by list family names in model
+        :param family_names: the family names need get data, e.g: ["Seating-LAMMHULTS-PENNE-Chair","Door-Double-Glass"]
+        :param is_get_sub_family: the flag to get sub family or not, default is False
+        :param display_unit: the flag to display unit or not in value, default is False
+        :return: :class:`pandas.DataFrame` : Dataframe contains data by family name
+        """
+        families = self.get_all_families()
+        cate_ids = [key for key, value in families.items() if value in family_names]
+        dataframe = self._get_recursive_ids(cate_ids, is_get_sub_family, display_unit)
+        return dataframe
+
     def get_data_by_family_type(self, family_type: str, is_get_sub_family: bool = False,
                                 display_unit: bool = False) -> pd.DataFrame:
+        warnings.warn("This function is deprecated. Use data_revit_by_family_types instead.", DeprecationWarning)
         """
         Get data by family type in model
         :param family_type:  the family type name need get data, e.g: "Plastic-Seat"
@@ -291,6 +308,20 @@ class PropDbReaderRevit(PropReader):
         family_types = self.get_all_families_types()
         type_id = [key for key, value in family_types.items() if value == family_type]
         dataframe = self._get_recursive_ids(type_id, is_get_sub_family, display_unit)
+        return dataframe
+
+    def get_data_by_family_types(self, family_types: str, is_get_sub_family: bool = False,
+                                 display_unit: bool = False) -> pd.DataFrame:
+        """
+        Get data by list family type name in model
+        :param family_types:  the family type name need get data, e.g: "Plastic-Seat"
+        :param is_get_sub_family:  the flag to sub subfamily or not, default is False
+        :param display_unit:  the flag to display unit or not in value, default is False
+        :return: :class:`pandas.DataFrame` : Dataframe contains data by family type
+        """
+        family_types = self.get_all_families_types()
+        type_ids = [key for key, value in family_types.items() if value in family_types]
+        dataframe = self._get_recursive_ids(type_ids, is_get_sub_family, display_unit)
         return dataframe
 
     def _get_recursive_ids(self, db_ids: List[int], get_sub_family: bool, display_unit: bool = False) -> pd.DataFrame:

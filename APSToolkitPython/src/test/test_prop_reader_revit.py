@@ -61,14 +61,25 @@ class TestPropDbReaderRevit(TestCase):
         df = self.prop_reader.get_data_by_categories(["Doors", "Windows"])
         self.assertNotEquals(df.empty, True)
 
+    # noinspection PyInterpreter
     def test_get_data_by_family(self):
         family_name = "Seating-LAMMHULTS-PENNE-Chair"
         df = self.prop_reader.get_data_by_family(family_name)
         self.assertNotEquals(df.empty, True)
 
+    def test_get_data_by_families(self):
+        family_names = ["Seating-LAMMHULTS-PENNE-Chair", "Sheet"]
+        df = self.prop_reader.get_data_by_families(family_names)
+        self.assertNotEquals(df.empty, True)
+
     def test_get_data_by_family_type(self):
         family_type = "Plastic-Seat"
         df = self.prop_reader.get_data_by_family_type(family_type)
+        self.assertNotEquals(df.empty, True)
+
+    def test_get_data_by_family_types(self):
+        family_types = ["Plastic-Seat", "Sheet"]
+        df = self.prop_reader.test_get_data_by_family_types(family_types)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_categories_and_params(self):
