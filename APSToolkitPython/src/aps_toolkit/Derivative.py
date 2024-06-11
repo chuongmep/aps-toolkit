@@ -20,7 +20,7 @@ from io import BytesIO
 import zipfile
 from json import loads as json_loads
 from typing import List
-from urllib.parse import unquote, quote, urljoin
+from urllib.parse import unquote
 import re
 from os.path import join, normpath
 import os
@@ -86,7 +86,10 @@ class Derivative:
             "region": self.region
         }
         response = requests.get(url, headers=headers)
-        return response.json()
+        if response.status_code == 404:
+            raise Exception(response.content)
+        json_response = response.json()
+        return json_response
 
     def read_svf_manifest_items(self) -> List[ManifestItem]:
         """
@@ -109,7 +112,7 @@ class Derivative:
             raise Exception(response.content)
         json_response = response.json()
         if "derivatives" not in json_response:
-            raise Exception("No derivatives found in the manifest.")
+            raise Exception(f"the manifest not found, recheck authentication or translate job.\nReason: {response.reason}")
         children = json_response['derivatives'][0]["children"]
         manifest_items = []
         image_items = []
