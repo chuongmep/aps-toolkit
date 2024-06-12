@@ -10,10 +10,10 @@ class TestBIM360(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
         self.bim360 = BIM360(self.token)
-        self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
-        self.project_id = "b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d"
-        self.folder_id = "urn:adsk.wipprod:fs.folder:co.2yCTHGmWSvSCzlaIzdrFKA"
-        self.item_id = "urn:adsk.wipprod:dm.lineage:DjXtlXoJQyS6D1R-gRhI8A"
+        self.hub_id = "b.6292e6eb-d01a-44b5-a21c-3b567c6686f9"
+        self.project_id = "b.e94466d2-bb64-4700-ab91-36422847d9af"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co.09W5jphvXByLjs1lL5VxmA"
+        self.item_id = "urn:adsk.wipprod:dm.lineage:xW2vOMRsQ4umwfDGuP_SHg"
 
     def test_get_hubs(self):
         hubs = self.bim360.get_hubs()
@@ -105,6 +105,11 @@ class TestBIM360(TestCase):
         result = self.bim360.upload_file_item(self.project_id, self.folder_id, full_path)
         self.assertNotEquals(result, 0)
 
+    def test_copy_file_item(self):
+        target_folder_id = "urn:adsk.wipprod:fs.folder:co.ThXlEqHBSomEoh_TdHE5AA"
+        result = self.bim360.copy_file_item(self.item_id, self.project_id, self.project_id, target_folder_id)
+        self.assertNotEquals(result, 0)
+
     def test_delete_file_item(self):
         file_name = "Test.dwg"
         result = self.bim360.delete_file_item(self.project_id, self.folder_id, file_name)
@@ -113,7 +118,7 @@ class TestBIM360(TestCase):
     def test_download_file_item(self):
         file_name = "Test.dwg"
         file_path = r"./test/resources/Test2.dwg"
-        file_path_result = self.bim360.download_file_item(file_path, self.project_id, self.folder_id, file_name, 2)
+        file_path_result = self.bim360.download_file_item(file_path, self.project_id, self.folder_id, file_name, 1)
         size = os.path.getsize(file_path)
         size_result = os.path.getsize(file_path_result)
         self.assertEqual(size, size_result)

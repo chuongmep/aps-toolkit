@@ -404,6 +404,53 @@ class BIM360:
             else:
                 raise e
 
+    def copy_file_item(self, item_id, source_project_id, target_project_id, target_folder_id) -> dict:
+        """
+        Copy a file between hubs, projects, folders
+        :param item_id:  :class:`str` the unique identifier of an item
+        :param source_project_id:  :class:`str` the unique identifier of a source project
+        :param target_project_id:  :class:`str` the unique identifier of a target project
+        :param target_folder_id:  :class:`str` the unique identifier of a target folder
+        :return: :class:`dict` all information of file version
+        """
+        # find the object_id of item
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{source_project_id}/items/{item_id}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        item = response.json()
+        object_id = item['included'][0]['relationships']['storage']['data']['id']
+        # bucket_key should wip.dm.prod
+        bucket_key = object_id.split("/").pop(0).split(":").pop()
+        object_key = object_id.split("/").pop()
+        item_name = item['data']['attributes']['displayName']
+        # Create storage in target folder and target project
+        result = self._create_object_storage(target_project_id, target_folder_id, item_name)
+        new_object_id = result['data']['id']
+        new_object_key = new_object_id.split("/").pop()
+
+        #  // Transfer data from source to target storage
+        url = f"https://developer.api.autodesk.com/oss/v2/buckets/{bucket_key}/objects/{object_key}/copyto/{new_object_key}"
+        response = requests.put(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.content)
+        new_object_id = response.json()['objectId']
+        try:
+            # create first version
+            file_version = self._create_first_version_file(target_project_id, target_folder_id, item_name, new_object_id)
+            return file_version
+        except Exception as e:
+            error = "Another object with the same name already exists in this container"
+            if error in str(e):
+                print("File already exists, create new version")
+                object_name = item_name
+                item_id = self._get_item_id(target_project_id, target_folder_id, object_name)
+                file_version = self._create_new_file_version(target_project_id, item_id, object_name, new_object_id)
+                return file_version
+            else:
+                raise e
+
     def _create_object_storage(self, project_id: str, folder_id: str, file_name: str):
         """
         Create object storage in BIM 360 Docs
@@ -466,7 +513,7 @@ class BIM360:
             raise Exception(response.content)
         return response.json()
 
-    def _create_first_version_file(self, project_id: str, folder_id: str, object_name: str, object_id: str):
+    def _create_first_version_file(self, project_id: str, folder_id: str, object_name: str, object_id: str) -> dict:
         url = f"{self.host}/data/v1/projects/{project_id}/items"
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         data = {
