@@ -2,6 +2,7 @@ from enum import Enum
 import pandas as pd
 import requests
 from .Token import Token
+import os
 
 
 class PublicKey(Enum):
@@ -66,7 +67,7 @@ class Bucket:
         }
         response = requests.post(self.host, headers=headers, json=data)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def delete_bucket(self, bucket_name: str):
@@ -87,7 +88,7 @@ class Bucket:
         url = f"{self.host}/{bucket_name}"
         response = requests.delete(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.content
 
     def get_objects(self, bucket_name: str) -> pd.DataFrame:
@@ -108,7 +109,7 @@ class Bucket:
         url = f"{self.host}/{bucket_name}/objects"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         data = response.json()
         df = pd.DataFrame(data["items"])
         return df
@@ -127,16 +128,35 @@ class Bucket:
            Returns:
                dict: A dictionary containing the response from the Autodesk OSS API.
            """
+        if not os.path.isabs(file_path):
+            file_path = os.path.abspath(file_path)
+        with open(file_path, "rb") as file:
+            stream = file.read()
+            return self.upload_object_stream(bucket_name, stream, object_name)
+
+    def upload_object_stream(self, bucket_name: str, stream: bytes, object_name: str) -> dict:
+        """
+           Uploads an object to a specified bucket in the Autodesk OSS API.
+
+           This method sends a PUT request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication and a Content-Type header set to "application/octet-stream". The bucket name and object name are passed in the URL of the request, and the file to be uploaded is passed in the body of the request as binary data. If the response status code is not 200, it raises an exception with the response content.
+
+           Args:
+               bucket_name (str): The name of the bucket to which the object will be uploaded.
+               stream (bytes): The stream of the file to be uploaded.
+               object_name (str): The name of the object to be created in the bucket.
+
+           Returns:
+               dict: A dictionary containing the response from the Autodesk OSS API.
+           """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}",
             "Content-Type": "application/octet-stream"
         }
         url = f"{self.host}/{bucket_name}/objects/{object_name}"
-        with open(file_path, "rb") as file:
-            response = requests.put(url, headers=headers, data=file)
-            if response.status_code != 200:
-                raise Exception(response.content)
-            return response.json()
+        response = requests.put(url, headers=headers, data=stream)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        return response.json()
 
     def delete_object(self, bucket_name: str, object_name: str) -> dict:
         """
@@ -157,7 +177,7 @@ class Bucket:
         url = f"{self.host}/{bucket_name}/objects/{object_name}"
         response = requests.delete(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.content
 
     def download_object(self, bucket_name: str, object_name: str, file_path: str) -> bool:
@@ -179,11 +199,42 @@ class Bucket:
         headers = {
             "Authorization": f"Bearer {self.token.access_token}"
         }
-        url = f"{self.host}/{bucket_name}/objects/{object_name}"
+        url = f"{self.host}/{bucket_name}/objects/{object_name}/signeds3download"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
+        if not os.path.isabs(file_path):
+            file_path = os.path.abspath(file_path)
+            if not os.path.exists(os.path.dirname(file_path)):
+                os.makedirs(os.path.dirname(file_path))
+        result = response.json()
+        url = result["url"]
+        response = requests.get(url)
         with open(file_path, "wb") as file:
             file.write(response.content)
             file.close()
         return True
+
+    def download_stream_object(self, bucket_name: str, object_name: str) -> bytes:
+        """
+            Downloads an object from a specified bucket in the Autodesk OSS API.
+
+            This method sends a GET request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication. The bucket name and object name are passed in the URL of the request. If the response status code is not 200, it raises an exception with the response content.
+
+            The downloaded content is written to a file at the specified file path.
+
+            Args:
+                bucket_name (str): The name of the bucket from which the object will be downloaded.
+                object_name (str): The name of the object to be downloaded.
+
+            Returns:
+                None
+            """
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}"
+        }
+        url = f"{self.host}/{bucket_name}/objects/{object_name}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        return response.content
