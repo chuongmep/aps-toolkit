@@ -109,7 +109,7 @@ class Derivative:
         # request
         response = requests.get(URL, headers=headers)
         if response.status_code == 404:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         json_response = response.json()
         if "derivatives" not in json_response:
             raise Exception(f"the manifest not found, recheck authentication or translate job.\nReason: {response.reason}")
@@ -201,7 +201,7 @@ class Derivative:
         }
         response = requests.get(URL, headers=headers)
         if response.status_code == 404:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         manifest_json = None
         # unzip it
         if ".gz" in response.headers.get("Content-Type", ""):
@@ -232,7 +232,7 @@ class Derivative:
         }
         response = requests.get(URL, headers=headers)
         if response.status_code == 404:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         meta_data_json = None
         # unzip it
         if ".gz" in response.headers.get("Content-Type", ""):
@@ -346,7 +346,7 @@ class Derivative:
         }
         response = requests.get(URL, headers=headers)
         if response.status_code == 404:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         result = response.json()
         df = pd.DataFrame()
         for item in result["data"]["metadata"]:
@@ -375,7 +375,7 @@ class Derivative:
         }
         response = requests.get(URL, headers=headers)
         if response.status_code == 404:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         if response.status_code == 202:
             while True:
                 response = requests.get(URL, headers=headers)

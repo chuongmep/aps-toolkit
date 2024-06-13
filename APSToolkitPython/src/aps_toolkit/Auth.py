@@ -232,7 +232,7 @@ class Auth:
         }
         response = requests.post(Host + url, data=body)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         content = response.json()
         self.access_token = content['access_token']
         self.expires_in = content['expires_in']
@@ -256,5 +256,5 @@ class Auth:
         }
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()

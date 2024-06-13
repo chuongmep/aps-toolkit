@@ -43,7 +43,7 @@ class BIM360:
         if response.status_code == 200:
             return response.json()
         else:
-            raise Exception(response.content)
+            raise Exception(response.reason)
 
     def get_projects(self, hub_id: str) -> dict:
         """
@@ -58,7 +58,7 @@ class BIM360:
         url = f"{self.host}/project/v1/hubs/{hub_id}/projects"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def get_top_folders(self, hub_id: str, project_id: str):
@@ -75,7 +75,7 @@ class BIM360:
         url = f"{self.host}/project/v1/hubs/{hub_id}/projects/{project_id}/topFolders"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def get_top_folder_project_files(self, hub_id: str, project_id: str):
@@ -120,7 +120,7 @@ class BIM360:
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code != 201:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def rename_folder(self, project_id: str, folder_id: str, folder_name: str):
@@ -147,7 +147,7 @@ class BIM360:
         }
         response = requests.patch(url, headers=headers, json=data)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.content
 
     def get_folder_contents(self, project_id: str, folder_id: str):
@@ -162,7 +162,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/folders/{folder_id}/contents"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def get_item_versions(self, project_id: str, item_id: str):
@@ -177,7 +177,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def get_item_info(self, project_id: str, item_id: str):
@@ -192,7 +192,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def get_latest_derivative_urn(self, project_id: str, item_id: str):
@@ -206,7 +206,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         item_versions = response.json()
         return item_versions['data'][0]['relationships']['derivatives']['data']['id']
 
@@ -221,7 +221,7 @@ class BIM360:
         url = f"{self.host}/project/v1/hubs/{hub_id}/projects"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         projects = response.json()
         for project in projects['data']:
             project_id = project['id']
@@ -244,7 +244,7 @@ class BIM360:
         url = f"{self.host}/project/v1/hubs/{hub_id}/projects/{project_id}/topFolders"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         top_folders = response.json()
         for top_folder in top_folders['data']:
             top_folder_id = top_folder['id']
@@ -274,7 +274,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         item_versions = response.json()
         for item_version in item_versions['data']:
             version = item_version['attributes']['versionNumber']
@@ -298,7 +298,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         item = response.json()
         return item['data']['attributes']['displayName']
 
@@ -319,7 +319,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/folders/{folder_id}/contents"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         folder_contents = response.json()
         if is_sub_folder:
             for folder_content in folder_contents['data']:
@@ -352,7 +352,7 @@ class BIM360:
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         item_versions = response.json()
         return len(item_versions['data'])
 
@@ -368,7 +368,7 @@ class BIM360:
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         item_versions = response.json()
         for item_version in item_versions['data']:
             if item_version['attributes']['versionNumber'] == version:
@@ -482,7 +482,7 @@ class BIM360:
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code != 201:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def _signeds_3_upload(self, object_id):
@@ -492,7 +492,7 @@ class BIM360:
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def _upload_file_to_signed_url(self, signed_upload_url, file_path):
@@ -510,7 +510,7 @@ class BIM360:
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def _create_first_version_file(self, project_id: str, folder_id: str, object_name: str, object_id: str) -> dict:
@@ -568,7 +568,7 @@ class BIM360:
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code != 201:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def _get_item_id(self, project_id: str, folder_id: str, object_name: str):
@@ -576,7 +576,7 @@ class BIM360:
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         folder_contents = response.json()
         for folder_content in folder_contents['data']:
             if folder_content['type'] == "items":
@@ -619,7 +619,7 @@ class BIM360:
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code != 201:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.json()
 
     def delete_file_item(self, project_id: str, folder_id: str, file_name: str):
@@ -657,7 +657,7 @@ class BIM360:
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code != 201:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         return response.content
 
     def download_file_item(self, file_path: str, project_id: str, folder_id: str, file_name: str, version: int = -1):
@@ -677,7 +677,7 @@ class BIM360:
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         item_versions = response.json()
         if version == -1:
             url = item_versions['data'][0]['relationships']['storage']['data']['id']
@@ -691,7 +691,7 @@ class BIM360:
         s3_url = f"{self.host}/oss/v2/buckets/{bucket_key}/objects/{object_key}/signeds3download"
         response = requests.get(s3_url, headers=headers)
         if response.status_code != 200:
-            raise Exception(response.content)
+            raise Exception(response.reason)
         download_url = response.json()['url']
         response = requests.get(download_url)
         with open(file_path, 'wb') as file:
