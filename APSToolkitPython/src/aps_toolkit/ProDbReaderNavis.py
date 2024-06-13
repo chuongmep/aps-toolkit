@@ -65,7 +65,7 @@ class PropDbReaderNavis(PropReader):
         df = pd.DataFrame()
         for cate in cates:
             df_single = self.get_data_by_category(cate)
-            df = pd.concat([df, df_single])
+            df = pd.concat([df, df_single], ignore_index=True)
         return df
 
     def get_data_by_category(self, category: str) -> pd.DataFrame:
