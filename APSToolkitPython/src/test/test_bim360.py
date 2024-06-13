@@ -10,9 +10,9 @@ class TestBIM360(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
         self.bim360 = BIM360(self.token)
-        self.hub_id = "b.6292e6eb-d01a-44b5-a21c-3b567c6686f9"
-        self.project_id = "b.e94466d2-bb64-4700-ab91-36422847d9af"
-        self.folder_id = "urn:adsk.wipprod:fs.folder:co.09W5jphvXByLjs1lL5VxmA"
+        self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
+        self.project_id = "b.ca790fb5-141d-4ad5-b411-0461af2e9748"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co.9yz45HsdRf2cgATDS620zw"
         self.item_id = "urn:adsk.wipprod:dm.lineage:xW2vOMRsQ4umwfDGuP_SHg"
 
     def test_get_hubs(self):
@@ -55,6 +55,10 @@ class TestBIM360(TestCase):
 
     def test_batch_report_item_versions(self):
         df = self.bim360.batch_report_item_versions(self.project_id, self.item_id)
+        self.assertNotEquals(df.empty, True)
+
+    def test_batch_report_folder_contents(self):
+        df = self.bim360.batch_report_folder_contents(self.project_id, self.folder_id, 2)
         self.assertNotEquals(df.empty, True)
 
     def test_get_urn_item_version(self):

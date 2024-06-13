@@ -150,7 +150,7 @@ class BIM360:
             raise Exception(response.reason)
         return response.content
 
-    def get_folder_contents(self, project_id: str, folder_id: str):
+    def get_folder_contents(self, project_id: str, folder_id: str) -> dict:
         """
         Returns a collection of items and folders within a folder. Items represent word documents, fusion design files, drawings, spreadsheets, etc.
         https://aps.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-folders-folder_id-contents-GET/
@@ -258,6 +258,30 @@ class BIM360:
             df = pd.concat([df, pd.DataFrame(properties_values, index=[0])], ignore_index=True)
         # drop all columns have null value
         df.dropna(axis=1, how='all', inplace=True)
+        return df
+
+    def batch_report_folder_contents(self, project_id: str, folder_id: str, deep: int = 1) -> pd.DataFrame:
+        """
+        Get batch all folder contents information
+        :param project_id:  :class:`str` the unique identifier of a project
+        :param folder_id:  :class:`str` the unique identifier of a folder
+        :param deep:  :class:`int` the deep of recursive folder contents, default is 1
+        :return:
+        """
+        result = self.get_folder_contents(project_id, folder_id)
+        df = pd.json_normalize(result['data'])
+        if deep > 1:
+            return self._recursive_folder_contents(project_id, folder_id, deep)
+        return df
+
+    def _recursive_folder_contents(self, project_id: str, folder_id: str, deep: int = 1):
+        result = self.get_folder_contents(project_id, folder_id)
+        df = pd.json_normalize(result['data'])
+        if deep > 1:
+            for item in result['data']:
+                if item['type'] == "folders":
+                    df = pd.concat([df, self._recursive_folder_contents(project_id, item['id'], deep - 1)],
+                                   ignore_index=True)
         return df
 
     def batch_report_item_versions(self, project_id: str, item_id: str) -> pd.DataFrame:
@@ -438,7 +462,8 @@ class BIM360:
         new_object_id = response.json()['objectId']
         try:
             # create first version
-            file_version = self._create_first_version_file(target_project_id, target_folder_id, item_name, new_object_id)
+            file_version = self._create_first_version_file(target_project_id, target_folder_id, item_name,
+                                                           new_object_id)
             return file_version
         except Exception as e:
             error = "Another object with the same name already exists in this container"
