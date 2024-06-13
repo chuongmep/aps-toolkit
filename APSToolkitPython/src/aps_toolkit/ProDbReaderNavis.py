@@ -60,6 +60,14 @@ class PropDbReaderNavis(PropReader):
                 categories.append(self.attrs[i][1])
         return categories
 
+    def get_all_data(self) -> pd.DataFrame:
+        cates = self.get_all_categories()
+        df = pd.DataFrame()
+        for cate in cates:
+            df_single = self.get_data_by_category(cate)
+            df = pd.concat([df, df_single])
+        return df
+
     def get_data_by_category(self, category: str) -> pd.DataFrame:
         db_ids = [1]
         df = self._get_recursive_ids_by_category(db_ids, category)
