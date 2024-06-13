@@ -428,6 +428,25 @@ class BIM360:
             else:
                 raise e
 
+    def copy_folder_contents(self, source_project_id, source_folder_id, target_project_id, target_folder_id) -> None:
+        """
+        Copy all contents of a folder to another folder
+        :param source_project_id:  :class:`str` the unique identifier of a source project
+        :param source_folder_id:  :class:`str` the unique identifier of a source folder
+        :param target_project_id:  :class:`str` the unique identifier of a target project
+        :param target_folder_id:  :class:`str` the unique identifier of a target folder
+        :return: :class:`dict` all information of file version
+        """
+        folder_contents = self.get_folder_contents(source_project_id, source_folder_id)
+        for item in folder_contents['data']:
+            if item['type'] == "folders":
+                folder_name = item['attributes']['name']
+                new_folder = self.create_folder(target_project_id, target_folder_id, folder_name)
+                self.copy_folder_contents(source_project_id, item['id'], target_project_id, new_folder['data']['id'])
+            else:
+                item_id = item['id']
+                self.copy_file_item(item_id, source_project_id, target_project_id, target_folder_id)
+
     def copy_file_item(self, item_id, source_project_id, target_project_id, target_folder_id) -> dict:
         """
         Copy a file between hubs, projects, folders
