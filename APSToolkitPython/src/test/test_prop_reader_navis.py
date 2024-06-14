@@ -6,7 +6,7 @@ from .context import Auth
 class TestPropDbReaderNavis(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnFjbGtOUkpTU3VTR2hyRnJIR29kMUE_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLmZqSkFRUUx6U3BxLTR3eWRPdG9DMGc_dmVyc2lvbj0x"
         self.prop_reader = PropDbReaderNavis(self.urn, self.token)
 
     def test_get_document_info(self):
@@ -21,6 +21,14 @@ class TestPropDbReaderNavis(TestCase):
         categories = self.prop_reader.get_all_categories()
         self.assertIsNotNone(categories)
 
-    def test_get_data_by_property(self):
-        data = self.prop_reader.get_data_by_category("Item")
+    def test_get_all_parameters(self):
+        parameters = self.prop_reader.get_all_parameters()
+        self.assertIsNotNone(parameters)
+
+    def test_get_data_by_categories(self):
+        df = self.prop_reader.get_data_by_categories(["Element", "Wall"])
+        self.assertIsNotNone(df)
+
+    def test_get_data_by_category(self):
+        data = self.prop_reader.get_data_by_category("Element")
         self.assertIsNotNone(data)

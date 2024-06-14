@@ -22,6 +22,7 @@ import requests
 from .PropReader import PropReader
 from .ManifestItem import ManifestItem
 from .Token import Token
+import warnings
 
 
 class PropDbReaderNavis(PropReader):
@@ -60,6 +61,57 @@ class PropDbReaderNavis(PropReader):
                 categories.append(self.attrs[i][1])
         return categories
 
+    def get_all_parameters(self) -> pd.DataFrame:
+        """
+        Get all parameters in the model, return a dataframe with columns: Category, Parameter
+        :return: pd.DataFrame - dataframe contains all categories - parameters in the model
+        """
+        categories = []
+        rg = re.compile(r'^__\w+__$')
+        df = pd.DataFrame()
+        for i in range(1, len(self.attrs)):
+            if self.attrs[i][1] not in categories and not rg.match(self.attrs[i][1]):
+                category = self.attrs[i][1]
+                parameter = self.attrs[i][5]
+                singleDF = pd.DataFrame({"Category": [category], "Parameter": [parameter]})
+                df = pd.concat([df, singleDF], ignore_index=True)
+        df = df.sort_values(by=['Category'])
+        return df
+
+    def get_data_by_categories(self, categories: List[str]) -> pd.DataFrame:
+        """
+        Get data by categories and parameters
+        :param categories: List[str] - list of categories
+        :param parameters: List[str] - list of parameters
+        :return: pd.DataFrame - dataframe contains data by categories and parameters
+        """
+        db_ids = [1]
+        df = self._get_recursive_ids_by_categories(db_ids, categories)
+        df = df.dropna(axis=0, how='all', subset=df.columns.difference(['DbId']))
+        return df
+
+    def _get_recursive_ids_by_categories(self, db_ids: List[int], categories: List[str]) -> pd.DataFrame:
+        dataframe = pd.DataFrame()
+        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
+        if len(db_ids) == 0:
+            return dataframe
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            properties = {}
+            for p in props:
+                if p.category in categories:
+                    properties["DbId"] = id
+                    for p in props:
+                        if p.name not in props_ignore and p.category in categories:
+                            properties[p.display_name] = p.value
+            if len(properties) > 1:
+                singleDF = pd.DataFrame(properties, index=[0])
+                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            children = self.get_children(id)
+            df = self._get_recursive_ids_by_categories(children, categories)
+            dataframe = pd.concat([dataframe, df], ignore_index=True)
+        return dataframe
+
     def get_all_data(self) -> pd.DataFrame:
         cates = self.get_all_categories()
         df = pd.DataFrame()
@@ -69,6 +121,7 @@ class PropDbReaderNavis(PropReader):
         return df
 
     def get_data_by_category(self, category: str) -> pd.DataFrame:
+        warnings.warn("This method is deprecated, use get_data_by_categories instead", DeprecationWarning)
         db_ids = [1]
         df = self._get_recursive_ids_by_category(db_ids, category)
         df = df.drop_duplicates(subset=df.columns.difference(['DbId']))
