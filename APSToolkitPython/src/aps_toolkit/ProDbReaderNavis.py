@@ -90,6 +90,35 @@ class PropDbReaderNavis(PropReader):
         df = df.dropna(axis=0, how='all', subset=df.columns.difference(['DbId']))
         return df
 
+    def get_all_sources_files(self) -> List[str]:
+        """
+        Get all sources files in the model like .rvt .dwg .nwd ,...
+        :return: List[str] - list of sources files
+        """
+        childs = self.get_children(1)
+        sources = self._get_recursive_ids_sources_files(childs)
+        return sources
+
+    def _get_recursive_ids_sources_files(self, db_ids: List[int]) -> List[str]:
+        sources = []
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            # list objects props to dataframe
+            properties_dicts = [prop.__dict__ for prop in props]
+            df_props = pd.DataFrame(properties_dicts)
+            # stop tree from layer
+            if not df_props[(df_props['display_name'] == 'Type') & (df_props['value'] == 'Layer')].empty:
+                continue
+            # see if any row have column 'display_name' with value is Type and  column 'Value' is File
+            if not df_props[(df_props['display_name'] == 'Type') & (df_props['value'] == 'File')].empty:
+                row_value = df_props[(df_props['category'] == 'Item') & (df_props['display_name'] == 'Name')].iloc[0]
+                value = row_value['value']
+                sources.append(value)
+                child_ids = self.get_children(id)
+                if len(child_ids) > 0:
+                    sources = sources + self._get_recursive_ids_sources_files(child_ids)
+        return sources
+
     def _get_recursive_ids_by_categories(self, db_ids: List[int], categories: List[str]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
