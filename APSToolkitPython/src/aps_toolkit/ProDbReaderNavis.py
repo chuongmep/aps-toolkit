@@ -44,6 +44,10 @@ class PropDbReaderNavis(PropReader):
         return self.ids[id]
 
     def get_document_info(self) -> pd.DataFrame:
+        """
+        Get document info of source file
+        :return: pd.DataFrame - dataframe contains document info
+        """
         props = {}
         for prop in self.enumerate_properties(1):
             props[prop.display_name] = prop.value
@@ -54,6 +58,10 @@ class PropDbReaderNavis(PropReader):
         return df
 
     def get_all_categories(self) -> List[str]:
+        """
+        Get all categories in the model e.g. Item, Element, ...
+        :return:  List[str] - list of categories contains in navisworks model
+        """
         categories = []
         rg = re.compile(r'^__\w+__$')
         for i in range(1, len(self.attrs)):
@@ -63,7 +71,9 @@ class PropDbReaderNavis(PropReader):
 
     def get_all_parameters(self) -> pd.DataFrame:
         """
-        Get all parameters in the model, return a dataframe with columns: Category, Parameter
+        Get all parameters in the model, return a dataframe with columns: Category, Parameter \n
+        Category: category of Parameter \n
+        Parameter: parameter name
         :return: pd.DataFrame - dataframe contains all categories - parameters in the model
         """
         categories = []
@@ -78,21 +88,21 @@ class PropDbReaderNavis(PropReader):
         df = df.sort_values(by=['Category'])
         return df
 
-    def get_data_by_categories(self, categories: List[str]) -> pd.DataFrame:
+    def get_data_by_categories(self, categories: List[str], sep="|") -> pd.DataFrame:
         """
-        Get data by categories and parameters
+        Get data by categories in the model, e.g. Item, Element, ...
         :param categories: List[str] - list of categories
-        :param parameters: List[str] - list of parameters
+        :param sep: str - separator between category and parameter
         :return: pd.DataFrame - dataframe contains data by categories and parameters
         """
         db_ids = [1]
-        df = self._get_recursive_ids_by_categories(db_ids, categories)
+        df = self._get_recursive_ids_by_categories(db_ids, categories, sep)
         df = df.dropna(axis=0, how='all', subset=df.columns.difference(['DbId']))
         return df
 
     def get_all_sources_files(self) -> List[str]:
         """
-        Get all sources files in the model like .rvt .dwg .nwd ,...
+        Get all sub sources files in the model like .rvt .dwg .nwd ,...
         :return: List[str] - list of sources files
         """
         childs = self.get_children(1)
@@ -119,18 +129,30 @@ class PropDbReaderNavis(PropReader):
                     sources = sources + self._get_recursive_ids_sources_files(child_ids)
         return sources
 
-    def get_all_data_by_resources(self) -> pd.DataFrame:
+    def get_all_data_resources(self) -> pd.DataFrame:
         """
-        Get data by resources model append to model
-        :param resources: List[str] - list of resources
-        :return: pd.DataFrame - dataframe contains data by resources
-        """
+       Get data by sub sources files in the model, the data will add new column 'ModelName' to dataframe
+       :return: pd.DataFrame - dataframe contains data by resources
+       """
         child_ids = self.get_children(1)
-        df = self._get_recursive_data_by_resources(child_ids)
+        cats = self.get_all_categories()
+        df = self._get_recursive_data_by_resources(child_ids, cats)
         df = df.dropna(axis=0, how='all', subset=df.columns.difference(['DbId']))
         return df
 
-    def _get_recursive_data_by_resources(self, db_ids: List[int]) -> pd.DataFrame:
+    def get_data_resources_by_categories(self, categories: List[str], sep: str = '|') -> pd.DataFrame:
+        """
+        Get data by resources model append to model
+        :param categories: List[str] - list of categories like Item, Element, ...
+        :param sep: str - separator between category and parameter
+        :return: pd.DataFrame - dataframe contains data by resources
+        """
+        child_ids = self.get_children(1)
+        df = self._get_recursive_data_by_resources(child_ids, categories, sep)
+        df = df.dropna(axis=0, how='all', subset=df.columns.difference(['DbId']))
+        return df
+
+    def _get_recursive_data_by_resources(self, db_ids: list[int], categories: list[str], sep="|") -> pd.DataFrame:
         dataframe = pd.DataFrame()
         for id in db_ids:
             props = self.enumerate_properties(id)
@@ -143,13 +165,14 @@ class PropDbReaderNavis(PropReader):
                 source_name = row_value['value']
                 child_ids = self.get_children(id)
                 if len(child_ids) > 0:
-                    df = self._get_recursive_elements(source_name, child_ids)
+                    df = self._get_recursive_elements(source_name, child_ids, categories, sep)
                     dataframe = pd.concat([dataframe, df], ignore_index=True)
         return dataframe
 
-    def _get_recursive_elements(self, model_name, sources_ids: [list[int]]) -> pd.DataFrame:
+    def _get_recursive_elements(self, model_name, sources_ids: list[int], categories: list[str],
+                                sep='|') -> pd.DataFrame:
         dataframe = pd.DataFrame()
-        #props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in", '__node_flags__', '__name__']
+        # props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in", '__node_flags__', '__name__']
         if len(sources_ids) == 0:
             return dataframe
         for id in sources_ids:
@@ -157,22 +180,32 @@ class PropDbReaderNavis(PropReader):
             properties = {}
             properties["DbId"] = id
             properties["ModelName"] = model_name
+            default_len = len(properties)
             for p in props:
+                if p.category not in categories: continue
                 if p.category is not None:
-                    key = p.category + "|" + str(p.display_name)
+                    key = p.category + sep + str(p.display_name)
                 elif p.display_name is not None:
                     key = str(p.display_name)
                 if key is not None:
                     properties[key] = p.value
-            if len(properties) > 1:
+            if len(properties) > default_len:
                 singleDF = pd.DataFrame(properties, index=[0])
                 dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             children = self.get_children(id)
-            df = self._get_recursive_elements(model_name, children)
-            dataframe = pd.concat([dataframe, df], ignore_index=True)
+            if len(children) > 0:
+                df = self._get_recursive_elements(model_name, children, categories, sep)
+                dataframe = pd.concat([dataframe, df], ignore_index=True)
         return dataframe
 
-    def _get_recursive_ids_by_categories(self, db_ids: List[int], categories: List[str]) -> pd.DataFrame:
+    def _get_recursive_ids_by_categories(self, db_ids: List[int], categories: List[str], sep='|') -> pd.DataFrame:
+        """
+        Recursive get data by categories in the model
+        :param db_ids:  List[int] - list of db_ids
+        :param categories:  List[str] - list of categories
+        :param sep:  str - separator between category and parameter
+        :return: pd.DataFrame - dataframe contains data by categories
+        """
         dataframe = pd.DataFrame()
         props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
         if len(db_ids) == 0:
@@ -185,22 +218,23 @@ class PropDbReaderNavis(PropReader):
                     properties["DbId"] = id
                     for p in props:
                         if p.name not in props_ignore and p.category in categories:
-                            key = p.category + "|" + str(p.display_name)
+                            key = p.category + sep + str(p.display_name)
                             properties[key] = p.value
             if len(properties) > 1:
                 singleDF = pd.DataFrame(properties, index=[0])
                 dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
             children = self.get_children(id)
-            df = self._get_recursive_ids_by_categories(children, categories)
+            df = self._get_recursive_ids_by_categories(children, categories, sep)
             dataframe = pd.concat([dataframe, df], ignore_index=True)
         return dataframe
 
     def get_all_data(self) -> pd.DataFrame:
-        cates = self.get_all_categories()
-        df = pd.DataFrame()
-        for cate in cates:
-            df_single = self.get_data_by_category(cate)
-            df = pd.concat([df, df_single], ignore_index=True)
+        """
+        Get all data in the model by categories e.g. Item, Element, ...
+        :return:  pd.DataFrame - dataframe contains all data in the model
+        """
+        cats = self.get_all_categories()
+        df = self.get_data_by_categories(cats)
         return df
 
     def get_data_by_category(self, category: str) -> pd.DataFrame:

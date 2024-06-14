@@ -26,7 +26,7 @@ class TestPropDbReaderNavis(TestCase):
         self.assertIsNotNone(parameters)
 
     def test_get_data_by_categories(self):
-        df = self.prop_reader.get_data_by_categories(["Item","Element"])
+        df = self.prop_reader.get_data_by_categories(["Item", "Element"])
         self.assertIsNotNone(df)
 
     def test_get_all_sources_files(self):
@@ -34,7 +34,11 @@ class TestPropDbReaderNavis(TestCase):
         self.assertIsNotNone(sources)
 
     def test_get_all_data_by_resources(self):
-        data = self.prop_reader.get_all_data_by_resources()
+        data = self.prop_reader.get_all_data_resources()
+        self.assertIsNotNone(data)
+
+    def test_get_data_by_resources_categories(self):
+        data = self.prop_reader.get_data_resources_by_categories(["Element"])
         self.assertIsNotNone(data)
 
     def test_get_data_by_category(self):
