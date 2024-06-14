@@ -126,11 +126,11 @@ class PropDbReaderNavis(PropReader):
         :return: pd.DataFrame - dataframe contains data by resources
         """
         child_ids = self.get_children(1)
-        df = self._get_recursive_ids_by_resources(child_ids)
+        df = self._get_recursive_data_by_resources(child_ids)
         df = df.dropna(axis=0, how='all', subset=df.columns.difference(['DbId']))
         return df
 
-    def _get_recursive_ids_by_resources(self, db_ids: List[int]) -> pd.DataFrame:
+    def _get_recursive_data_by_resources(self, db_ids: List[int]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         for id in db_ids:
             props = self.enumerate_properties(id)
@@ -149,7 +149,7 @@ class PropDbReaderNavis(PropReader):
 
     def _get_recursive_elements(self, model_name, sources_ids: [list[int]]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
-        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in", '__node_flags__', '__name__']
+        #props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in", '__node_flags__', '__name__']
         if len(sources_ids) == 0:
             return dataframe
         for id in sources_ids:
@@ -158,13 +158,12 @@ class PropDbReaderNavis(PropReader):
             properties["DbId"] = id
             properties["ModelName"] = model_name
             for p in props:
-                if p.name not in props_ignore:
-                    if p.category is not None:
-                        key = p.category + "|" + str(p.display_name)
-                    elif p.display_name is not None:
-                        key = str(p.display_name)
-                    if key is not None:
-                        properties[key] = p.value
+                if p.category is not None:
+                    key = p.category + "|" + str(p.display_name)
+                elif p.display_name is not None:
+                    key = str(p.display_name)
+                if key is not None:
+                    properties[key] = p.value
             if len(properties) > 1:
                 singleDF = pd.DataFrame(properties, index=[0])
                 dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
