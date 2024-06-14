@@ -119,6 +119,60 @@ class PropDbReaderNavis(PropReader):
                     sources = sources + self._get_recursive_ids_sources_files(child_ids)
         return sources
 
+    def get_all_data_by_resources(self) -> pd.DataFrame:
+        """
+        Get data by resources model append to model
+        :param resources: List[str] - list of resources
+        :return: pd.DataFrame - dataframe contains data by resources
+        """
+        child_ids = self.get_children(1)
+        df = self._get_recursive_ids_by_resources(child_ids)
+        df = df.dropna(axis=0, how='all', subset=df.columns.difference(['DbId']))
+        return df
+
+    def _get_recursive_ids_by_resources(self, db_ids: List[int]) -> pd.DataFrame:
+        dataframe = pd.DataFrame()
+        for id in db_ids:
+            props = self.enumerate_properties(id)
+            # list objects props to dataframe
+            properties_dicts = [prop.__dict__ for prop in props]
+            df_props = pd.DataFrame(properties_dicts)
+            # see if any row have column 'display_name' with value is Type and  column 'Value' is File
+            if not df_props[(df_props['display_name'] == 'Type') & (df_props['value'] == 'File')].empty:
+                row_value = df_props[(df_props['category'] == 'Item') & (df_props['display_name'] == 'Name')].iloc[0]
+                source_name = row_value['value']
+                child_ids = self.get_children(id)
+                if len(child_ids) > 0:
+                    df = self._get_recursive_elements(source_name, child_ids)
+                    dataframe = pd.concat([dataframe, df], ignore_index=True)
+        return dataframe
+
+    def _get_recursive_elements(self, model_name, sources_ids: [list[int]]) -> pd.DataFrame:
+        dataframe = pd.DataFrame()
+        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in", '__node_flags__', '__name__']
+        if len(sources_ids) == 0:
+            return dataframe
+        for id in sources_ids:
+            props = self.enumerate_properties(id)
+            properties = {}
+            properties["DbId"] = id
+            properties["ModelName"] = model_name
+            for p in props:
+                if p.name not in props_ignore:
+                    if p.category is not None:
+                        key = p.category + "|" + str(p.display_name)
+                    elif p.display_name is not None:
+                        key = str(p.display_name)
+                    if key is not None:
+                        properties[key] = p.value
+            if len(properties) > 1:
+                singleDF = pd.DataFrame(properties, index=[0])
+                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
+            children = self.get_children(id)
+            df = self._get_recursive_elements(model_name, children)
+            dataframe = pd.concat([dataframe, df], ignore_index=True)
+        return dataframe
+
     def _get_recursive_ids_by_categories(self, db_ids: List[int], categories: List[str]) -> pd.DataFrame:
         dataframe = pd.DataFrame()
         props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]

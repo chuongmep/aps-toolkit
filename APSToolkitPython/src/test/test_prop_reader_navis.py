@@ -33,6 +33,10 @@ class TestPropDbReaderNavis(TestCase):
         sources = self.prop_reader.get_all_sources_files()
         self.assertIsNotNone(sources)
 
+    def test_get_all_data_by_resources(self):
+        data = self.prop_reader.get_all_data_by_resources()
+        self.assertIsNotNone(data)
+
     def test_get_data_by_category(self):
         data = self.prop_reader.get_data_by_category("Element")
         self.assertIsNotNone(data)
