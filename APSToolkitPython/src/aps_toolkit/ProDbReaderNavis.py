@@ -186,7 +186,8 @@ class PropDbReaderNavis(PropReader):
                     properties["DbId"] = id
                     for p in props:
                         if p.name not in props_ignore and p.category in categories:
-                            properties[p.display_name] = p.value
+                            key = p.category + "|" + str(p.display_name)
+                            properties[key] = p.value
             if len(properties) > 1:
                 singleDF = pd.DataFrame(properties, index=[0])
                 dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
