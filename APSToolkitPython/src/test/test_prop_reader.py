@@ -6,7 +6,7 @@ from .context import Auth
 
 class TestPropDbReader(TestCase):
     def setUp(self):
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnhXMnZPTVJzUTR1bXdmREd1UF9TSGc_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLkRlZFNWdHhIUXlxS3YzY29vSjdxS1E_dmVyc2lvbj0x"
         self.token = Auth().auth2leg()
         self.prop_reader = PropReader(self.urn, self.token)
 
@@ -29,6 +29,27 @@ class TestPropDbReader(TestCase):
     def test_get_all_properties(self):
         properties = self.prop_reader.get_all_properties(1)
         self.assertNotEquals(properties, 0)
+
+    def test_get_entities_table(self):
+        df = self.prop_reader.get_entities_table()
+        self.assertNotEquals(df.empty, True)
+
+    def test_get_values_table(self):
+        df = self.prop_reader.get_values_table()
+        self.assertNotEquals(df.empty, True)
+
+    def test_get_attributes_table(self):
+        df = self.prop_reader.get_attributes_table()
+        self.assertNotEquals(df.empty, True)
+
+    def test_get_avs_table(self):
+        # TODO
+        df = self.prop_reader.get_avs_table()
+        self.assertNotEquals(df.empty, True)
+
+    def test_get_offsets_table(self):
+        df = self.prop_reader.get_offsets_table()
+        self.assertNotEquals(df.empty, True)
 
     def test_get_property_values_by_names(self):
         values = self.prop_reader.get_property_values_by_names(["Comments", "name"])

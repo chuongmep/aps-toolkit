@@ -167,6 +167,34 @@ class PropReader:
             props[prop.name] = prop.value
         return props
 
+    def get_entities_table(self) -> pd.DataFrame:
+        data = self.ids
+        df = pd.DataFrame(data, columns=["dbId"])
+        return df
+
+    def get_values_table(self) -> pd.DataFrame:
+        data = self.vals
+        df = pd.DataFrame(data, columns=["value"])
+        return df
+
+    def get_attributes_table(self) -> pd.DataFrame:
+        data = self.attrs
+        data = data[1:]
+        df = pd.DataFrame(data, columns=['name', 'category', 'data_type', 'data_type_context', 'description',
+                                         'display_name', 'flags', 'display_precision', 'forge_parameter_id'])
+        return df
+
+    def get_avs_table(self) -> pd.DataFrame:
+        data = self.avs
+        df = pd.DataFrame(data, columns=['entId'])
+        return df
+
+    def get_offsets_table(self) -> pd.DataFrame:
+        data = self.offsets
+        df = pd.DataFrame(data, columns=['offset'])
+        return df
+
+
     def get_all_properties_display_unit(self, id) -> dict:
         """
         Get all properties include internal properties with display unit value

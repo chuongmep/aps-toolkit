@@ -69,9 +69,9 @@ class PropDbReaderNavis(PropReader):
                 categories.append(self.attrs[i][1])
         return categories
 
-    def get_all_parameters(self) -> pd.DataFrame:
+    def get_all_cats_params(self) -> pd.DataFrame:
         """
-        Get all parameters in the model, return a dataframe with columns: Category, Parameter \n
+        Get all categories and parameters in the model, return a dataframe with columns: Category, Parameter \n
         Category: category of Parameter \n
         Parameter: parameter name
         :return: pd.DataFrame - dataframe contains all categories - parameters in the model
