@@ -167,6 +167,19 @@ class PropDbReaderNavis(PropReader):
                 if len(child_ids) > 0:
                     df = self._get_recursive_elements(source_name, child_ids, categories, sep)
                     dataframe = pd.concat([dataframe, df], ignore_index=True)
+        if dataframe.empty:
+            # use main model
+            props = self.enumerate_properties(1)
+            properties_dicts = [prop.__dict__ for prop in props]
+            df_props = pd.DataFrame(properties_dicts)
+            # see if any row have column 'display_name' with value is Type and  column 'Value' is File
+            if not df_props[(df_props['display_name'] == 'Type') & (df_props['value'] == 'File')].empty:
+                row_value = df_props[(df_props['category'] == 'Item') & (df_props['display_name'] == 'Name')].iloc[0]
+                source_name = row_value['value']
+                child_ids = self.get_children(id)
+                if len(child_ids) > 0:
+                    df = self._get_recursive_elements(source_name, child_ids, categories, sep)
+                    dataframe = pd.concat([dataframe, df], ignore_index=True)
         return dataframe
 
     def _get_recursive_elements(self, model_name, source_ids: list[int], categories: list[str],
