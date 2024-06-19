@@ -7,7 +7,7 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnhXMnZPTVJzUTR1bXdmREd1UF9TSGc_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLkRlZFNWdHhIUXlxS3YzY29vSjdxS1E_dmVyc2lvbj0x"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
 
     def test_get_document_info(self):

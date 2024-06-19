@@ -391,20 +391,22 @@ class PropDbReaderRevit(PropReader):
         :param display_unit: the flag to display unit or not in value
         :return:
         """
-        dataframe = pd.DataFrame()
-        props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in"]
-        if len(childs) == 0:
-            return dataframe
-        for id in childs:
+        if not childs:
+            return pd.DataFrame()
+
+        props_ignore = {'parent', 'instanceof_objid', 'child', "viewable_in"}
+        data = []
+
+        stack = list(childs)
+        while stack:
+            id = stack.pop()
             flag_sub_families = False
             props = self.enumerate_properties(id)
-            # if props contain _RC, _RFN, _RFT, it's not a leaf node, continue to get children
-            if len([prop for prop in props if prop.name in ["_RC", "_RFN", "_RFT"]]) > 0:
-                ids = self.get_children(id)
-                dataframe = pd.concat(
-                    [dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family, display_unit)],
-                    ignore_index=True)
+
+            if any(prop.name in ["_RC", "_RFN", "_RFT"] for prop in props):
+                stack.extend(self.get_children(id))
                 continue
+
             properties = {}
             for prop in props:
                 if prop.category == "__internalref__" and prop.name == "Sub Family":
@@ -414,50 +416,45 @@ class PropDbReaderRevit(PropReader):
                         properties["Name"] = prop.value
                     else:
                         if display_unit:
-                            if prop.data_type_context not in ["", None]:
-                                properties[prop.name] = str(prop.value) + " " + str(
-                                    self.units.parse_symbol(prop.data_type_context))
+                            if prop.data_type_context:
+                                properties[
+                                    prop.name] = f"{prop.value} {self.units.parse_symbol(prop.data_type_context)}"
                             else:
                                 properties[prop.name] = prop.value
                         else:
                             properties[prop.name] = prop.value
+
             db_id = id
             external_id = self.ids[id]
-            # filter just get properties name in params list
             properties = {k: v for k, v in properties.items() if k in params}
             properties['dbId'] = db_id
             properties['external_id'] = external_id
+
             if flag_sub_families and not get_sub_family:
-                ids = self.get_children(id)
-                dataframe = pd.concat(
-                    [dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family, display_unit)],
-                    ignore_index=True)
+                stack.extend(self.get_children(id))
                 continue
-            # get instances
-            ins = self.get_instance(id)
-            if len(ins) > 0:
-                for instance in ins:
-                    if display_unit:
-                        types = self.get_all_properties_display_unit(instance)
-                    else:
-                        types = self.get_all_properties(instance)
-                    types = {k: v for k, v in types.items() if k in params}
-                    # add unit to value
-                    if display_unit:
-                        for key, value in types.items():
-                            if key in params:
-                                if self.units is not None:
-                                    types[key] = str(value) + " " + str(self.units.parse_symbol(key))
-                    properties = {**properties, **types}
-            single_df = pd.DataFrame(properties, index=[0])
-            dataframe = pd.concat([dataframe, single_df], ignore_index=True)
-            ids = self.get_children(id)
-            dataframe = pd.concat([dataframe, self._get_recursive_ids_prams(ids, params, get_sub_family, display_unit)],
-                                  ignore_index=True)
-        # set dbid and external_id to first and second column if it exists
+
+            instances = self.get_instance(id)
+            for instance in instances:
+                if display_unit:
+                    types = self.get_all_properties_display_unit(instance)
+                else:
+                    types = self.get_all_properties(instance)
+                types = {k: v for k, v in types.items() if k in params}
+                if display_unit:
+                    for key in types:
+                        if key in params and self.units:
+                            types[key] = f"{types[key]} {self.units.parse_symbol(key)}"
+                properties.update(types)
+
+            data.append(properties)
+            stack.extend(self.get_children(id))
+
+        dataframe = pd.DataFrame(data)
         if 'dbId' in dataframe.columns and 'external_id' in dataframe.columns:
-            dataframe = dataframe[
-                ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]]
+            cols = ['dbId', 'external_id'] + [col for col in dataframe.columns if col not in ['dbId', 'external_id']]
+            dataframe = dataframe[cols]
+
         return dataframe
 
     def get_data_by_external_id(self, external_id: str, is_get_sub_family: bool = False,
