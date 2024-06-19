@@ -169,33 +169,35 @@ class PropDbReaderNavis(PropReader):
                     dataframe = pd.concat([dataframe, df], ignore_index=True)
         return dataframe
 
-    def _get_recursive_elements(self, model_name, sources_ids: list[int], categories: list[str],
+    def _get_recursive_elements(self, model_name, source_ids: list[int], categories: list[str],
                                 sep='|') -> pd.DataFrame:
-        dataframe = pd.DataFrame()
-        # props_ignore = ['parent', 'instanceof_objid', 'child', "viewable_in", '__node_flags__', '__name__']
-        if len(sources_ids) == 0:
-            return dataframe
-        for id in sources_ids:
+        all_properties = []
+
+        def collect_properties(id):
             props = self.enumerate_properties(id)
-            properties = {}
-            properties["DbId"] = id
-            properties["ModelName"] = model_name
-            default_len = len(properties)
+            properties = {"DbId": id, "ModelName": model_name}
+
             for p in props:
-                if p.category not in categories: continue
-                if p.category is not None:
-                    key = p.category + sep + str(p.display_name)
-                elif p.display_name is not None:
-                    key = str(p.display_name)
-                if key is not None:
+                if p.category not in categories:
+                    continue
+                key = p.category + sep + str(p.display_name) if p.category else str(p.display_name)
+                if key:
                     properties[key] = p.value
-            if len(properties) > default_len:
-                singleDF = pd.DataFrame(properties, index=[0])
-                dataframe = pd.concat([dataframe, singleDF], ignore_index=True)
-            children = self.get_children(id)
-            if len(children) > 0:
-                df = self._get_recursive_elements(model_name, children, categories, sep)
-                dataframe = pd.concat([dataframe, df], ignore_index=True)
+
+            return properties
+
+        def process_ids(ids):
+            for id in ids:
+                properties = collect_properties(id)
+                if len(properties) > 2:  # More than DbId and ModelName
+                    all_properties.append(properties)
+                children = self.get_children(id)
+                if children:
+                    process_ids(children)
+
+        process_ids(source_ids)
+
+        dataframe = pd.DataFrame(all_properties)
         return dataframe
 
     def _get_recursive_ids_by_categories(self, db_ids: List[int], categories: List[str], sep='|') -> pd.DataFrame:

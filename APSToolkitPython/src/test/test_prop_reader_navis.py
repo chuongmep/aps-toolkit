@@ -6,6 +6,7 @@ from .context import Auth
 class TestPropDbReaderNavis(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
+        # self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLmlMcUMyM0h2UlYyclEzZmYxU2RGYXc_dmVyc2lvbj0x"
         self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLlEtYm00cUoyUTYtb0k5NDFRWUNOWUE_dmVyc2lvbj0x"
         self.prop_reader = PropDbReaderNavis(self.urn, self.token)
 
