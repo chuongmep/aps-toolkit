@@ -36,4 +36,4 @@ class DisplayUnits:
 
     def parse_symbol(self, type_id: str):
         type_id = type_id.split("-")[0]
-        return self.units.get(type_id, "Unknown")
+        return self.units.get(type_id, "")
