@@ -19,6 +19,9 @@ import pandas as pd
 from .Auth import Auth
 from .Token import Token
 import os
+import re
+from urllib.parse import urlparse, parse_qs
+import json
 
 
 class BIM360:
@@ -28,6 +31,27 @@ class BIM360:
             auth = Auth()
             self.token = auth.auth2leg()
         self.host = "https://developer.api.autodesk.com"
+
+    @staticmethod
+    def parse_url(url: str) -> dict:
+        """
+        Parse url to get project_id, folder_urn, entity_id, model_guid
+        :param url: the url from bim360 or autodesk construction cloud (ACC)
+        :return: :class:`dict` project_id, folder_urn, entity_id, model_guid
+        """
+        project_id_match = re.search(r'projects/([^\/?#]+)', url)
+        project_id = 'b.' + project_id_match.group(1) if project_id_match else ''
+        query_params = parse_qs(urlparse(url).query)
+        folder_urn = query_params.get('folderUrn', [''])[0]
+        entity_id = query_params.get('entityId', [''])[0]
+        model_guid = query_params.get('viewableGuid', [''])[0]
+
+        return {
+            'project_id': project_id,
+            'folder_urn': folder_urn,
+            'entity_id': entity_id,
+            'model_guid': model_guid,
+        }
 
     def get_hubs(self) -> dict:
         """
