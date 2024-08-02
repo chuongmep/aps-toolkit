@@ -7,7 +7,7 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnhXMnZPTVJzUTR1bXdmREd1UF9TSGc_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0zMA"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
 
     def test_get_document_info(self):
@@ -52,13 +52,13 @@ class TestPropDbReaderRevit(TestCase):
         self.assertIsNotNone(data)
 
     def test_get_data_by_category(self):
-        df = self.prop_reader.get_data_by_category("Furniture", True, True)
+        df = self.prop_reader.get_data_by_category("Furniture", True, True, True)
         # check if dataframe have rows = 1
         df_rows = df.shape[0]
         self.assertNotEquals(df_rows, 0)
 
     def test_get_data_by_categories(self):
-        df = self.prop_reader.get_data_by_categories(["Doors", "Windows"])
+        df = self.prop_reader.get_data_by_categories(["Doors", "Windows"], is_add_family_name=True)
         self.assertNotEquals(df.empty, True)
 
     # noinspection PyInterpreter
@@ -84,8 +84,8 @@ class TestPropDbReaderRevit(TestCase):
 
     def test_get_data_by_categories_and_params(self):
         df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
-                                                                ["name", "Category", "ElementId", "Width", "Height",
-                                                                 "IfcGUID"], True, display_unit=True)
+                                                                ["Name", "Category", "ElementId", "Width", "Height",
+                                                                 "IfcGUID","Family Name"], True, display_unit=True)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_external_id(self):

@@ -213,12 +213,13 @@ class PropDbReaderRevit(PropReader):
                 data_frame.loc[len(data_frame)] = new_row
 
     def get_data_by_category(self, category: str, is_get_sub_family: bool = False,
-                             display_unit: bool = False) -> pd.DataFrame:
+                             display_unit: bool = False, is_add_family_name: bool = False) -> pd.DataFrame:
         """
         Get data by category in model
         :param category: the category name need get data, e.g: Walls, Doors, Windows, etc
         :param is_get_sub_family: the flag to get sub family or not, default is False
         :param display_unit: the flag to display unit or not in value, default is False
+        :param is_add_family_name: the flag to add family name or not, default is False
         :return: :class:`pandas.DataFrame` : Dataframe contains data by category
         """
         categories = self.get_all_categories()
@@ -227,10 +228,16 @@ class PropDbReaderRevit(PropReader):
             category = category[5:].strip()
         category_id = [key for key, value in categories.items() if value == category]
         dataframe = self._get_recursive_ids(category_id, is_get_sub_family, display_unit)
+        if dataframe.empty:
+            return dataframe
+        if (is_add_family_name):
+            # get name from family and get name by regex e.g "Seating-LAMMHULTS-PENNE-Chair [12143232]" ->
+            # "Seating-LAMMHULTS-PENNE-Chair"
+            dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
         return dataframe
 
     def get_data_by_categories(self, categories: List[str], is_get_sub_family: bool = False,
-                               display_unit: bool = False) -> pd.DataFrame:
+                               display_unit: bool = False, is_add_family_name: bool = False) -> pd.DataFrame:
         """
         Get data by list of categories in model
         :param categories: the list of categories need get data, e.g: ["Walls", "Doors", "Windows"]
@@ -240,8 +247,9 @@ class PropDbReaderRevit(PropReader):
         """
         dataframe = pd.DataFrame()
         for category in categories:
-            dataframe = pd.concat([dataframe, self.get_data_by_category(category, is_get_sub_family, display_unit)],
-                                  ignore_index=True)
+            dataframe = pd.concat(
+                [dataframe, self.get_data_by_category(category, is_get_sub_family, display_unit, is_add_family_name)],
+                ignore_index=True)
         return dataframe
 
     def get_data_by_categories_and_params(self, categories: List[str], params: List[str],
@@ -254,6 +262,9 @@ class PropDbReaderRevit(PropReader):
         :param display_unit: the flag to display unit or not in value, default is False
         :return: :class:`pandas.DataFrame` : Dataframe contains data by categories and parameters
         """
+        is_have_name = params in ["Name"]
+        if not is_have_name:
+            params.append("Name")
         dataframe = pd.DataFrame()
         all_categories = self.get_all_categories()
         category_ids = [key for key, value in all_categories.items() if value in categories]
@@ -261,6 +272,12 @@ class PropDbReaderRevit(PropReader):
             dataframe = pd.concat(
                 [dataframe, self._get_recursive_ids_prams([category_id], params, is_get_sub_family, display_unit)],
                 ignore_index=True)
+        if dataframe.empty:
+            return dataframe
+        if "Family Name" in params:
+            dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
+        if not is_have_name:
+            dataframe = dataframe.drop(columns=["Name"])
         # remove all row have all values is null, ignore dbId and external_id columns
         dataframe = dataframe.dropna(how='all',
                                      subset=[col for col in dataframe.columns if col not in ['dbId', 'external_id']])
@@ -293,6 +310,10 @@ class PropDbReaderRevit(PropReader):
         families = self.get_all_families()
         cate_ids = [key for key, value in families.items() if value in family_names]
         dataframe = self._get_recursive_ids(cate_ids, is_get_sub_family, display_unit)
+        # add family name to dataframe
+        if dataframe.empty:
+            return dataframe
+        dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
         return dataframe
 
     def get_data_by_family_type(self, family_type: str, is_get_sub_family: bool = False,
@@ -308,6 +329,10 @@ class PropDbReaderRevit(PropReader):
         family_types = self.get_all_families_types()
         type_id = [key for key, value in family_types.items() if value == family_type]
         dataframe = self._get_recursive_ids(type_id, is_get_sub_family, display_unit)
+        # add family name to dataframe
+        if dataframe.empty:
+            return dataframe
+        dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
         return dataframe
 
     def get_data_by_family_types(self, type_names: str, is_get_sub_family: bool = False,
@@ -322,6 +347,10 @@ class PropDbReaderRevit(PropReader):
         types = self.get_all_families_types()
         type_ids = [key for key, value in types.items() if value in type_names]
         dataframe = self._get_recursive_ids(type_ids, is_get_sub_family, display_unit)
+        # add family name to dataframe
+        if dataframe.empty:
+            return dataframe
+        dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
         return dataframe
 
     def _get_recursive_ids(self, db_ids: List[int], get_sub_family: bool, display_unit: bool = False) -> pd.DataFrame:
