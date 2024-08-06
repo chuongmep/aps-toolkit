@@ -419,7 +419,7 @@ class BIM360:
             raise Exception(response.reason)
         item_versions = response.json()
         for item_version in item_versions['data']:
-            if item_version['attributes']['versionNumber'] == version:
+            if str(item_version['attributes']['versionNumber']) == str(version):
                 return item_version['relationships']['derivatives']['data']['id']
         return None
 
