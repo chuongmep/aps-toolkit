@@ -164,6 +164,9 @@ class PropDbReaderRevit(PropReader):
         for dbid in dbids:
             df = self._get_recursive_ids([dbid], is_get_sub_family, display_unit)
             dataframe = pd.concat([dataframe, df], ignore_index=True)
+        if dataframe.empty:
+            return dataframe
+        dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
         return dataframe
 
     def get_all_families(self) -> dict:
