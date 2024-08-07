@@ -265,9 +265,11 @@ class PropDbReaderRevit(PropReader):
         :param display_unit: the flag to display unit or not in value, default is False
         :return: :class:`pandas.DataFrame` : Dataframe contains data by categories and parameters
         """
-        is_have_name = params in ["Name"]
+        flag_name = False
+        is_have_name = "Name" in params
         if not is_have_name:
             params.append("Name")
+            flag_name = True
         dataframe = pd.DataFrame()
         all_categories = self.get_all_categories()
         category_ids = [key for key, value in all_categories.items() if value in categories]
@@ -279,7 +281,7 @@ class PropDbReaderRevit(PropReader):
             return dataframe
         if "Family Name" in params:
             dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
-        if not is_have_name:
+        if flag_name:
             dataframe = dataframe.drop(columns=["Name"])
         # remove all row have all values is null, ignore dbId and external_id columns
         dataframe = dataframe.dropna(how='all',
