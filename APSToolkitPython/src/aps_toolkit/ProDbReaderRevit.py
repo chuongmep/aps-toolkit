@@ -255,6 +255,24 @@ class PropDbReaderRevit(PropReader):
                 ignore_index=True)
         return dataframe
 
+    def get_data_by_parameters(self, params: List[str], display_unit: bool = False) -> pd.DataFrame:
+        """
+        Get data by list of parameters in model
+        :param params: the list of parameters need get data, e.g: ["Name", "Area", "Volume", "Height"]
+        :param display_unit: the flag to display unit or not in value, default is False
+        :return: :class:`pandas.DataFrame` : Dataframe contains data by parameters
+        """
+        dataframe = pd.DataFrame()
+        all_categories = self.get_all_categories()
+        category_ids = [key for key, value in all_categories.items()]
+        dataframe = pd.concat(
+            [dataframe, self._get_recursive_ids_prams(category_ids, params, False, display_unit)], ignore_index=True)
+        if dataframe.empty:
+            return dataframe
+        if "Family Name" in params:
+            dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
+        return dataframe
+
     def get_data_by_categories_and_params(self, categories: List[str], params: List[str],
                                           is_get_sub_family: bool = False, display_unit: bool = False) -> pd.DataFrame:
         """

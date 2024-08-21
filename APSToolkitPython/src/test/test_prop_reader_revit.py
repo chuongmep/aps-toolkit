@@ -88,6 +88,11 @@ class TestPropDbReaderRevit(TestCase):
                                                                  "IfcGUID","Family Name"], True, display_unit=False)
         self.assertNotEquals(df.empty, True)
 
+    def test_get_data_by_parameters(self):
+        df = self.prop_reader.get_data_by_parameters(["Name", "Category", "ElementId", "Width", "Height",
+                                                      "IfcGUID", "Family Name"], True)
+        self.assertNotEquals(df.empty, True)
+
     def test_get_data_by_external_id(self):
         external_id = "6d22740f-4d3f-4cc6-a442-8c98ddd54f1f-0004923b"
         df = self.prop_reader.get_data_by_external_id(external_id, True)
