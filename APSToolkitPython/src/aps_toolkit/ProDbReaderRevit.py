@@ -25,9 +25,23 @@ import warnings
 
 class PropDbReaderRevit(PropReader):
     """
-    Class PropDbReaderRevit to read properties from Revit model
-    """
+    Class to read properties from a Revit model.
 
+    Attributes:
+    ----------
+    urn : str
+        Unique identifier of the Revit model.
+    token : Token
+        Access token to authenticate the user.
+    region : str
+        Region of the model: US, EMEA, or APAC.
+
+    Methods:
+    --------
+    __init__(urn, token, region="US", manifest_item: [ManifestItem] = None):
+        Initializes the PropDbReaderRevit class with model URN, access token, region,
+        and optional manifest items.
+    """
     def __int__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
         super().__init__(urn, token, region, manifest_item)
 
