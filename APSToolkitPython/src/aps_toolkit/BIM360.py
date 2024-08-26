@@ -22,7 +22,7 @@ import os
 import re
 from urllib.parse import urlparse, parse_qs
 import json
-
+from io import BytesIO
 
 class BIM360:
     def __init__(self, token: Token = None):
@@ -766,6 +766,41 @@ class BIM360:
             file.write(response.content)
         return file_path
 
+    def download_file_stream_item(self, project_id: str, folder_id: str, file_name: str, version: int = -1):
+        """
+        Download a file stream in BIM 360 Docs or Autodesk Construction Cloud
+        :param project_id:  :class:`str` the unique identifier of a project
+        :param folder_id:  :class:`str` the unique identifier of a folder
+        :param file_name:  :class:`str` the name of file at the folder need to download
+        :param version:  :class:`int` the version of file need to download
+        :return:  :class:`str` the path of file after download
+        """
+        item_id = self._get_item_id(project_id, folder_id, file_name)
+        if item_id is None:
+            raise Exception("File not found")
+        url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        item_versions = response.json()
+        if version == -1:
+            url = item_versions['data'][0]['relationships']['storage']['data']['id']
+        else:
+            version = version - 1
+            if version < 0 or version >= len(item_versions['data']):
+                raise Exception("Version not found")
+            url = item_versions['data'][version]['relationships']['storage']['data']['id']
+        bucket_key = url.split("/").pop(0).split(":").pop()
+        object_key = url.split("/").pop()
+        s3_url = f"{self.host}/oss/v2/buckets/{bucket_key}/objects/{object_key}/signeds3download"
+        response = requests.get(s3_url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        download_url = response.json()['url']
+        response = requests.get(download_url)
+        bytes_io = BytesIO(response.content)
+        return bytes_io
     def restore_file_item(self, project_id, item_id, version=1):
         """
         Restore a file in BIM 360 Docs or Autodesk Construction Cloud

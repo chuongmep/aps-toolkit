@@ -140,6 +140,16 @@ class TestBIM360(TestCase):
         size_result = os.path.getsize(file_path_result)
         self.assertEqual(size, size_result)
 
+    def test_download_file_stream_item(self):
+        file_name = "Test.dwg"
+        byte_io = self.bim360.download_file_stream_item(self.project_id, self.folder_id, file_name, 2)
+        self.assertNotEquals(byte_io, 0)
+        # download
+        with open(file_name, 'wb') as f:
+            f.write(byte_io.read())
+        #open
+        size = os.path.getsize(file_name)
+        self.assertNotEquals(size, 0)
     def test_restore_file_item(self):
         item_id = "urn:adsk.wipprod:fs.file:vf.-wv2uodvSgaXmUZ4O0oYkw";
         result = self.bim360.restore_file_item(self.project_id, item_id, 2)
