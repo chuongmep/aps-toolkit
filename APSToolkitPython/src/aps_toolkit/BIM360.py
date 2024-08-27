@@ -444,7 +444,7 @@ class BIM360:
             return file_version
         except Exception as e:
             error = "Another object with the same name already exists in this container"
-            if error in str(e):
+            if error in str(e) or "Conflict" in str(e):
                 print("File already exists")
                 item_id = self._get_item_id(project_id, folder_id, object_name)
                 file_version = self._create_new_file_version(project_id, item_id, object_name, id)
