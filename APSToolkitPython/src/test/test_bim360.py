@@ -12,7 +12,7 @@ class TestBIM360(TestCase):
         self.bim360 = BIM360(self.token)
         self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
         self.project_id = "b.ca790fb5-141d-4ad5-b411-0461af2e9748"
-        self.folder_id = "urn:adsk.wipprod:fs.folder:co.uX9MsdjjSraK_3p5qXyE_A"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co.2lGXhfiZQN-rGhArdOY6gw"
         self.item_id = "urn:adsk.wipprod:dm.lineage:wGXA2ljoSQaXtGOEepawIg"
 
     def test_parse_url(self):
@@ -117,7 +117,12 @@ class TestBIM360(TestCase):
         full_path = os.path.abspath(path)
         result = self.bim360.upload_file_item(self.project_id, self.folder_id, full_path)
         self.assertNotEquals(result, 0)
-
+    def test_upload_file_item_stream(self):
+        path = r"./test/resources/Test.dwg"
+        file_name = "Test.dwg"
+        streams = open(path, 'rb')
+        result = self.bim360.upload_file_item_stream(self.project_id, self.folder_id,file_name, streams)
+        self.assertNotEquals(result, 0)
     def test_copy_file_item(self):
         target_folder_id = "urn:adsk.wipprod:fs.folder:co.ThXlEqHBSomEoh_TdHE5AA"
         result = self.bim360.copy_file_item(self.item_id, self.project_id, self.project_id, target_folder_id)

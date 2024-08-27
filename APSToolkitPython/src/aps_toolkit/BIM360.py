@@ -24,6 +24,7 @@ from urllib.parse import urlparse, parse_qs
 import json
 from io import BytesIO
 
+
 class BIM360:
     def __init__(self, token: Token = None):
         self.token = token
@@ -452,6 +453,35 @@ class BIM360:
             else:
                 raise e
 
+    def upload_file_item_stream(self, project_id: str, folder_id: str, file_name: str, file_stream: BytesIO):
+        """
+        Upload a file to BIM 360 Docs or Autodesk Construction Cloud
+        :param project_id:  :class:`str` the unique identifier of a project
+        :param folder_id:  :class:`str` the unique identifier of a folder
+        :param file_name:  :class:`str` the name of file need to upload
+        :param file_stream:  :class:`BytesIO` the stream of file need to upload
+        :return: :class:`dict` all information of file version
+        """
+        result = self._create_object_storage(project_id, folder_id, file_name)
+        id = result['data']['id']
+        sign = self._signeds_3_upload(id)
+        upload_key = sign['uploadKey']
+        url = sign['urls'][0]
+        self._upload_file_to_signed_url_stream(url, file_stream)
+        self._complete_upload(upload_key, id)
+        try:
+            file_version = self._create_first_version_file(project_id, folder_id, file_name, id)
+            return file_version
+        except Exception as e:
+            error = "Another object with the same name already exists in this container"
+            if error in str(e) or "Conflict" in str(e):
+                print("File already exists")
+                item_id = self._get_item_id(project_id, folder_id, file_name)
+                file_version = self._create_new_file_version(project_id, item_id, file_name, id)
+                return file_version
+            else:
+                raise e
+
     def copy_folder_contents(self, source_project_id, source_folder_id, target_project_id, target_folder_id) -> None:
         """
         Copy all contents of a folder to another folder
@@ -567,6 +597,10 @@ class BIM360:
         with open(file_path, 'rb') as file:
             response = requests.put(signed_upload_url, data=file)
             return response
+
+    def _upload_file_to_signed_url_stream(self, signed_upload_url, file_stream):
+        response = requests.put(signed_upload_url, data=file_stream)
+        return response
 
     def _complete_upload(self, upload_key, object_id):
         bucket_key = object_id.split("/").pop(0).split(":").pop()
@@ -801,6 +835,7 @@ class BIM360:
         response = requests.get(download_url)
         bytes_io = BytesIO(response.content)
         return bytes_io
+
     def restore_file_item(self, project_id, item_id, version=1):
         """
         Restore a file in BIM 360 Docs or Autodesk Construction Cloud
