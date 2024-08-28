@@ -351,19 +351,20 @@ class BIM360:
         item = response.json()
         return item['data']['attributes']['displayName']
 
-    def batch_report_items(self, project_id: str, folder_id: str, extension: str = ".rvt",
+    def batch_report_items(self, project_id: str, folder_id: str, extensions: list[str] = None,
                            is_sub_folder: bool = False) -> pd.DataFrame:
         """
         Get batch all items with general information by project_id and folder_id
         :param project_id:  :class:`str` the unique identifier of a project
         :param folder_id:  :class:`str` the unique identifier of a folder
-        :param extension:  :class:`str` the extension of file. e.g: .rvt, .dwg, .pdf
+        :param extensions:  :class:`list[str]` the extension of file. e.g: [.rvt,.dwg,.pdf]
         :param is_sub_folder:  :class:`bool` if True, get all items in sub folders by recursive
         :return: :class:`pandas.DataFrame` all items with general information containing :
         project_id, folder_id, item_name, item_id, last_version, derivative_urn, last_modified_time
         """
-        df = pd.DataFrame(columns=['project_id', 'folder_id', 'item_name', 'item_id', 'last_version', 'derivative_urn',
-                                   'last_modified_time'])
+        if extensions is None:
+            extensions = [""]
+        df = pd.DataFrame()
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         url = f"{self.host}/data/v1/projects/{project_id}/folders/{folder_id}/contents"
         response = requests.get(url, headers=headers)
@@ -374,26 +375,24 @@ class BIM360:
             for folder_content in folder_contents['data']:
                 if folder_content['type'] == "folders":
                     df = pd.concat(
-                        [df, self.batch_report_items(project_id, folder_content['id'], extension, is_sub_folder)],
+                        [df, self.batch_report_items(project_id, folder_content['id'], extensions, is_sub_folder)],
                         ignore_index=True)
         # if included not include or null,pass
         if 'included' in folder_contents:
             for include_content in folder_contents['included']:
                 item_name = include_content['attributes']['displayName']
-                if not item_name.endswith(extension):
-                    if not extension == "" or extension is not None:
+                extension_format = item_name.split('.')[-1]
+                # remove all dot in extensions
+                extensions = [extension.replace(".", "") for extension in extensions]
+                if extension_format not in extensions:
+                    if extensions != [""]:
                         continue
-                relationship = include_content['relationships']
-                item_id = relationship['item']['data']['id']
-                last_version = include_content['attributes']['versionNumber']
-                derivative_urn = ""
-                if 'derivatives' in relationship:
-                    derivative_urn = include_content['relationships']['derivatives']['data']['id']
-                last_modified_time = include_content['attributes']['lastModifiedTime']
-                df = pd.concat([df, pd.DataFrame(
-                    {'project_id': project_id, 'folder_id': folder_id, 'item_name': item_name, 'item_id': item_id,
-                     'last_version': last_version, 'derivative_urn': derivative_urn,
-                     'last_modified_time': last_modified_time}, index=[0])], ignore_index=True)
+                single_df = pd.json_normalize(include_content)
+                df = pd.concat([df, single_df], ignore_index=True)
+        df.insert(0, 'project_id', project_id)
+        df.insert(1, 'folder_id', folder_id)
+        # df.columns = ['project_id','folder_id','item_name', 'item_id', 'last_version', 'derivative_urn', 'last_modified_time']
+
         return df
 
     def _get_number_latest_item_version(self, project_id: str, item_id: str) -> int:
