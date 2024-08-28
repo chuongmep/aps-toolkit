@@ -86,7 +86,7 @@ class TestBIM360(TestCase):
         # df = self.bim360.batch_report_items(self.project_id, self.folder_id, None, True)
         # df = self.bim360.batch_report_items(self.project_id, self.folder_id, [".rvt"], True)
         df = self.bim360.batch_report_items(self.project_id, self.folder_id, ["rvt"], True)
-        # self.assertNotEquals(df.empty, True)
+        self.assertNotEquals(df.empty, True)
 
     def test_get_item__display_name(self):
         item_name = self.bim360.get_item_display_name(self.project_id, self.item_id)

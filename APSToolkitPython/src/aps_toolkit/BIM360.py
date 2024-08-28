@@ -388,9 +388,9 @@ class BIM360:
                     if extensions != [""]:
                         continue
                 single_df = pd.json_normalize(include_content)
+                single_df.insert(0, 'project_id', project_id)
+                single_df.insert(1, 'folder_id', folder_id)
                 df = pd.concat([df, single_df], ignore_index=True)
-        df.insert(0, 'project_id', project_id)
-        df.insert(1, 'folder_id', folder_id)
         # df.columns = ['project_id','folder_id','item_name', 'item_id', 'last_version', 'derivative_urn', 'last_modified_time']
 
         return df
