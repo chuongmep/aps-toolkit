@@ -27,6 +27,7 @@ from aps_toolkit import SVFMetadata
 from aps_toolkit import Bucket
 from aps_toolkit.units import DisplayUnits
 from aps_toolkit import Webhooks
+from aps_toolkit import AECDataModel
 
 APS_CLIENT_ID = os.environ["APS_CLIENT_ID"]
 APS_CLIENT_SECRET = os.environ["APS_CLIENT_SECRET"]

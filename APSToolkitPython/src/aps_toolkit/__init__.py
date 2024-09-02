@@ -22,3 +22,4 @@ from .SVFMaterials import SVFMaterials
 from .SVFImage import SVFImage
 from .SVFMetadata import SVFMetadata
 from .Webhooks import Webhooks
+from .AECDataModel import AECDataModel
