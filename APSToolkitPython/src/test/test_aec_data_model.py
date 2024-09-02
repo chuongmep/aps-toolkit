@@ -101,8 +101,57 @@ class TestAECDataModel(TestCase):
         """
         variables = {
             "elementGroupId": f"{self.group_id}",  # Replace with your actual element group ID
-            "propertyFilter": "property.name.category==Furniture"
+            "propertyFilter": "property.name.category==Walls"
             # Replace with your property filter property.name.category==Walls
+        }
+        result = self.aec_data_model.execute_query_variables(query, variables)
+        self.assertIsNotNone(result)
+
+    def test_get_elements_from_type(self):
+        query = """
+                    query ($elementGroupId: ID!, $propertyFilter: String!) {
+                elementsByElementGroup(
+                    elementGroupId: $elementGroupId
+                    filter: { query: $propertyFilter }
+                    pagination: {limit: 5}
+                ) {
+                    pagination {
+                        cursor
+                    }
+                    results {
+                        id
+                        name
+                        properties {
+                            results {
+                            name
+                            value
+                            }
+                        }
+                        referencedBy(name: "Type") {
+                            pagination {
+                                cursor
+                            }
+                            results {
+                                id
+                                name
+                                alternativeIdentifiers {
+                                    externalElementId
+                                }
+                                properties {
+                                    results {
+                                        name
+                                        value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            """
+        variables = {
+            "elementGroupId": f"{self.group_id}",  # Replace with your actual element group ID
+            "propertyFilter": "'property.name.category'=contains=Walls and 'property.name.Element Context'==Type'"
         }
         result = self.aec_data_model.execute_query_variables(query, variables)
         self.assertIsNotNone(result)
