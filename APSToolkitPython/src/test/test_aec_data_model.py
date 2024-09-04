@@ -155,3 +155,37 @@ class TestAECDataModel(TestCase):
         }
         result = self.aec_data_model.execute_query_variables(query, variables)
         self.assertIsNotNone(result)
+
+    def test_get_data_instance_type_category(self):
+        query = """
+        query GetElementsFromCategory($elementGroupId: ID!, $propertyFilter: String!) {
+            elementsByElementGroup(elementGroupId: $elementGroupId, filter: {query:$propertyFilter}) {
+              pagination {
+                cursor
+              }
+              results {
+                id
+                name
+                properties(includeReferencesProperties: "Type") {
+                  results {
+                    name
+                    value
+                    definition {
+                      units{
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        }
+        """
+
+        # Set the variables (replace with your actual values)
+        variables = {
+            "elementGroupId": "YWVjZH45enZvNHRHazl1RTI4VVc0NUsySkgzX0wyQ35yTHd5MTNSSlFhMml5cmlCZ1NMd3ZB",
+            "propertyFilter": "'property.name.category'==Walls and 'property.name.Element Context'==Instance"
+        }
+        result = self.aec_data_model.execute_query_variables(query, variables)
+        self.assertIsNotNone(result)
