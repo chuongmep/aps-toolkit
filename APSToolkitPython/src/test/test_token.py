@@ -4,7 +4,8 @@ from .context import Token
 from .context import RevokeType
 from .context import ClientType
 from .context import Auth
-
+import datetime
+import time
 
 class TestAuth(TestCase):
 
@@ -23,3 +24,11 @@ class TestAuth(TestCase):
         token.set_env()
         result = token.introspect(ClientType.PRIVATE)
         self.assertNotEquals(result, "")
+
+    def test_is_expired(self):
+        token = Auth().auth2leg()
+        # downtime to 1 minutes
+        token.expires_in = time.time() - 1 * 60
+        self.assertTrue(token.is_expired())
+        token.expires_in = time.time() + 1 * 60
+        self.assertFalse(token.is_expired())

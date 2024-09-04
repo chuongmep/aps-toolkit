@@ -28,7 +28,7 @@ import hashlib
 import base64
 import random
 import string
-
+import datetime
 
 class Auth:
     def __init__(self, client_id: Optional[str] = None, client_secret: Optional[str] = None):
@@ -65,7 +65,10 @@ class Auth:
             raise Exception(response.content)
         content = response.json()
         self.access_token = content['access_token']
-        self.expires_in = content['expires_in']
+        second = content['expires_in']
+        now = datetime.datetime.now()
+        expires = now + datetime.timedelta(seconds=second)
+        self.expires_in = expires.timestamp()
         self.token_type = content['token_type']
         result = Token(self.access_token, self.token_type, self.expires_in)
         return result
@@ -97,7 +100,10 @@ class Auth:
                     result_token = handle_callback(callback_url, code)
                     auth_instance.access_token = result_token['access_token']
                     auth_instance.token_type = result_token['token_type']
-                    auth_instance.expires_in = result_token['expires_in']
+                    now = datetime.datetime.now()
+                    second = result_token['expires_in']
+                    expires = now + datetime.timedelta(seconds=second)
+                    auth_instance.expires_in = expires.timestamp()
                     auth_instance.refresh_token = result_token.get('refresh_token')
 
                 else:
@@ -170,7 +176,10 @@ class Auth:
                     result_token = handle_callback(callback_url, code, auth_instance.client_id, code_verifier)
                     auth_instance.access_token = result_token['access_token']
                     auth_instance.token_type = result_token['token_type']
-                    auth_instance.expires_in = result_token['expires_in']
+                    now = datetime.datetime.now()
+                    second = result_token['expires_in']
+                    expires = now + datetime.timedelta(seconds=second)
+                    auth_instance.expires_in = expires.timestamp()
                     auth_instance.refresh_token = result_token.get('refresh_token')
 
                 else:

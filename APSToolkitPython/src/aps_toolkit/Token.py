@@ -18,6 +18,7 @@ import os
 import requests
 import base64
 from enum import Enum
+import time
 
 
 class RevokeType(Enum):
@@ -33,7 +34,7 @@ class ClientType(Enum):
 
 
 class Token():
-    def __init__(self, access_token: str = None, token_type: str = None, expires_in: int = None,
+    def __init__(self, access_token: str = None, token_type: str = None, expires_in: float = None,
                  refresh_token: str = None,
                  SetEnv: bool = False):
         """
@@ -60,8 +61,17 @@ class Token():
         os.environ["APS_ACCESS_TOKEN"] = self.access_token if self.access_token is not None else ""
         os.environ["APS_REFRESH_TOKEN"] = self.refresh_token if self.refresh_token is not None else ""
 
-    def is_expired(self) -> bool:
-        return self.expires_in <= 0
+    def is_expired(self, buffer_minutes=0) -> bool:
+        """
+        Check if the token is expired
+        :return: True if the token is expired, False otherwise
+        """
+        time_stamp_now = time.time()
+        if self.expires_in is None:
+            return False
+        if time_stamp_now + buffer_minutes * 60 >= self.expires_in:
+            return True
+        return False
 
     def introspect(self, client_type: ClientType) -> dict:
         """
