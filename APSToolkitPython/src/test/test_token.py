@@ -7,6 +7,7 @@ from .context import Auth
 import datetime
 import time
 
+
 class TestAuth(TestCase):
 
     def test_revoke_token_private(self):
@@ -32,3 +33,9 @@ class TestAuth(TestCase):
         self.assertTrue(token.is_expired())
         token.expires_in = time.time() + 1 * 60
         self.assertFalse(token.is_expired())
+
+    def test_refresh_token(self):
+        token = Auth().auth3leg()
+        token.refresh()
+        token.refresh()
+        self.assertNotEqual(token.access_token, "")

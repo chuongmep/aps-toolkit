@@ -244,7 +244,10 @@ class Auth:
             raise Exception(response.reason)
         content = response.json()
         self.access_token = content['access_token']
-        self.expires_in = content['expires_in']
+        second = content['expires_in']
+        now = datetime.datetime.now()
+        expires = now + datetime.timedelta(seconds=second)
+        self.expires_in = expires.timestamp()
         self.token_type = content['token_type']
         self.refresh_token = content.get('refresh_token')
         result = Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)

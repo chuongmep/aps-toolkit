@@ -19,7 +19,7 @@ import requests
 import base64
 from enum import Enum
 import time
-
+import datetime
 
 class RevokeType(Enum):
     TOKEN_PUBLIC = 1
@@ -72,6 +72,42 @@ class Token():
         if time_stamp_now + buffer_minutes * 60 >= self.expires_in:
             return True
         return False
+
+    def refresh(self, client_id: str = None, client_secret: str = None, refresh_token: str = None):
+        """
+        Refresh the access token
+        :param client_id: the client id of the application
+        :param client_secret: the client secret of the application
+        :param refresh_token: the refresh token used to get a new access token
+        """
+        host = "https://developer.api.autodesk.com"
+        url = "/authentication/v2/token"
+        if client_id is None:
+            client_id = os.getenv("APS_CLIENT_ID")
+        if client_secret is None:
+            client_secret = os.getenv("APS_CLIENT_SECRET")
+        if refresh_token is None:
+            refresh_token = self.refresh_token
+            if refresh_token is None:
+                raise Exception("refresh_token is not provided, please provide the refresh_token or use Auth3leg")
+        # body
+        body = {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "grant_type": "refresh_token",
+            "refresh_token": self.refresh_token
+        }
+        response = requests.post(host + url, data=body)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        content = response.json()
+        self.access_token = content['access_token']
+        second = content['expires_in']
+        now = datetime.datetime.now()
+        expires = now + datetime.timedelta(seconds=second)
+        self.expires_in = expires.timestamp()
+        self.token_type = content['token_type']
+        self.refresh_token = content.get('refresh_token')
 
     def introspect(self, client_type: ClientType) -> dict:
         """
