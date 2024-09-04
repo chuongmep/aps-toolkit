@@ -420,7 +420,8 @@ class BIM360:
         item_versions = response.json()
         for item_version in item_versions['data']:
             if str(item_version['attributes']['versionNumber']) == str(version):
-                return item_version['relationships']['derivatives']['data']['id']
+                if 'derivatives' in item_version['relationships']:
+                    return item_version['relationships']['derivatives']['data']['id']
         return None
 
     def upload_file_item(self, project_id: str, folder_id: str, file_path: str):

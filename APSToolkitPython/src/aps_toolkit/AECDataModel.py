@@ -23,7 +23,6 @@ class AECDataModel:
             'Content-Type': 'application/json'
         }
         response = requests.post(self.url, headers=headers, json={'query': query, 'variables': variables})
-        response.raise_for_status()
         if response.status_code != 200:
             raise Exception(f"Error: {response.content}")
         return response.json()
