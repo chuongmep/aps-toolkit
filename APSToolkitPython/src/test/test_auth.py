@@ -46,6 +46,10 @@ class TestAuth(TestCase):
         self.assertNotEquals(token.access_token, "")
         self.assertNotEquals(token.refresh_token, "")
 
+    def test_refresh_token_from_env(self):
+        token = Auth.refresh_token_from_env()
+        self.assertNotEquals(token.access_token, "")
+
     def test_get_user_info(self):
         auth = Auth()
         token = auth.auth3leg()

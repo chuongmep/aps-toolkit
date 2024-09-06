@@ -62,6 +62,7 @@ Advanced setup for APS Toolkit environment:
 ```bash
 APS_REFRESH_TOKEN = <your refresh token>
 APS_ACCESS_TOKEN = <your access token>
+APS_CLIENT_PKCE_ID = <your client id>
 ```
 
 ## ⭐ Getting Started

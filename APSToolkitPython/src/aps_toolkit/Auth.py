@@ -30,6 +30,7 @@ import random
 import string
 import datetime
 
+
 class Auth:
     def __init__(self, client_id: Optional[str] = None, client_secret: Optional[str] = None):
         if client_id and client_secret:
@@ -152,7 +153,9 @@ class Auth:
         :param scopes: The scopes for which the application is requesting access. If not provided, it defaults to 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'.
         :Returns: :class:`Token`: An instance of the Token class containing the access token, token type, expiration time, and refresh token (if available).
         """
-        if clientId:
+        if clientId is None:
+            self.client_id = os.environ.get('APS_CLIENT_PKCE_ID')
+        else:
             self.client_id = clientId
         if not scopes:
             scopes = 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all'
@@ -252,6 +255,32 @@ class Auth:
         self.refresh_token = content.get('refresh_token')
         result = Token(self.access_token, self.token_type, self.expires_in, self.refresh_token)
         return result
+
+    @staticmethod
+    def refresh_token_from_env(refresh_token: str = None) -> Token:
+        """
+        Refresh to new token from the environment variables (auth 3legend).
+        :param refresh_token: The refresh token. If not provided, it will use the refresh token from the environment variables.
+        :return: :class:`Token`: An instance of the Token class containing the access token, token type, expiration time, and refresh token (if available).
+        """
+        if refresh_token is None:
+            refresh_token = os.getenv('APS_REFRESH_TOKEN')
+        else:
+            refresh_token = refresh_token
+        token = Token(refresh_token=refresh_token)
+        if refresh_token is not None:
+            try:
+                client_id = os.getenv('APS_CLIENT_ID')
+                client_secret = os.getenv('APS_CLIENT_SECRET')
+                token.refresh(client_id, client_secret)
+                token.set_env()
+                print('Token refreshed')
+            except Exception as e:
+                print('Token refresh failed, try to re login', e)
+                token = Auth().auth3leg()
+                token.set_env()
+                print('Token refreshed')
+        return token
 
     def get_user_info(self) -> dict:
         """
