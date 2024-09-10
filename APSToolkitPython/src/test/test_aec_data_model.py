@@ -6,27 +6,25 @@ from .context import Auth
 
 class TestAECDataModel(TestCase):
     def setUp(self):
-        self.token = Auth().auth3leg()
+        # read refresh token from json
+        if not os.path.exists('refresh_token.json'):
+            with open('refresh_token.json', 'w') as f:
+                f.write('')
+        with open('refresh_token.json', 'r') as f:
+            self.refresh_token = f.read()
+        self.token = Auth.refresh_token_from_env(self.refresh_token)
+        self.refresh_token = self.token.refresh_token
+        # save to json
+        with open('refresh_token.json', 'w') as f:
+            f.write(self.refresh_token)
         self.hub_id = "urn:adsk.ace:prod.scope:207eaa13-b1e2-4e99-9f20-dc94fc599272"
         self.project_id = "urn:adsk.workspace:prod.project:f4d95147-4eef-4664-89e0-a4f01f8a7b71"
         self.group_id = "YWVjZH45enZvNHRHazl1RTI4VVc0NUsySkgzX0wyQ35JZE10SWtTU1I2eXBaTjFfLTJVd0RR"
         self.aec_data_model = AECDataModel(self.token)
 
     def test_get_hubs(self):
-        data = {
-            "query": """
-                query GetHubs {
-                    hubs {
-                        results {
-                            id
-                            name
-                        }
-                    }
-                }
-            """
-        }
-        result = self.aec_data_model.execute_query(data)
-        self.assertIsNotNone(result)
+        df_result = self.aec_data_model.get_hubs()
+        self.assertIsNotNone(df_result)
 
     def test_get_projects(self):
         data = {

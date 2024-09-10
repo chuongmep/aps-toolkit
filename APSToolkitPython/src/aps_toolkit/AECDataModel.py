@@ -1,3 +1,5 @@
+import pandas as pd
+
 from .Token import Token
 import requests
 
@@ -26,3 +28,23 @@ class AECDataModel:
         if response.status_code != 200:
             raise Exception(f"Error: {response.content}")
         return response.json()
+
+    def get_hubs(self) -> pd.DataFrame:
+        data = {
+            "query": """
+                query GetHubs {
+                    hubs {
+                        results {
+                            id
+                            name
+                            alternativeIdentifiers{
+                            dataManagementAPIHubId
+                            }
+                        }
+                    }
+                }
+            """
+        }
+        result = self.execute_query(data)
+        hubs = result['data']['hubs']['results']
+        return pd.json_normalize(hubs)

@@ -404,3 +404,4 @@ database
 
 **/_trial_temp*
 *.DS_Store
+*refresh_token.json
