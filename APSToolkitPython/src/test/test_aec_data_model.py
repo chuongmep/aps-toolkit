@@ -49,11 +49,7 @@ class TestAECDataModel(TestCase):
                                                                          "Family Name", "Type Name", "Comments"])
         self.assertIsNotNone(result)
 
-    def test_get_element_projects_by_parameters2(self):
-        result = self.aec_data_model.get_element_projects_by_parameters2(self.project_id)
-        self.assertIsNotNone(result)
-
-    def test_get_element_projects_by_parameters3(self):
+    def test_get_elements_by_projects(self):
         cursor = "YWRjdXJzfjB-NTB-NTA"
         # cursor = ""
         result = self.aec_data_model.get_elements_by_projects(self.project_id, cursor)

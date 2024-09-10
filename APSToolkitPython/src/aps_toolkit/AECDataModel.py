@@ -257,7 +257,7 @@ class AECDataModel:
 
         return data_df
 
-    def get_elements_by_projects(self, projectId: str, cursor: str = None) -> pd.DataFrame:
+    def get_elements_by_projects(self, projectId: str, cursor: str = None, is_recursive: bool = False) -> pd.DataFrame:
         # Define the GraphQL query with the cursor as a dynamic variable
         data = {
             "query": """
@@ -305,11 +305,16 @@ class AECDataModel:
         data_df = pd.DataFrame()
         for i, row in df.iterrows():
             props_dict = {}
+            id = row['id']
             single_df = pd.json_normalize(row['properties.results'])
             for i in range(len(single_df)):
                 props_dict[single_df['name'][i]] = single_df['value'][i]
+            props_dict['id'] = id
             single_df = pd.DataFrame(props_dict, index=[0], dtype="object")
             data_df = pd.concat([data_df, single_df], axis=0)
-
+        # recursive call to get all data if cursor is not None
+        cursor = result['data']['elementsByProject']['pagination']['cursor']
+        if cursor and is_recursive:
+            # merge by id
+            data_df = pd.concat([data_df, self.get_elements_by_projects(projectId, cursor)], axis=0)
         return data_df
-
