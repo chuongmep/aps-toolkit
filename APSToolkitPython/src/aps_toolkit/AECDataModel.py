@@ -96,3 +96,62 @@ class AECDataModel:
         result = self.execute_query_variables(data['query'], data['variables'])
         folders = result['data']['foldersByProject']['results']
         return pd.json_normalize(folders)
+
+    def get_element_group_by_project(self, projectId: str) -> pd.DataFrame:
+        """
+        Get element groups by project, return source file urn and version urn in alternativeIdentifiers
+        :param projectId:
+        :return:
+        """
+        data = {
+            "query": """
+                query GetElementGroupsByProject($projectId: ID!) {
+                elementGroupsByProject(projectId: $projectId) {
+                  pagination {
+                    cursor
+                  }
+                  results{
+                    name
+                    id
+                    version{
+                    versionNumber
+                    createdOn
+                    createdBy{
+                        id
+                        userName
+                        firstName
+                        lastName
+                        email
+                        lastModifiedOn
+                        createdOn
+                    }
+                    }
+                    createdOn
+                    lastModifiedBy{
+                        id
+                        userName
+                        firstName
+                        lastName
+                        email
+                        lastModifiedOn
+                    }
+                    alternativeIdentifiers{
+                      fileUrn
+                      fileVersionUrn
+                    }
+                    parentFolder{
+                        id
+                        name
+                        objectCount
+                    }
+                  }
+                }
+            }
+            """,
+            "variables": {
+                "projectId": projectId
+            }
+        }
+        result = self.execute_query_variables(data['query'], data['variables'])
+        item_versions = result['data']['elementGroupsByProject']['results']
+        return pd.json_normalize(item_versions)
