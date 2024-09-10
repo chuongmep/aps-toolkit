@@ -48,3 +48,30 @@ class AECDataModel:
         result = self.execute_query(data)
         hubs = result['data']['hubs']['results']
         return pd.json_normalize(hubs)
+
+    def get_projects(self, hub_id: str) -> pd.DataFrame:
+        data = {
+            "query": """
+                query GetProjects($hubId: ID!) {
+                    projects(hubId: $hubId) {
+                        results {
+                            id
+                            name
+                            hub {
+                                id
+                                name
+                            }
+                            alternativeIdentifiers{
+                             dataManagementAPIProjectId
+                            }
+                        }
+                    }
+                }
+            """,
+            "variables": {
+                "hubId": hub_id
+            }
+        }
+        result = self.execute_query(data)
+        projects = result['data']['projects']['results']
+        return pd.json_normalize(projects)

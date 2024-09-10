@@ -27,26 +27,7 @@ class TestAECDataModel(TestCase):
         self.assertIsNotNone(df_result)
 
     def test_get_projects(self):
-        data = {
-            "query": """
-                query GetProjects($hubId: ID!) {
-                    projects(hubId: $hubId) {
-                        results {
-                                id
-                                name
-                                hub {
-                                    id
-                                    name
-                                            }
-                                        }
-                                }
-                }
-                    """,
-            "variables": {
-                "hubId": f"{self.hub_id}"
-            }
-        }
-        result = self.aec_data_model.execute_query(data)
+        result = self.aec_data_model.get_projects(self.hub_id)
         self.assertIsNotNone(result)
 
     def test_version_group_by_project(self):
