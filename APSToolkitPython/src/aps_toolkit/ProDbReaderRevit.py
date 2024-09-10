@@ -191,7 +191,7 @@ class PropDbReaderRevit(PropReader):
         :return:  :class:`pandas.DataFrame` : Dataframe contains bounding boxs with dbId and bbox
         :remark: bbox is a list of 6 value [minX, minY, minZ, maxX, maxY, maxZ]
         """
-        svf_reader = SVFReader(self.urn, self.token)
+        svf_reader = SVFReader(self.urn, self.token, self.region)
         frags = svf_reader.read_fragments()
         df_bbox = pd.DataFrame(columns=["dbId", "bbox"])
         for k, v in frags.items():
