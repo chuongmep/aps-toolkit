@@ -1,5 +1,4 @@
 ﻿from unittest import TestCase
-import os
 from .context import PropDbReaderRevit
 from .context import Auth
 
@@ -51,6 +50,10 @@ class TestPropDbReaderRevit(TestCase):
         data = self.prop_reader.get_all_data(display_unit=True)
         self.assertIsNotNone(data)
 
+    def test_get_bounding_boxs(self):
+        bounding_boxes = self.prop_reader.get_all_bounding_boxs()
+        self.assertNotEquals(len(bounding_boxes), 0)
+
     def test_get_data_by_category(self):
         df = self.prop_reader.get_data_by_category("Furniture", True, True, True)
         # check if dataframe have rows = 1
@@ -85,7 +88,7 @@ class TestPropDbReaderRevit(TestCase):
     def test_get_data_by_categories_and_params(self):
         df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
                                                                 ["Name", "Category", "ElementId", "Width", "Height",
-                                                                 "IfcGUID","Family Name"], True, display_unit=False)
+                                                                 "IfcGUID", "Family Name"], True, display_unit=False)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_parameters(self):

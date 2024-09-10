@@ -21,6 +21,7 @@ import requests
 from .PropReader import PropReader
 from .ManifestItem import ManifestItem
 import warnings
+from .SVFReader import SVFReader
 
 
 class PropDbReaderRevit(PropReader):
@@ -42,6 +43,7 @@ class PropDbReaderRevit(PropReader):
         Initializes the PropDbReaderRevit class with model URN, access token, region,
         and optional manifest items.
     """
+
     def __int__(self, urn, token, region="US", manifest_item: [ManifestItem] = None):
         super().__init__(urn, token, region, manifest_item)
 
@@ -182,6 +184,23 @@ class PropDbReaderRevit(PropReader):
             return dataframe
         dataframe["Family Name"] = dataframe["Name"].str.extract(r'(.*)\s\[')
         return dataframe
+
+    def get_all_bounding_boxs(self) -> pd.DataFrame:
+        """
+        Get bounding boxs all elements in model
+        :return:  :class:`pandas.DataFrame` : Dataframe contains bounding boxs with dbId and bbox
+        :remark: bbox is a list of 6 value [minX, minY, minZ, maxX, maxY, maxZ]
+        """
+        svf_reader = SVFReader(self.urn, self.token)
+        frags = svf_reader.read_fragments()
+        df_bbox = pd.DataFrame(columns=["dbId", "bbox"])
+        for k, v in frags.items():
+            for f in v:
+                df_bbox = pd.concat([df_bbox, pd.DataFrame([[f.dbID, f.bbox]], columns=["dbId", "bbox"])])
+        df_bbox.reset_index(drop=True, inplace=True)
+        df_bbox.sort_values(by="dbId", inplace=True)
+        df_bbox.drop_duplicates(subset="dbId", inplace=True)
+        return df_bbox
 
     def get_all_families(self) -> dict:
         """
