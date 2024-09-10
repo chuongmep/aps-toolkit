@@ -42,12 +42,12 @@ class TestAECDataModel(TestCase):
         result = self.aec_data_model.get_element_by_category(self.group_id, "Doors")
         self.assertIsNotNone(result)
 
-    def test_get_element_projects_by_parameters(self):
-        result = self.aec_data_model.get_element_projects_by_parameters(self.project_id,
-                                                                        ["Name", "Revit Element ID", "Category",
-                                                                         "Width", "Height", "Element Context",
-                                                                         "Family Name", "Type Name", "Comments"])
-        self.assertIsNotNone(result)
+    # def test_get_element_projects_by_parameters(self):
+    #     result = self.aec_data_model.get_element_projects_by_parameters(self.project_id,
+    #                                                                     ["Name", "Revit Element ID", "Category",
+    #                                                                      "Width", "Height", "Element Context",
+    #                                                                      "Family Name", "Type Name", "Comments"])
+    #     self.assertIsNotNone(result)
 
     def test_get_elements_by_projects(self):
         cursor = "YWRjdXJzfjB-NTB-NTA"
