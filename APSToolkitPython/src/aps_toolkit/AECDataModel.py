@@ -75,3 +75,24 @@ class AECDataModel:
         result = self.execute_query(data)
         projects = result['data']['projects']['results']
         return pd.json_normalize(projects)
+
+    def get_folders(self, project_id: str) -> pd.DataFrame:
+        data = {
+            "query": """
+                query GetFolders($projectId: ID!) {
+                  foldersByProject(projectId: $projectId) {
+                    results {
+                      id
+                      name
+                      objectCount
+                    }
+                  }
+                }
+            """,
+            "variables": {
+                "projectId": project_id
+            }
+        }
+        result = self.execute_query_variables(data['query'], data['variables'])
+        folders = result['data']['foldersByProject']['results']
+        return pd.json_normalize(folders)

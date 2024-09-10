@@ -30,6 +30,10 @@ class TestAECDataModel(TestCase):
         result = self.aec_data_model.get_projects(self.hub_id)
         self.assertIsNotNone(result)
 
+    def test_get_folders(self):
+        result = self.aec_data_model.get_folders(self.project_id)
+        self.assertIsNotNone(result)
+
     def test_version_group_by_project(self):
         query = """
             query GetElementGroupsByProject($projectId: ID!) {
