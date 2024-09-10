@@ -38,6 +38,27 @@ class TestAECDataModel(TestCase):
         result = self.aec_data_model.get_element_group_by_project(self.project_id)
         self.assertIsNotNone(result)
 
+    def test_get_element_by_category(self):
+        result = self.aec_data_model.get_element_by_category(self.group_id, "Doors")
+        self.assertIsNotNone(result)
+
+    def test_get_element_projects_by_parameters(self):
+        result = self.aec_data_model.get_element_projects_by_parameters(self.project_id,
+                                                                        ["Name", "Revit Element ID", "Category",
+                                                                         "Width", "Height", "Element Context",
+                                                                         "Family Name", "Type Name", "Comments"])
+        self.assertIsNotNone(result)
+
+    def test_get_element_projects_by_parameters2(self):
+        result = self.aec_data_model.get_element_projects_by_parameters2(self.project_id)
+        self.assertIsNotNone(result)
+
+    def test_get_element_projects_by_parameters3(self):
+        cursor = "YWRjdXJzfjB-NTB-NTA"
+        # cursor = ""
+        result = self.aec_data_model.get_elements_by_projects(self.project_id, cursor)
+        self.assertIsNotNone(result)
+
     def test_version_group_by_project(self):
         query = """
             query GetElementGroupsByProject($projectId: ID!) {
@@ -55,41 +76,6 @@ class TestAECDataModel(TestCase):
         """
         variables = {
             "projectId": f"{self.project_id}"  # Replace with your actual project ID
-        }
-        result = self.aec_data_model.execute_query_variables(query, variables)
-        self.assertIsNotNone(result)
-
-    def test_get_element_by_category(self):
-        query = """
-            query GetElementsFromCategory($elementGroupId: ID!, $propertyFilter: String!) {
-                elementsByElementGroup(elementGroupId: $elementGroupId, filter: {query:$propertyFilter}) {
-                    pagination {
-                        cursor
-                    }
-                    results {
-                        id
-                        name
-                        properties {
-                            results {
-                                name
-                                value
-                                definition {
-                                    name
-                                    units {
-                                        id
-                                        name
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        """
-        variables = {
-            "elementGroupId": f"{self.group_id}",  # Replace with your actual element group ID
-            "propertyFilter": "property.name.category==Walls"
-            # Replace with your property filter property.name.category==Walls
         }
         result = self.aec_data_model.execute_query_variables(query, variables)
         self.assertIsNotNone(result)

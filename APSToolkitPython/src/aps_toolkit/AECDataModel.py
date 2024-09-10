@@ -155,3 +155,161 @@ class AECDataModel:
         result = self.execute_query_variables(data['query'], data['variables'])
         item_versions = result['data']['elementGroupsByProject']['results']
         return pd.json_normalize(item_versions)
+
+    def get_element_by_category(self, elementGroupId: str, category: str) -> pd.DataFrame:
+        data = {
+            "query": """
+               query GetElementsFromCategory($elementGroupId: ID!, $propertyFilter: String!) {
+                    elementsByElementGroup(elementGroupId: $elementGroupId, filter: {query:$propertyFilter}) {
+                      pagination {
+                        cursor
+                      }
+                      results {
+                        id
+                        name
+                        properties(includeReferencesProperties: "Type") {
+                          results {
+                            name
+                            value
+                            definition {
+                              units{
+                                name
+                              }
+                            }
+                          }
+                        }
+                    }
+                      }
+                }
+            """,
+            "variables": {
+                "elementGroupId": elementGroupId,
+                "propertyFilter": f"'property.name.category'=={category} and 'property.name.Element Context'==Instance"
+            }
+        }
+        result = self.execute_query_variables(data['query'], data['variables'])
+        elements = result['data']['elementsByElementGroup']['results']
+        df = pd.json_normalize(elements)
+        data_df = pd.DataFrame()
+        for i, row in df.iterrows():
+            props_dict = {}
+            single_df = pd.json_normalize(row['properties.results'])
+            for i in range(len(single_df)):
+                props_dict[single_df['name'][i]] = single_df['value'][i]
+            single_df = pd.DataFrame(props_dict, index=[0], dtype="object")
+            data_df = pd.concat([data_df, single_df], axis=0)
+        return data_df
+
+    def get_element_projects_by_parameters(self, projectId: str, parameters: list[str]) -> pd.DataFrame:
+        parameters_str = '","'.join(parameters)
+        query = f"""
+            query GetElementsInProject($projectId: ID!, $propertyFilter: String!) {{
+                elementsByProject(projectId: $projectId, filter: {{query: $propertyFilter}}) {{
+                    pagination {{
+                        cursor
+                    }}
+                    results {{
+                        id
+                        name
+                        properties(
+                            includeReferencesProperties: "Type"
+                            filter: {{names: ["{parameters_str}"]}}  # Dynamically insert parameters here
+                        ) {{
+                            results {{
+                                name
+                                value
+                                displayValue
+                                definition {{
+                                    units {{
+                                        name
+                                    }}
+                                }}
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        """
+
+        data = {
+            "query": query,
+            "variables": {
+                "projectId": projectId,
+                "propertyFilter": "'property.name.Element Context'==Instance"
+            }
+        }
+
+        # Execute the query
+        result = self.execute_query_variables(data['query'], data['variables'])
+
+        # Normalize the data into a pandas DataFrame
+        elements = result['data']['elementsByProject']['results']
+        df = pd.json_normalize(elements)
+
+        data_df = pd.DataFrame()
+        for i, row in df.iterrows():
+            props_dict = {}
+            single_df = pd.json_normalize(row['properties.results'])
+            for i in range(len(single_df)):
+                props_dict[single_df['name'][i]] = single_df['value'][i]
+            single_df = pd.DataFrame(props_dict, index=[0], dtype="object")
+            data_df = pd.concat([data_df, single_df], axis=0)
+
+        return data_df
+
+    def get_elements_by_projects(self, projectId: str, cursor: str = None) -> pd.DataFrame:
+        # Define the GraphQL query with the cursor as a dynamic variable
+        data = {
+            "query": """
+                query GetElementsInProject($projectId: ID!, $propertyFilter: String!, $cursor: String) {
+                    elementsByProject(projectId: $projectId, filter: {query: $propertyFilter}, pagination: {cursor: $cursor}) {
+                        pagination {
+                            cursor
+                        }
+                        results {
+                            id
+                            name
+                            properties(
+                                includeReferencesProperties: "Type"
+                                
+                            ) {
+                                results {
+                                    name
+                                    value
+                                    displayValue
+                                    definition {
+                                        units {
+                                            name
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            """,
+            "variables": {
+                "projectId": projectId,
+                "propertyFilter": "'property.name.Element Context'==Instance",
+                "cursor": cursor
+            }
+        }
+
+        # Execute the query
+        result = self.execute_query_variables(data['query'], data['variables'])
+
+        # Process the results into a pandas DataFrame
+        elements = result['data']['elementsByProject']['results']
+        df = pd.json_normalize(elements)
+
+        data_df = pd.DataFrame()
+        for i, row in df.iterrows():
+            props_dict = {}
+            single_df = pd.json_normalize(row['properties.results'])
+            for i in range(len(single_df)):
+                props_dict[single_df['name'][i]] = single_df['value'][i]
+            single_df = pd.DataFrame(props_dict, index=[0], dtype="object")
+            data_df = pd.concat([data_df, single_df], axis=0)
+
+        return data_df
+
