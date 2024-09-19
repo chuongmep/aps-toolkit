@@ -25,10 +25,11 @@ partial class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main () => Execute<Build>(x => x.Pack);
+    public static int Main () => Execute<Build>(x => x.PublishNuget);
     readonly AbsolutePath BinDirectory = RootDirectory / "APSToolkit"/ "bin";
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    // readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    readonly Configuration Configuration = Configuration.Release;
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
     Target Clean => _ => _
@@ -44,6 +45,7 @@ partial class Build : NukeBuild
         {
             DotNetTasks.DotNetRestore(s => s
                 .SetProjectFile(Solution)
+                // config is release
                 .SetVerbosity(DotNetVerbosity.minimal));
 
         });
@@ -61,6 +63,26 @@ partial class Build : NukeBuild
                 .SetVerbosity(DotNetVerbosity.minimal));
 
         });
+    Target PublishNuget => _ => _
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            var nugetFiles = GlobFiles(BinDirectory, "*.nupkg");
+            foreach (var nugetFile in nugetFiles)
+            {
+                DotNetTasks.DotNetNuGetPush(s => s
+                    .SetTargetPath(nugetFile)
+                    .SetSource("https://api.nuget.org/v3/index.json")
+                    .SetApiKey(NugetApiKey));
+                // .SetVerbosity(DotNetVerbosity.minimal));
+            }
+        });
+
+
+    public List<string> GlobFiles(string directory, string pattern)
+    {
+        return Directory.GetFiles(directory, pattern, SearchOption.AllDirectories).ToList();
+    }
     string GetAssemblyVersion(string binDir)
     {
         string AssName = "ForgeToolkit.dll";
