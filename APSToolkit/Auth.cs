@@ -128,7 +128,9 @@ public class Auth
             }).ConfigureAwait(false);
         this.Token.AccessToken = token.access_token;
         this.Token.TokenType = token.token_type;
-        this.Token.ExpiresIn = token.expires_in;
+        long expiresIn = token.expires_in;
+        // convert expiresIn to linux time
+        this.Token.ExpiresIn = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() + expiresIn;
         if (string.IsNullOrEmpty(this.Token.AccessToken))
         {
             throw new Exception("can't get access_token, please check again value APS_CLIENT_ID and APS_CLIENT_SECRET");
@@ -205,7 +207,14 @@ public class Auth
         }
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<Token>(jsonResponse);
+        JObject? token = JsonConvert.DeserializeObject<JObject>(jsonResponse);
+        var accessToken = token!["access_token"]!.Value<string>();
+        var tokenType = token["token_type"]!.Value<string>();
+        var expiresIn = token["expires_in"]!.Value<int>();
+        // convert expiresIn to linux time
+        expiresIn = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() + expiresIn;
+        var refreshToken = token["refresh_token"]!.Value<string>();
+        return new Token(accessToken, tokenType, expiresIn, refreshToken);
     }
 
     private void OpenDefaultBrowser(string url)
@@ -361,7 +370,7 @@ public class Auth
         Environment.SetEnvironmentVariable("APS_REFRESH_TOKEN", newRefreshToken, EnvironmentVariableTarget.User);
         this.Token.AccessToken = accessToken;
         this.Token.TokenType = token.token_type;
-        this.Token.ExpiresIn = token.expires_in;
+        this.Token.ExpiresIn = token.expires_in + (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         this.Token.RefreshToken = newRefreshToken;
         return Token;
     }
@@ -393,7 +402,7 @@ public class Auth
         {
             AccessToken = accessToken,
             TokenType = token.token_type,
-            ExpiresIn = token.expires_in,
+            ExpiresIn = token.expires_in + (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             RefreshToken = newRefreshToken
         };
         return newToken;

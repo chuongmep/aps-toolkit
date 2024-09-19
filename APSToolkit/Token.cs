@@ -16,10 +16,15 @@ public class Token
     {
 
     }
-
+    // map with access_token
+    [System.Text.Json.Serialization.JsonPropertyName("access_token")]
     public string? AccessToken { get; set; }
+    [System.Text.Json.Serialization.JsonPropertyName("token_type")]
     public string? TokenType { get; set; }
+    [System.Text.Json.Serialization.JsonPropertyName("expires_in")]
     public long? ExpiresIn { get; set; }
+
+    [System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
     public string? RefreshToken { get; set; }
 
     /// <summary>
@@ -58,9 +63,18 @@ public class Token
         this.RefreshToken = token.RefreshToken;
         return this;
     }
-    public bool IsExpired()
+    /// <summary>
+    /// Checks if the token has expired.
+    /// </summary>
+    /// <param name="bufferMinutes"></param>
+    /// <returns></returns>
+    public bool IsExpired(double bufferMinutes=0)
     {
-        bool b = this.ExpiresIn <= 60;
-        return b;
+        var currentUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        if (currentUnixTime + bufferMinutes*60 >= this.ExpiresIn)
+        {
+            return true;
+        }
+        return false;
     }
 }

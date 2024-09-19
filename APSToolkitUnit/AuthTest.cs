@@ -23,6 +23,15 @@ public class AuthTest
         Assert.IsNotEmpty(Token.AccessToken);
     }
     [Test]
+    public void TestExpireTime()
+    {
+        Token = Auth.Get2LeggedToken().Result;
+        bool isExpired = Token.IsExpired();
+        Assert.IsFalse(isExpired);
+        isExpired = Token.IsExpired(70);
+        Assert.IsTrue(isExpired);
+    }
+    [Test]
     public void TestAuthentication3Leg()
     {
         Token = Auth.Get3LeggedToken().Result;
