@@ -26,6 +26,52 @@ public class PropDbReaderRevit : PropDbReader
         GetRecursiveChild(ref categories, 1, "_RC");
         return categories;
     }
+
+    public Dictionary<string, List<string>> GetAllCategoriesAndParameters()
+    {
+        Dictionary<string, List<string>> categories = new Dictionary<string, List<string>>();
+        Dictionary<int,string> allCategories = GetAllCategories();
+        foreach (KeyValuePair<int,string> category in allCategories)
+        {
+            List<string> parameters = new List<string>();
+            int[] cates = GetChildren(category.Key);
+            for (int i = 0; i < cates.Length; i++)
+            {
+                GetRecursiveParameters(ref parameters, cates[i]);
+            }
+            parameters = parameters.Distinct().OrderBy(x=>x).ToList();
+            categories[category.Value] = parameters;
+        }
+        return categories;
+    }
+    private void GetRecursiveParameters(ref List<string> parameters, int id)
+    {
+
+        Dictionary<string,string?> publicProperties = GetPublicProperties(id);
+        parameters.AddRange(publicProperties.Keys);
+        int[] ints = this.GetInstanceOf(id);
+        foreach (int @int in ints)
+        {
+            var docs = GetPublicProperties(@int);
+            parameters.AddRange(docs.Keys);
+
+        }
+        int[] children = GetChildren(id);
+        for (int i = 0; i < children.Length; i++)
+        {
+            GetRecursiveParameters(ref parameters,children[i]);
+        }
+    }
+    public List<string> GetAllParameters()
+    {
+        List<string> parameters = new List<string>();
+        for (int i = 0; i < this.ids!.Length; i++)
+        {
+            Dictionary<string,string?> publicProperties = GetPublicProperties(i);
+            parameters.AddRange(publicProperties.Keys);
+        }
+        return parameters.Distinct().OrderBy(x=>x).ToList();
+    }
     /// <summary>
     /// Retrieves a list of unique families based on the properties with the name "_RFN".
     /// </summary>
@@ -308,7 +354,6 @@ public class PropDbReaderRevit : PropDbReader
             int[] cates = GetChildren(cate.Key);
             GetChildren(ref dataTable, cates,parameters);
         }
-
         return dataTable;
     }
     // public DataTable GetAllDataParameterByCategory(string category,List<string> parameters, bool isIncludeType = true, bool isAddUnit = true)

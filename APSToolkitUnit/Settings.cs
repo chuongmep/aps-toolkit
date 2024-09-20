@@ -10,7 +10,7 @@ public static class Settings
         "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLmZqSkFRUUx6U3BxLTR3eWRPdG9DMGc_dmVyc2lvbj0x";
 
     public const string _RevitTestUrn =
-        "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0yNA";
+        "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLkotQ2laSHpGVEd5LUEwLVJmaEVVTVE_dmVyc2lvbj04";
 
     public const string _IfcUrn =
         "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLjEzLVdVN2NBU2kyQThVdUNqQVFmUkE_dmVyc2lvbj0x";

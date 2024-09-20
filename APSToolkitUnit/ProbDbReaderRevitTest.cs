@@ -41,6 +41,24 @@ public class ProbDbReaderRevitTest
     }
     [Test]
     [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
+    public void GetAllParametersTest(string urn)
+    {
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
+        var parameters = RevitPropDbReader.GetAllParameters();
+        parameters.ExportToCsv("result.csv");
+        Assert.AreNotEqual(0, parameters.Count);
+    }
+    [Test]
+    [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
+    public void GetAllCategoriesAndParameters(string urn)
+    {
+        RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
+        var parameters = RevitPropDbReader.GetAllCategoriesAndParameters();
+        parameters.ExportToCsv("result.csv");
+        Assert.AreNotEqual(0, parameters.Count);
+    }
+    [Test]
+    [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
     public void TestExportAllDataToExcel(string urn)
     {
         RevitPropDbReader = new PropDbReaderRevit(urn, Settings.Token2Leg);
