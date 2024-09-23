@@ -252,20 +252,25 @@ namespace APSToolkit.Database
 
                     var value = vals[valOffset];
                     //yield { name: attr[0], category: attr[1], value };
-                    properties.Add(new Property()
+                    var item = new Property();
+                    item.Id = ids[id];
+                    item.Name = attr[0];
+                    item.Category = attr[1];
+                    item.DataType = EnumRecords.GetDataType(int.Parse(attr[2]));
+                    item.DataTypeContext = attr[3];
+                    item.Description = attr[4];
+                    item.DisplayName = attr[5];
+                    item.Flags = int.Parse(attr[6]);
+                    if (attr.Length >= 8)
                     {
-                        Id = ids[id],
-                        Name = attr[0],
-                        Category = attr[1],
-                        DataType = EnumRecords.GetDataType(int.Parse(attr[2])),
-                        DataTypeContext = attr[3],
-                        Description = attr[4],
-                        DisplayName = attr[5],
-                        Flags = int.Parse(attr[6]),
-                        DisplayPrecision = int.Parse(attr[7]),
-                        ForgeParameterId = attr[8],
-                        Value = value
-                    });
+                        item.DisplayPrecision = int.Parse(attr[7]);
+                    }
+                    if (attr.Length >= 9)
+                    {
+                        item.ForgeParameterId = attr[8];
+                    }
+                    item.Value = value;
+                    properties.Add(item);
                 }
             }
 
