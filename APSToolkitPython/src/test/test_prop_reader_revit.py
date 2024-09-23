@@ -6,7 +6,7 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0zMA"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnZMb1pqZHRLU3ktbVFjZEZBamFCOFE_dmVyc2lvbj0x"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
 
     def test_get_document_info(self):
@@ -86,9 +86,9 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_categories_and_params(self):
-        df = self.prop_reader.get_data_by_categories_and_params(["Doors", "Windows"],
-                                                                ["Name", "Category", "ElementId", "Width", "Height",
-                                                                 "IfcGUID", "Family Name"], True, display_unit=False)
+        categories = ["Areas"]
+        params = ["ElementId", "Name", "Category", "CategoryId", "Level", "Workset", "Area Type","Number","Area","Perimeter"]
+        df = self.prop_reader.get_data_by_categories_and_params(categories,params, True, display_unit=False)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_parameters(self):
@@ -97,7 +97,7 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_external_id(self):
-        external_id = "6d22740f-4d3f-4cc6-a442-8c98ddd54f1f-0004923b"
+        external_id = "652ae298-920d-4c0c-a25b-0f9dc79857d7-000fafee"
         df = self.prop_reader.get_data_by_external_id(external_id, True)
         self.assertNotEquals(df.empty, True)
 

@@ -603,6 +603,10 @@ public class PropDbReaderRevit : PropDbReader
                         {
                             dataRow[columnName] = property.Value + " " + unit;
                         }
+                        else
+                        {
+                            dataRow[columnName] = property.Value;
+                        }
                     }
                     else
                     {
