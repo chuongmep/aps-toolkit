@@ -182,12 +182,22 @@ public class ProbDbReaderRevitTest
     [Test]
     [TestCase("Rooms",new string[]{"Name","Number","Area","Volume","Workset","Level","Comments"})]
     [TestCase("Doors",new string[]{"name","ExternalId","Category","Area","Volume","Workset","Level","Comments"})]
+    [TestCase("Areas",new string[]{"ElementId","Name","Category","CategoryId","Level","Workset","Area Type","Number","Area","Perimeter"})]
     public void GetDataByCategoryAndParametersTest(string category,string[] parameterNames)
 
     {
         RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
         RevitPropDbReader.Configuration.IsGetBBox = false;
         DataTable dataTable = RevitPropDbReader.GetDataByCategoryAndParameters(category,parameterNames.ToList());
+        dataTable.ExportToCsv("result.csv");
+        Assert.AreNotEqual(0, dataTable.Rows);
+    }
+    [Test]
+    [TestCase("652ae298-920d-4c0c-a25b-0f9dc79857d7-000fafee")]
+    public void GetDataByExternalIdTest(string externalId)
+    {
+        RevitPropDbReader = new PropDbReaderRevit(Settings._RevitTestUrn, Settings.Token2Leg);
+        DataTable dataTable = RevitPropDbReader.GetDataByExternalId(externalId);
         dataTable.ExportToCsv("result.csv");
         Assert.AreNotEqual(0, dataTable.Rows);
     }

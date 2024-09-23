@@ -171,6 +171,34 @@ public class PropDbReaderRevit : PropDbReader
         return dataTable;
     }
 
+    public DataTable GetDataByExternalId(string externalId)
+    {
+        DataTable dataTable = new DataTable();
+        dataTable.Columns.Add("DbId");
+        dataTable.Columns.Add("ExternalId");
+        for(int i = 0; i < this.ids!.Length; i++)
+        {
+            if (ids[i] == externalId)
+            {
+
+                Dictionary<string, string?> properties = GetPublicProperties(i);
+                DataRow dataRow = dataTable.NewRow();
+                dataRow["DbId"] = i;
+                dataRow["ExternalId"] = externalId;
+                foreach (KeyValuePair<string, string?> property in properties)
+                {
+                    if (!dataTable.Columns.Contains(property.Key))
+                    {
+                        dataTable.Columns.Add(property.Key);
+                    }
+                    dataRow[property.Key] = property.Value;
+                }
+                dataTable.Rows.Add(dataRow);
+            }
+        }
+        return dataTable;
+    }
+
     public void ExportAllDataToParquet(string directory)
     {
         if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
@@ -533,7 +561,7 @@ public class PropDbReaderRevit : PropDbReader
 
                 foreach (var property in properties)
                 {
-                    string columnName = property.Name.Trim();
+                    string? columnName = property?.Name?.Trim();
                     if (columnName == "parent") continue;
                     if (columnName == "instanceof_objid" && Configuration.IsGetParameterType)
                     {
