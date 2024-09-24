@@ -36,6 +36,12 @@ class TestBIM360(TestCase):
         bim360 = BIM360(token)
         result = bim360.publish_model_without_links(self.project_id, item_id)
         self.assertNotEquals(result, 0)
+    def test_get_publish_model_job(self):
+        item_id = "urn:adsk.wipprod:dm.lineage:Od8txDbKSSelToVg1oc1VA"
+        token = Auth().auth3leg()
+        bim360 = BIM360(token)
+        result = bim360.get_publish_model_job(self.project_id, item_id)
+        self.assertNotEquals(result, 0)
     def test_get_hubs(self):
         hubs = self.bim360.get_hubs()
         self.assertNotEquals(hubs, 0)
