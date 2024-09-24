@@ -6,7 +6,7 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnZMb1pqZHRLU3ktbVFjZEZBamFCOFE_dmVyc2lvbj0x"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLndzZURxSkdRVFF5SEZIZ2ZBbmZ5NWc_dmVyc2lvbj0x"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
 
     def test_get_document_info(self):
@@ -45,6 +45,10 @@ class TestPropDbReaderRevit(TestCase):
     def test_get_categories_families_types(self):
         categories_families_types = self.prop_reader.get_categories_families_types()
         self.assertNotEquals(categories_families_types, 0)
+
+    def test_get_cats_fams_types_params(self):
+        categories_families_types_params = self.prop_reader.get_cats_fams_types_params()
+        self.assertNotEquals(categories_families_types_params, 0)
 
     def test_get_all_data(self):
         data = self.prop_reader.get_all_data(display_unit=True)
@@ -86,7 +90,7 @@ class TestPropDbReaderRevit(TestCase):
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_categories_and_params(self):
-        categories = ["Areas"]
+        categories = ["Doors"]
         params = ["ElementId", "Name", "Category", "CategoryId", "Level", "Workset", "Area Type","Number","Area","Perimeter"]
         df = self.prop_reader.get_data_by_categories_and_params(categories,params, True, display_unit=False)
         self.assertNotEquals(df.empty, True)

@@ -194,7 +194,6 @@ class PropReader:
         df = pd.DataFrame(data, columns=['offset'])
         return df
 
-
     def get_all_properties_display_unit(self, id) -> dict:
         """
         Get all properties include internal properties with display unit value

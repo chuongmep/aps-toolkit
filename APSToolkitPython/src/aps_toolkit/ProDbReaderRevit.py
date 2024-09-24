@@ -248,6 +248,55 @@ class PropDbReaderRevit(PropReader):
                 new_row = {"dbId": child, "Category": category, "Family": family, "FamilyType": family_type}
                 data_frame.loc[len(data_frame)] = new_row
 
+    def get_cats_fams_types_params(self) -> pd.DataFrame:
+        """
+        Get all categories, families, families types and parameters in model
+        :return: :class:`pandas.DataFrame` : Dataframe contains all dbid,category, family, family type, parameter
+        """
+        df = pd.DataFrame(columns=["dbId", "Category", "Family", "FamilyType", "Parameter"])
+        self._get_recursive_child_types_params(df, 1)
+        # drop duplicates
+        df.drop_duplicates(subset=["dbId", "Category", "Family", "FamilyType", "Parameter"], inplace=True)
+        df = df.sort_values(by=["Category", "Family", "FamilyType", "Parameter"])
+        df = df.drop(columns=["dbId"])
+        return df
+
+    def _get_recursive_child_types_params(self, data_frame, id):
+        children = self.get_children(id)
+        for child in children:
+            properties = self.enumerate_properties(child)
+            property = [prop.value for prop in properties if
+                        prop.name == "Category" and prop.value == "Revit Family Type"]
+
+            if len(property) == 0:
+                # Recursively call the function, passing the same data_frame
+                self._get_recursive_child_types_params(data_frame, child)
+            else:
+                if str(property[0]) == "":
+                    continue
+                family_type = [prop.value for prop in properties if prop.name == "_RFT"][0]
+                category = [prop.value for prop in properties if prop.name == "_RC"][0]
+                family = [prop.value for prop in properties if prop.name == "_RFN"][0]
+                child_id = [prop.value for prop in properties if prop.name == "child"][0] if len(
+                    [prop.value for prop in properties if prop.name == "child"]) > 0 else None
+                instance_of_objid = [prop.value for prop in properties if prop.name == "instanceof_objid"][0] if len(
+                    [prop.value for prop in properties if prop.name == "instanceof_objid"]) > 0 else None
+
+                # Collect parameters
+                params = []
+                if child_id:
+                    params_dict = self.get_properties(int(child_id))
+                    params.extend(list(params_dict.keys()))
+                if instance_of_objid:
+                    params_dict = self.get_properties(int(instance_of_objid))
+                    params.extend(list(params_dict.keys()))
+
+                # Add rows to the existing data_frame
+                for param in params:
+                    new_row = {"dbId": child, "Category": category, "Family": family, "FamilyType": family_type,
+                               "Parameter": param}
+                    data_frame.loc[len(data_frame)] = new_row
+
     def get_data_by_category(self, category: str, is_get_sub_family: bool = False,
                              display_unit: bool = False, is_add_family_name: bool = False) -> pd.DataFrame:
         """
