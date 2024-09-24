@@ -11,7 +11,7 @@ class TestBIM360(TestCase):
         self.token = Auth().auth2leg()
         self.bim360 = BIM360(self.token)
         self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
-        self.project_id = "b.ca790fb5-141d-4ad5-b411-0461af2e9748"
+        self.project_id = "b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d"
         self.folder_id = "urn:adsk.wipprod:fs.folder:co.sSH-pxrUR8CoAAJHS5kYIA"
         self.item_id = "urn:adsk.wipprod:dm.lineage:wGXA2ljoSQaXtGOEepawIg"
 
@@ -23,6 +23,12 @@ class TestBIM360(TestCase):
         self.assertEqual(result['folder_urn'], "urn:adsk.wipprod:fs.folder:co.uX9MsdjjSraK_3p5qXyE_A")
         self.assertEqual(result['entity_id'], "urn:adsk.wipprod:dm.lineage:wGXA2ljoSQaXtGOEepawIg")
 
+    def test_publish_model(self):
+        item_id = "urn:adsk.wipprod:dm.lineage:Od8txDbKSSelToVg1oc1VA"
+        token = Auth().auth3leg()
+        bim360 = BIM360(token)
+        result = bim360.publish_model(self.project_id, item_id)
+        self.assertNotEquals(result, 0)
     def test_get_hubs(self):
         hubs = self.bim360.get_hubs()
         self.assertNotEquals(hubs, 0)
