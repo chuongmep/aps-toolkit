@@ -94,6 +94,46 @@ class BIM360:
         response = requests.post(url, headers=headers, json=payload)
         return response.json() if response.status_code == 200 else response.text
 
+    def publish_model_without_links(self, project_id: str, item_id: str):
+        """
+        Publish a model in Autodesk Construction Cloud (ACC)
+        :param project_id: the unique identifier of a project
+        :param item_id: the unique identifier of an item
+        :return: Response from the API
+        """
+        headers = {
+            'Authorization': f'Bearer {self.token.access_token}',
+            'Content-Type': 'application/vnd.api+json'
+        }
+        url = f"{self.host}/data/v1/projects/{project_id}/commands"
+
+        payload = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "commands",
+                "attributes": {
+                    "extension": {
+                        "type": "commands:autodesk.bim360:C4RPublishWithoutLinks",
+                        "version": "1.0.0"
+                    }
+                },
+                "relationships": {
+                    "resources": {
+                        "data": [
+                            {
+                                "type": "items",
+                                "id": item_id
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        response = requests.post(url, headers=headers, json=payload)
+        return response.json() if response.status_code == 200 else response.text
+
     def get_hubs(self) -> dict:
         """
         Returns a collection of accessible hubs for this member.
