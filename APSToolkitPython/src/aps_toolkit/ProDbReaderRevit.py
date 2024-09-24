@@ -250,14 +250,14 @@ class PropDbReaderRevit(PropReader):
 
     def get_cats_fams_types_params(self) -> pd.DataFrame:
         """
-        Get all categories, families, families types and parameters in model
-        :return: :class:`pandas.DataFrame` : Dataframe contains all dbid,category, family, family type, parameter
+        Get all categories, families, families types and parameters, is parameter type in model
+        :return: :class:`pandas.DataFrame` : Dataframe contains all dbid,category, family, family type, parameter, is parameter type
         """
-        df = pd.DataFrame(columns=["dbId", "Category", "Family", "FamilyType", "Parameter"])
+        df = pd.DataFrame(columns=["dbId", "Category", "Family", "FamilyType", "Parameter","Is Parameter Type"])
         self._get_recursive_child_types_params(df, 1)
         # drop duplicates
-        df.drop_duplicates(subset=["dbId", "Category", "Family", "FamilyType", "Parameter"], inplace=True)
-        df = df.sort_values(by=["Category", "Family", "FamilyType", "Parameter"])
+        df.drop_duplicates(subset=["dbId", "Category", "Family", "FamilyType", "Parameter","Is Parameter Type"], inplace=True)
+        df = df.sort_values(by=["Category", "Family", "FamilyType", "Parameter", "Is Parameter Type"])
         df = df.drop(columns=["dbId"])
         return df
 
@@ -283,18 +283,23 @@ class PropDbReaderRevit(PropReader):
                     [prop.value for prop in properties if prop.name == "instanceof_objid"]) > 0 else None
 
                 # Collect parameters
-                params = []
+                params = {}
                 if child_id:
                     params_dict = self.get_properties(int(child_id))
-                    params.extend(list(params_dict.keys()))
+                    is_type = False
+                    # add key is parameter name and value is type
+                    for key, value in params_dict.items():
+                        params[key] = is_type
                 if instance_of_objid:
+                    is_type = True
                     params_dict = self.get_properties(int(instance_of_objid))
-                    params.extend(list(params_dict.keys()))
-
+                    # add key is parameter name and value is type
+                    for key, value in params_dict.items():
+                        params[key] = is_type
                 # Add rows to the existing data_frame
                 for param in params:
                     new_row = {"dbId": child, "Category": category, "Family": family, "FamilyType": family_type,
-                               "Parameter": param}
+                               "Parameter": param, "Is Parameter Type": params[param]}
                     data_frame.loc[len(data_frame)] = new_row
 
     def get_data_by_category(self, category: str, is_get_sub_family: bool = False,
