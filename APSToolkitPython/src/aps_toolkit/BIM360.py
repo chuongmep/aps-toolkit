@@ -235,6 +235,22 @@ class BIM360:
         item_versions = response.json()
         return item_versions['data'][0]['relationships']['derivatives']['data']['id']
 
+
+    def batch_report_hubs(self) -> pd.DataFrame:
+        """
+        Get batch all hubs information
+        :return: :class:`pandas.DataFrame` all hubs information : id, name, type,...
+        """
+        df = pd.DataFrame(columns=['id', 'name', 'type'])
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/project/v1/hubs"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        hubs = response.json()
+        df = pd.json_normalize(hubs['data'])
+        return df
+
     def batch_report_projects(self, hub_id: str) -> pd.DataFrame:
         """
         Get batch all projects with general information by hub_id
