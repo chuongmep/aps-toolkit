@@ -15,14 +15,14 @@ namespace APSToolkit.BIM360;
 public class BIM360
 {
     private static string Host = "https://developer.api.autodesk.com";
-    private Token Token { get; set; }
+    private Token? Token { get; set; }
 
     public BIM360()
     {
         var auth = new Auth();
         this.Token = auth.Get2LeggedToken().Result;
     }
-    public BIM360(Token token)
+    public BIM360(Token? token)
     {
         Token = token;
     }

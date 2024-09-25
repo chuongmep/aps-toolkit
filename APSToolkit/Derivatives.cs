@@ -280,7 +280,7 @@ public static class Derivatives
         return resources;
     }
 
-    public static async Task<List<Resource>> ExtractProbDbAsync(string? urn, string accessToken)
+    public static async Task<List<Resource>> ExtractProbDbAsync(string? urn, string? accessToken)
     {
         DerivativesApi derivativeApi = new DerivativesApi();
         derivativeApi.Configuration.AccessToken = accessToken;

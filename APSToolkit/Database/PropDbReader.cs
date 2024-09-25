@@ -4,6 +4,7 @@ using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using APSToolkit.Utils;
+using Autodesk.Forge.DesignAutomation.Model;
 using ICSharpCode.SharpZipLib.GZip;
 using Newtonsoft.Json;
 using OfficeOpenXml;
@@ -58,7 +59,7 @@ namespace APSToolkit.Database
             }
         }
 
-        private Token Token { get; set; }
+        private Token? Token { get; set; }
 
         /// <summary>
         /// Reads a GZip-compressed file from the specified path, decompresses its content, and returns the decompressed byte array.
@@ -71,28 +72,32 @@ namespace APSToolkit.Database
             return Unzip(input);
         }
 
-        public PropDbReader(string urn)
-        {
-            this.Urn = urn;
-            var auth = new Auth();
-            Token = auth.Get2LeggedToken().Result;
-        }
         public PropDbReader()
         {
             var auth = new Auth();
             Token = auth.Get2LeggedToken().Result;
         }
+
         /// <summary>
         /// Read All Information properties from urn model
         /// </summary>
         /// <param name="urn"></param>
-        /// <param name="token"></param>
+        /// <param name="token">default authentication 2legend</param>
         /// <returns></returns>
-        public PropDbReader(string urn, Token token)
+        public PropDbReader(string urn, Token? token = null)
         {
             this.Urn = urn;
-            Token = token;
-            DownloadStreamAsync(urn, token.AccessToken).Wait();
+            if (token == null)
+            {
+                var auth = new Auth();
+                token = auth.Get2LeggedToken().Result;
+            }
+            else
+            {
+                Token = token;
+            }
+
+            DownloadStreamAsync(urn, token!.AccessToken).Wait();
         }
 
         /// <summary>
@@ -102,7 +107,7 @@ namespace APSToolkit.Database
         /// <param name="urn">The unique identifier for the model in the Autodesk Forge derivative service.</param>
         /// <param name="accessToken">The access token for authenticating requests to the Autodesk Forge service.</param>
         /// <returns>An asynchronous task representing the PropDbReader instance with the downloaded and extracted data.</returns>
-        private async Task<PropDbReader> DownloadStreamAsync(string? urn, string accessToken)
+        private async Task<PropDbReader> DownloadStreamAsync(string? urn, string? accessToken)
         {
             List<Derivatives.Resource> resourcesToDownload =
                 await Derivatives.ExtractProbDbAsync(urn, accessToken).ConfigureAwait(false);
@@ -173,6 +178,49 @@ namespace APSToolkit.Database
             vals = JsonConvert.DeserializeObject<string[]>(Encoding.UTF8.GetString(Unzip(_vals)));
             return this;
         }
+
+        public static PropDbReader ReadFromSvf(string svfPath)
+        {
+            /*
+             * Initialize PropReader from svf file
+             * svfPath: path to svf file, e.g. "path/to/3D.svf"
+             * Remark: see tutorial at https://chuongmep.com/posts/2024-09-25-revit-extractor.html
+             * return: Instance
+             */
+            string parentDir = Path.GetFullPath(Path.Combine(svfPath, @"..\..\.."));
+            string idsPath = Path.Combine(parentDir, "objects_ids.json.gz");
+            if (!File.Exists(idsPath))
+            {
+                throw new FileNotFoundException($"File {idsPath} not found");
+            }
+
+            string offsetsPath = Path.Combine(parentDir, "objects_offs.json.gz");
+            if (!File.Exists(offsetsPath))
+            {
+                throw new FileNotFoundException($"File {offsetsPath} not found");
+            }
+
+            string avsPath = Path.Combine(parentDir, "objects_avs.json.gz");
+            if (!File.Exists(avsPath))
+            {
+                throw new FileNotFoundException($"File {avsPath} not found");
+            }
+
+            string attrsPath = Path.Combine(parentDir, "objects_attrs.json.gz");
+            if (!File.Exists(attrsPath))
+            {
+                throw new FileNotFoundException($"File {attrsPath} not found");
+            }
+
+            string valsPath = Path.Combine(parentDir, "objects_vals.json.gz");
+            if (!File.Exists(valsPath))
+            {
+                throw new FileNotFoundException($"File {valsPath} not found");
+            }
+            var reader = new PropDbReader(idsPath, offsetsPath, avsPath, attrsPath, valsPath);
+            return reader;
+        }
+
 
         /// <summary>
         /// Initialize PropDbReader with byte[]
@@ -265,10 +313,12 @@ namespace APSToolkit.Database
                     {
                         item.DisplayPrecision = int.Parse(attr[7]);
                     }
+
                     if (attr.Length >= 9)
                     {
                         item.ForgeParameterId = attr[8];
                     }
+
                     item.Value = value;
                     properties.Add(item);
                 }
@@ -571,6 +621,7 @@ namespace APSToolkit.Database
                     {
                         dataTable.Columns.Add(columnName);
                     }
+
                     dataRow[columnName] = property.Value;
                 }
 

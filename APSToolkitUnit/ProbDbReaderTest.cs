@@ -34,6 +34,19 @@ public class ProbDbReaderTest
     }
 
     [Test]
+    public void ReadFromSvfFileTest()
+    {
+        string filePAth = @"C:\Users\vho2\3D Objects\output\output\Resource\3D View\{3D} 960621\{3D}.svf";
+        PropDbReader propDbReader = PropDbReader.ReadFromSvf(filePAth);
+        Console.WriteLine(propDbReader.ids.Length);
+        Dictionary<string,string?> publicProperties = propDbReader.GetPublicProperties(1);
+        foreach (KeyValuePair<string,string> publicProperty in publicProperties)
+        {
+            Console.WriteLine(publicProperty.Key + " : " + publicProperty.Value);
+        }
+    }
+
+    [Test]
     public void PropDbReaderSQLTest()
     {
         Assert.AreNotEqual(0, PropDbReader.avs!.Length);

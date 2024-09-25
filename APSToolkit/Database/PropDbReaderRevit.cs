@@ -644,9 +644,25 @@ public class PropDbReaderRevit : PropDbReader
         return properties;
     }
 
-    public PropDbReaderRevit(string urn, Token token) : base(urn, token)
+    public PropDbReaderRevit(string urn, Token? token) : base(urn, token)
     {
         Configuration = new RevitDataConfiguration(urn, token);
+    }
+    public static PropDbReaderRevit ReadFromSvf(string path)
+    {
+        PropDbReader propDbReader = PropDbReader.ReadFromSvf(path);
+        PropDbReaderRevit propDbReaderRevit = new PropDbReaderRevit();
+        propDbReaderRevit.ids = propDbReader.ids;
+        propDbReaderRevit.offsets = propDbReader.offsets;
+        propDbReaderRevit.avs = propDbReader.avs;
+        propDbReaderRevit.attrs = propDbReader.attrs;
+        propDbReaderRevit.vals = propDbReader.vals;
+        return propDbReaderRevit;
+    }
+
+    public PropDbReaderRevit()
+    {
+
     }
     public PropDbReaderRevit(byte[] _ids, byte[] _offsets, byte[] _avs, byte[] _attrs, byte[] _vals) : base(_ids,
         _offsets, _avs, _attrs, _vals)

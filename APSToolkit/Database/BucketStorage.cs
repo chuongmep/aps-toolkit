@@ -7,8 +7,8 @@ namespace APSToolkit.Database;
 
 public class BucketStorage
 {
-    private Token Token { get; set; }
-    public BucketStorage(Token token)
+    private Token? Token { get; set; }
+    public BucketStorage(Token? token)
     {
         Token = token;
     }

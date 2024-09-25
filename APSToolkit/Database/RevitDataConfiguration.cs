@@ -28,7 +28,7 @@ public class RevitDataConfiguration
 
     public string Urn { get; set; }
 
-    public Token Token { get; set; }
+    public Token? Token { get; set; }
 
     public Dictionary<string, string> Units = new Dictionary<string, string>();
 
@@ -37,7 +37,7 @@ public class RevitDataConfiguration
     {
 
     }
-    public RevitDataConfiguration(string urn,Token token) : this()
+    public RevitDataConfiguration(string urn,Token? token) : this()
     {
         this.Urn = urn;
         this.Token = token;

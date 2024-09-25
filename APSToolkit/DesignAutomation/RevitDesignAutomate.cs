@@ -69,7 +69,7 @@ public class RevitDesignAutomate
     public async Task<Status> ExecuteJob(string projectId, string versionId, string callBackUrl)
     {
         // access Token
-        Token token = new Auth(_configuration.ClientId, _configuration.ClientSecret)
+        Token? token = new Auth(_configuration.ClientId, _configuration.ClientSecret)
             .Get2LeggedToken().Result;
         string userAccessToken = token.AccessToken;
         bool isCompositeDesign = DAUtils.IsCompositeDesign(userAccessToken, projectId, versionId).Result;

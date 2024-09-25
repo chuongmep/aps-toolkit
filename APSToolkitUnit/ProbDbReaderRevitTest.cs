@@ -31,6 +31,18 @@ public class ProbDbReaderRevitTest
     }
 
     [Test]
+    public void InitFromSvf()
+    {
+        string path = @"C:\Users\vho2\3D Objects\output\output\Resource\3D View\{3D} 960621\{3D}.svf";
+        var prop = PropDbReaderRevit.ReadFromSvf(path);
+        Dictionary<int, string> allCategories = prop.GetAllCategories();
+        foreach (KeyValuePair<int, string> publicProperty in allCategories)
+        {
+            Console.WriteLine(publicProperty.Key + " : " + publicProperty.Value);
+        }
+    }
+
+    [Test]
     [TestCaseSource(typeof(Settings), nameof(Settings.RevitTestUrn))]
     public void GetAllCategoriesTest(string urn)
     {

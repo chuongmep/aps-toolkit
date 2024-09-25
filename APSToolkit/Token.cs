@@ -35,7 +35,7 @@ public class Token
     public Token Refresh2LegToken()
     {
         var auth = new Auth();
-        Token token = auth.Get2LeggedToken().Result;
+        Token? token = auth.Get2LeggedToken().Result;
         this.AccessToken = token.AccessToken;
         this.TokenType = token.TokenType;
         this.ExpiresIn = token.ExpiresIn;

@@ -16,7 +16,7 @@ public class Auth
     private string? ClientId { get; set; }
     private string? ClientSecret { get; set; }
 
-    private Token Token { get; set; }
+    private Token? Token { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Auth"/> class.
@@ -112,7 +112,7 @@ public class Auth
     /// </summary>
     /// <returns>The 2-legged access token.</returns>
     /// <exception cref="Exception">Thrown when APS_CLIENT_ID or APS_CLIENT_SECRET environment variables are missing.</exception>
-    public async Task<Token> Get2LeggedToken()
+    public async Task<Token?> Get2LeggedToken()
     {
         Autodesk.Forge.TwoLeggedApi twoLeggedApi = new Autodesk.Forge.TwoLeggedApi();
         if (string.IsNullOrEmpty(ClientId) || string.IsNullOrEmpty(ClientSecret))
@@ -137,7 +137,7 @@ public class Auth
         }
         return Token;
     }
-    public async Task<Token> Get3LeggedToken(string? callbackUrl = null, string? scopes = null)
+    public async Task<Token?> Get3LeggedToken(string? callbackUrl = null, string? scopes = null)
     {
         if (string.IsNullOrEmpty(scopes))
         {
@@ -230,7 +230,7 @@ public class Auth
             Console.WriteLine($"Error opening default browser: {ex.Message}");
         }
     }
-    public async Task<Token> Get3LeggedTokenPkce(string? callbackUrl = null, string? scopes = null)
+    public async Task<Token?> Get3LeggedTokenPkce(string? callbackUrl = null, string? scopes = null)
     {
         if (string.IsNullOrEmpty(scopes))
         {
@@ -351,7 +351,7 @@ public class Auth
     /// <param name="scope">The array of scopes specifying the access permissions for the refreshed token.</param>
     /// <returns>The refreshed 3-legged access token.</returns>
     /// <exception cref="Exception">Thrown when clientId, clientSecret, or refreshToken is null or empty.</exception>
-    public async Task<Token> Refresh3LeggedToken(string refreshToken,
+    public async Task<Token?> Refresh3LeggedToken(string refreshToken,
         Scope[] scope)
     {
         Autodesk.Forge.ThreeLeggedApi threeLeggedApi = new Autodesk.Forge.ThreeLeggedApi();
