@@ -26,11 +26,12 @@ from typing import List
 from .units.DisplayUnits import DisplayUnits
 from .Token import Token
 import concurrent.futures
+import os
 
 
 class PropReader:
 
-    def __init__(self, urn: str, token: Token, region: str = "US", manifest_item: [ManifestItem] = None):
+    def __init__(self, urn: str = None, token: Token = None, region: str = "US", manifest_item: [ManifestItem] = None):
         # get manifest
         self.host = "https://developer.api.autodesk.com"
         self.urn = urn
@@ -42,6 +43,57 @@ class PropReader:
         else:
             self._read_metadata()
         self.units = DisplayUnits()
+
+    @classmethod
+    def read_from_svf(cls, svf_path) -> 'PropReader':
+        """
+        Initialize PropReader from svf file
+        :param svf_path: path to svf file, e.g. "path/to/3D.svf"
+        :remark :see tutorial at https://chuongmep.com/posts/2024-09-25-revit-extractor.html
+        :return: Instance
+        """
+        parrent_dir = os.path.abspath(os.path.join(svf_path, os.pardir))
+        parrent_dir = os.path.abspath(os.path.join(parrent_dir, os.pardir))
+        parrent_dir = os.path.abspath(os.path.join(parrent_dir, os.pardir))
+        ids_path = os.path.join(parrent_dir, "objects_ids.json.gz")
+        if not os.path.exists(ids_path):
+            raise Exception(f"File {ids_path} not found")
+        offsets_path = os.path.join(parrent_dir, "objects_offs.json.gz")
+        if not os.path.exists(offsets_path):
+            raise Exception(f"File {offsets_path} not found")
+        avs_path = os.path.join(parrent_dir, "objects_avs.json.gz")
+        if not os.path.exists(avs_path):
+            raise Exception(f"File {avs_path} not found")
+        attrs_path = os.path.join(parrent_dir, "objects_attrs.json.gz")
+        if not os.path.exists(attrs_path):
+            raise Exception(f"File {attrs_path} not found")
+        vals_path = os.path.join(parrent_dir, "objects_vals.json.gz")
+        if not os.path.exists(vals_path):
+            raise Exception(f"File {vals_path} not found")
+        return cls.read_from_json_gzip_files(ids_path, offsets_path, avs_path, attrs_path, vals_path)
+
+    @classmethod
+    def read_from_json_gzip_files(cls, ids_path: str, offsets_path: str, avs_path: str, attrs_path: str,
+                                  vals_path: str):
+        # unzip and load json files
+        with open(ids_path, 'rb') as f:
+            ids = json.loads(codecs.decode(gzip.decompress(f.read()), 'utf-8'))
+        with open(offsets_path, 'rb') as f:
+            offsets = json.loads(codecs.decode(gzip.decompress(f.read()), 'utf-8'))
+        with open(avs_path, 'rb') as f:
+            avs = json.loads(codecs.decode(gzip.decompress(f.read()), 'utf-8'))
+        with open(attrs_path, 'rb') as f:
+            attrs = json.loads(codecs.decode(gzip.decompress(f.read()), 'utf-8'))
+        with open(vals_path, 'rb') as f:
+            vals = json.loads(codecs.decode(gzip.decompress(f.read()), 'utf-8'))
+        instance = cls.__new__(cls)
+        instance.ids = ids
+        instance.offsets = offsets
+        instance.avs = avs
+        instance.attrs = attrs
+        instance.vals = vals
+        instance.units = DisplayUnits()
+        return instance
 
     def _read_metadata(self):
         derivative = Derivative(self.urn, self.token, self.region)

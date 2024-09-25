@@ -8,6 +8,12 @@ class TestPropDbReaderRevit(TestCase):
         self.token = Auth().auth2leg()
         self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLkotQ2laSHpGVEd5LUEwLVJmaEVVTVE_dmVyc2lvbj04"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
+        # pass
+
+    def test_init_local(self):
+        pro = PropDbReaderRevit.read_from_svf(
+            r"C:\Users\vho2\3D Objects\output\output\Resource\3D View\{3D} 960621\{3D}.svf")
+        self.assertIsNotNone(pro)
 
     def test_get_document_info(self):
         document_info = self.prop_reader.get_document_info()
@@ -91,8 +97,9 @@ class TestPropDbReaderRevit(TestCase):
 
     def test_get_data_by_categories_and_params(self):
         categories = ["Doors"]
-        params = ["ElementId", "Name", "Category", "CategoryId", "Level", "Workset", "Area Type","Number","Area","Perimeter"]
-        df = self.prop_reader.get_data_by_categories_and_params(categories,params, True, display_unit=False)
+        params = ["ElementId", "Name", "Category", "CategoryId", "Level", "Workset", "Area Type", "Number", "Area",
+                  "Perimeter"]
+        df = self.prop_reader.get_data_by_categories_and_params(categories, params, True, display_unit=False)
         self.assertNotEquals(df.empty, True)
 
     def test_get_data_by_parameters(self):
