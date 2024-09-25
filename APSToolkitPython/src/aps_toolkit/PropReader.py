@@ -45,7 +45,7 @@ class PropReader:
         self.units = DisplayUnits()
 
     @classmethod
-    def read_from_svf(cls, svf_path) -> 'PropReader':
+    def read_from_svf(cls, svf_path):
         """
         Initialize PropReader from svf file
         :param svf_path: path to svf file, e.g. "path/to/3D.svf"
