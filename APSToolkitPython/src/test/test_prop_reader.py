@@ -6,16 +6,21 @@ from .context import Auth
 
 class TestPropDbReader(TestCase):
     def setUp(self):
-        # pass
+        pass
         self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLkotQ2laSHpGVEd5LUEwLVJmaEVVTVE_dmVyc2lvbj04"
         self.token = Auth().auth2leg()
         self.prop_reader = PropReader(self.urn, self.token)
 
     def test_read_from_svf(self):
-        path = r"C:\Users\vho2\3D Objects\output\output\Resource\3D View\{3D} 960621\{3D}.svf"
-        prop = PropReader.read_from_svf(path)
+        path = r"C:\Users\vho2\AppData\Local\Temp\output\output\Resource\3D View\{3D} 960621\{3D}.svf"
+        prop = PropReader.read_from_resource(path)
         child = prop.get_properties(1)
-        self.assertNotEquals(prop, 0)
+        self.assertNotEqual(prop, 0)
+
+    def test_read_from_resource(self):
+        path = r"C:\Users\vho2\AppData\Local\Temp\output\output\Resource"
+        prop = PropReader.read_from_resource(path)
+        self.assertNotEqual(prop.ids, 0)
     def test_enumerate_properties(self):
         properties = self.prop_reader.enumerate_properties(14)
         self.assertNotEquals(properties, 0)

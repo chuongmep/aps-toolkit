@@ -45,16 +45,28 @@ class PropReader:
         self.units = DisplayUnits()
 
     @classmethod
-    def read_from_svf(cls, svf_path):
+    def read_from_resource(cls, path):
         """
-        Initialize PropReader from svf file
-        :param svf_path: path to svf file, e.g. "path/to/3D.svf"
+        Initialize PropReader from svf extracted
+        :param path: path of resource extracted by svf, e.g. "path/to/3D.svf" or "path/../Resource"
         :remark :see tutorial at https://chuongmep.com/posts/2024-09-25-revit-extractor.html
         :return: Instance
         """
-        parrent_dir = os.path.abspath(os.path.join(svf_path, os.pardir))
-        parrent_dir = os.path.abspath(os.path.join(parrent_dir, os.pardir))
-        parrent_dir = os.path.abspath(os.path.join(parrent_dir, os.pardir))
+        parrent_dir = path
+        if path.endswith(".svf"):
+            parrent_dir = os.path.abspath(os.path.join(path, os.pardir))
+            parrent_dir = os.path.abspath(os.path.join(parrent_dir, os.pardir))
+            parrent_dir = os.path.abspath(os.path.join(parrent_dir, os.pardir))
+        if path.endswith("output"):
+            # find sub folder have "Resource" name and stop
+            for root, dirs, files in os.walk(path):
+                if "Resource" in dirs:
+                    parrent_dir = os.path.join(root, "Resource")
+                    break
+        if not os.path.exists(parrent_dir):
+            raise Exception(f"Directory {parrent_dir} not found")
+        if not parrent_dir.endswith("Resource"):
+            raise Exception(f"Directory {parrent_dir} is not Resource")
         ids_path = os.path.join(parrent_dir, "objects_ids.json.gz")
         if not os.path.exists(ids_path):
             raise Exception(f"File {ids_path} not found")
@@ -71,7 +83,6 @@ class PropReader:
         if not os.path.exists(vals_path):
             raise Exception(f"File {vals_path} not found")
         return cls.read_from_json_gzip_files(ids_path, offsets_path, avs_path, attrs_path, vals_path)
-
     @classmethod
     def read_from_json_gzip_files(cls, ids_path: str, offsets_path: str, avs_path: str, attrs_path: str,
                                   vals_path: str):

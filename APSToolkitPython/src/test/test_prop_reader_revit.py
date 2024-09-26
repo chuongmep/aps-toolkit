@@ -11,8 +11,8 @@ class TestPropDbReaderRevit(TestCase):
         # pass
 
     def test_init_local(self):
-        pro = PropDbReaderRevit.read_from_svf(
-            r"C:\Users\vho2\3D Objects\output\output\Resource\3D View\{3D} 960621\{3D}.svf")
+        pro = PropDbReaderRevit.read_from_resource(
+            r"C:\Users\vho2\AppData\Local\Temp\output\output\Resource\3D View\{3D} 960621\{3D}.svf")
         self.assertIsNotNone(pro)
 
     def test_get_document_info(self):
