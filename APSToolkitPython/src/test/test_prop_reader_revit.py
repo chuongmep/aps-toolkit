@@ -6,7 +6,7 @@ from .context import Auth
 class TestPropDbReaderRevit(TestCase):
     def setUp(self):
         self.token = Auth().auth2leg()
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLkotQ2laSHpGVEd5LUEwLVJmaEVVTVE_dmVyc2lvbj04"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLk9kOHR4RGJLU1NlbFRvVmcxb2MxVkE_dmVyc2lvbj0zMg"
         self.prop_reader = PropDbReaderRevit(self.urn, self.token)
         # pass
 
@@ -121,3 +121,7 @@ class TestPropDbReaderRevit(TestCase):
     def test_get_all_parametes(self):
         parameters = self.prop_reader.get_all_parameters()
         self.assertNotEquals(parameters, 0)
+
+    def test_get_units_mapping(self):
+        units = self.prop_reader.get_units_mapping()
+        self.assertNotEquals(units, 0)

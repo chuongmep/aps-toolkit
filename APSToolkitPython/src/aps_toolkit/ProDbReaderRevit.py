@@ -657,3 +657,44 @@ class PropDbReaderRevit(PropReader):
         parameters = list(set(parameters))
         parameters.sort()
         return parameters
+
+    def get_units_mapping(self) -> pd.DataFrame:
+        """
+        Get all units mapping in model
+        Return a dataframe contains all units mapping include name, category, data_type, data_type_context, description, display_name, flags, display_precision, forge_parameter, symbol_unit, data_type_string
+        :return:  :class:`pandas.DataFrame` : Dataframe contains all units
+        """
+        df = pd.DataFrame(columns=["name", "category", "data_type","data_type_context","description","display_name","flags","display_precision","forge_parameter"])
+        # get from atts
+        for i in range(1,len(self.attrs)):
+            name = self.attrs[i][0]
+            category = self.attrs[i][1]
+            data_type = self.attrs[i][2]
+            data_type_context = self.attrs[i][3]
+            description = self.attrs[i][4]
+            display_name = self.attrs[i][5]
+            flags = self.attrs[i][6]
+            display_precision = self.attrs[i][7]
+            forge_parameter = self.attrs[i][8]
+            new_row = {"name": name, "category": category, "data_type": data_type, "data_type_context": data_type_context,
+                       "description": description, "display_name": display_name, "flags": flags, "display_precision": display_precision,
+                       "forge_parameter": forge_parameter}
+            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+        # insert column symbol_unit = self.units.parse_symbol(<value from data_type_context>)
+        df["symbol_unit"] = df["data_type_context"].apply(lambda x: self.units.parse_symbol(x))
+        # enum map : https://stackoverflow.com/questions/76973784/how-to-get-string-type-of-data-type-from-autodesk-platform-services
+        enum_mapping = {
+            0: "Unknown",
+            1: "Boolean",
+            2: "Integer",
+            3: "Double",
+            10: "Blob",
+            11: "DbKey",
+            20: "String",
+            21: "LocalizableString",
+            22: "DateTime",
+            23: "GeoLocation",
+            24: "Position"
+        }
+        df["data_type_string"] = df["data_type"].map(enum_mapping)
+        return df

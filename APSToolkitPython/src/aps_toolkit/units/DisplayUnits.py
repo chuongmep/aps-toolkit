@@ -35,5 +35,10 @@ class DisplayUnits:
             print(f"Error decoding JSON file: {e}")
 
     def parse_symbol(self, type_id: str):
-        type_id = type_id.split("-")[0]
-        return self.units.get(type_id, "")
+        if type_id is None:
+            return ""
+        if "-" in type_id:
+            type_id = type_id.split("-")[0]
+            return self.units.get(type_id, "")
+        else:
+            return ""
