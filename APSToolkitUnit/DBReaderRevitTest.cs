@@ -100,7 +100,6 @@ public class DbReaderRevitTest
     }
 
     [Test]
-    // [TestCase("Resources/F10A.sdb","Mechanical Equipment")] // fast 8 second
     [TestCase("Resources/model_rvt.sdb","Walls")] // 2 second
     public Task ExportDataToCsvTest(string dbPath,string revitCategory)
     {
@@ -109,7 +108,6 @@ public class DbReaderRevitTest
         return Task.CompletedTask;
     }
     [Test]
-    // [TestCase("Resources/F10A.sdb","Mechanical Equipment")] // fast 8 second
     [TestCase("Resources/model_rvt.sdb","Walls")] // 2 second
     public Task ExportDataToExcelTest(string dbPath,string revitCategory)
     {
@@ -118,7 +116,6 @@ public class DbReaderRevitTest
         return Task.CompletedTask;
     }
     [Test]
-    // [TestCase("Resources/F10A.sdb")] // so  slow
     [TestCase("Resources/model_rvt.sdb")]
     public Task ExportAllDataToExcelTest(string dbPath)
     {
@@ -127,7 +124,6 @@ public class DbReaderRevitTest
         return Task.CompletedTask;
     }
     [Test]
-    // [TestCase("Resources/F10A.sdb")]
     [TestCase("Resources/model_rvt.sdb")]
     public Task GetAllDataGroupByRevitCategoryTest(string dbPath)
     {
