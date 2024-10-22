@@ -30,7 +30,7 @@ from .ManifestItem import ManifestItem
 from .Token import Token
 import json
 import pandas as pd
-
+import time
 
 class Derivative:
     def __init__(self, urn: str, token: Token, region: str = "US"):
@@ -75,6 +75,93 @@ class Derivative:
         }
         response = requests.post(url, headers=headers, data=payload)
         return response.text
+
+    def download_stream_ifc(self,ifc_setting_name="IFC4 Reference View"):
+        response = self.check_job_status()
+        derivatives = response["derivatives"]
+        # find any outputType is "ifc"
+        flag = any(derivative["outputType"] == "ifc" for derivative in derivatives)
+        if not flag:
+            # start call translate job
+            response = self.translate_to_ifc(ifc_setting_name)
+            if response.status_code != 200:
+                raise Exception("Translate job failed.Return: " + response.text)
+            # check job status
+            response = self.check_job_status()
+            process = response["progress"]
+            while process != "complete" and response['status']=='inprogress':
+                time.sleep(5)
+                response = self.check_job_status()
+                process = response["progress"]
+            # get all derivatives
+            derivatives = response["derivatives"]
+        # find in list derivatives any item has outputType is "ifc"
+        for derivative in derivatives:
+            if derivative["outputType"] == "ifc":
+                # get the manifest of the derivative
+                children = derivative["children"][0] if "children" in derivative else []
+                if not children:
+                    raise Exception("The derivative has no Urn IFC.")
+                guid = children["guid"]
+                mime = children["mime"]
+                path_info = self._decompose_urn(children["urn"])
+                urn_json = children["urn"]
+                manifest_item = ManifestItem(guid, mime, path_info, urn_json)
+                local_path = path_info.local_path
+                myUri = "file://" + path_info.base_path + path_info.root_file_name
+                remote_path = join("derivativeservice/v2/derivatives/", unquote(myUri)[len("file://"):])
+                resource = Resource(manifest_item.path_info.root_file_name, remote_path, local_path)
+                # download the IFC file
+                stream = self.download_stream_resource(resource)
+                return {"file_name": manifest_item.path_info.root_file_name, "stream": stream}
+        return None
+    def download_ifc(self, file_path=None,ifc_setting_name="IFC4 Reference View"):
+        result_dict = self.download_stream_ifc(ifc_setting_name)
+        if result_dict is None:
+            raise Exception("Can not download IFC file.")
+        if file_path is None:
+            file_path = result_dict["file_name"]
+        # in case file exits, remove it
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                raise Exception(f"Can not remove file {file_path}. Reason: {e}")
+        bytes_io = result_dict["stream"]
+        with open(file_path, "wb") as f:
+            f.write(bytes_io.read())
+        return file_path
+
+    def translate_to_ifc(self, ifc_setting_name="IFC4 Reference View")-> requests.Response:
+        """
+        Run a Job to translate the model to IFC format:
+        https://aps.autodesk.com/blog/export-ifc-rvt-using-model-derivative-api
+        :return:
+        """
+        url = 'https://developer.api.autodesk.com/modelderivative/v2/designdata/job'
+        headers = {
+            'Authorization': f'Bearer {self.token.access_token}',
+            'Content-Type': 'application/json',
+            'x-ads-force': 'true'
+        }
+        data = {
+            "input": {
+                "urn": self.urn
+            },
+            "output": {
+                "formats": [
+                    {
+                        "type": "ifc",
+                        "advanced": {
+                            "exportSettingName": f"{ifc_setting_name}"
+                        }
+                    }
+                ]
+            }
+        }
+        # Make the POST request
+        response = requests.post(url, headers=headers, json=data)
+        return response
 
     def check_job_status(self):
         url = f"{self.host}/modelderivative/v2/designdata/{self.urn}/manifest"

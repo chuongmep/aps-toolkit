@@ -1,7 +1,7 @@
 from unittest import TestCase
-
 from .context import Derivative
 from .context import Auth
+import os
 
 
 class TestDerivative(TestCase):
@@ -15,8 +15,25 @@ class TestDerivative(TestCase):
         response = derivative.translate_job("Project Completion.ifc")
         self.assertNotEquals(response, "")
 
+    def test_translate_to_ifc(self):
+        ## Wrong Urn
+        #self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLktXNWVBZ25oUjNpRVJaVnh1bEVrb3c_dmVyc2lvbj0x"
+        ## Right Urn
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLmRnRkswLXZqVFlLRS1tUDA3Z3o3WUE_dmVyc2lvbj0z"
+        derivative = Derivative(self.urn, self.token)
+        response = derivative.translate_to_ifc()
+        status_code = response.status_code
+        self.assertEqual(status_code, 200)
+    def test_download_ifc(self):
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnc3cjBxY1BRUzNXVDczeGV6dC13SEE_dmVyc2lvbj0z"
+        derivative = Derivative(self.urn, self.token)
+        filepath = derivative.download_ifc()
+        # check size
+        self.assertNotEqual(os.path.getsize(filepath), 0)
+
+
     def test_check_job_status(self):
-        self.urn = "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6Y2h1b25nX2J1Y2tldC9NeUhvdXNlLm53Yw"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLmRnRkswLXZqVFlLRS1tUDA3Z3o3WUE_dmVyc2lvbj0z"
         derivative = Derivative(self.urn, self.token)
         response = derivative.check_job_status()
         self.assertNotEquals(response, "")
