@@ -21,13 +21,13 @@ class TestDerivative(TestCase):
         ## Right Urn
         self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLmRnRkswLXZqVFlLRS1tUDA3Z3o3WUE_dmVyc2lvbj0z"
         derivative = Derivative(self.urn, self.token)
-        response = derivative.translate_to_ifc()
+        response = derivative.translate_to_ifc("IFC 2x3 GSA Concept Design BIM 2010")
         status_code = response.status_code
         self.assertEqual(status_code, 200)
     def test_download_ifc(self):
-        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLnc3cjBxY1BRUzNXVDczeGV6dC13SEE_dmVyc2lvbj0z"
+        self.urn = "dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLmRnRkswLXZqVFlLRS1tUDA3Z3o3WUE_dmVyc2lvbj0z"
         derivative = Derivative(self.urn, self.token)
-        filepath = derivative.download_ifc()
+        filepath = derivative.download_ifc("gsa_report.ifc")
         # check size
         self.assertNotEqual(os.path.getsize(filepath), 0)
 

@@ -76,12 +76,21 @@ class Derivative:
         response = requests.post(url, headers=headers, data=payload)
         return response.text
 
-    def download_stream_ifc(self,ifc_setting_name="IFC4 Reference View"):
+    def download_stream_ifc(self,ifc_setting_name="IFC 2x3 GSA Concept Design BIM 2010",is_translate=False):
+        """
+        Download IFC file from the model
+        :param ifc_setting_name: the setting name of IFC format, see more at : https://help.autodesk.com/view/RVT/2024/ENU/?guid=GUID-E029E3AD-1639-4446-A935-C9796BC34C95
+        :param is_translate: True if you want post a translation job for convert to IFC format (Cost Will be charged)
+        :return:
+        """
         response = self.check_job_status()
+        process = response["progress"]
+        while process != "complete" and response['status'] == 'inprogress':
+            time.sleep(5)
+            response = self.check_job_status()
+            process = response["progress"]
         derivatives = response["derivatives"]
-        # find any outputType is "ifc"
-        flag = any(derivative["outputType"] == "ifc" for derivative in derivatives)
-        if not flag:
+        if is_translate:
             # start call translate job
             response = self.translate_to_ifc(ifc_setting_name)
             if response.status_code != 200:
@@ -115,10 +124,16 @@ class Derivative:
                 stream = self.download_stream_resource(resource)
                 return {"file_name": manifest_item.path_info.root_file_name, "stream": stream}
         return None
-    def download_ifc(self, file_path=None,ifc_setting_name="IFC4 Reference View"):
+    def download_ifc(self, file_path=None,ifc_setting_name="IFC2x3 Coordination View 2.0"):
+        """
+        Download IFC file from the model and save it to the file path
+        :param file_path: the path to save the IFC file e.g: "C:/Users/<your name>/Downloads/IFC.ifc"
+        :param ifc_setting_name: the setting name of IFC format, see more at : https://help.autodesk.com/view/RVT/2024/ENU/?guid=GUID-E029E3AD-1639-4446-A935-C9796BC34C95
+        :return:
+        """
         result_dict = self.download_stream_ifc(ifc_setting_name)
         if result_dict is None:
-            raise Exception("Can not download IFC file.")
+            raise Exception("Can not download IFC file.Please check stream download process.")
         if file_path is None:
             file_path = result_dict["file_name"]
         # in case file exits, remove it
@@ -132,10 +147,11 @@ class Derivative:
             f.write(bytes_io.read())
         return file_path
 
-    def translate_to_ifc(self, ifc_setting_name="IFC4 Reference View")-> requests.Response:
+    def translate_to_ifc(self, ifc_setting_name="IFC 2x3 GSA Concept Design BIM 2010")-> requests.Response:
         """
         Run a Job to translate the model to IFC format:
         https://aps.autodesk.com/blog/export-ifc-rvt-using-model-derivative-api
+        More about ifc setting name : https://help.autodesk.com/view/RVT/2024/ENU/?guid=GUID-E029E3AD-1639-4446-A935-C9796BC34C95
         :return:
         """
         url = 'https://developer.api.autodesk.com/modelderivative/v2/designdata/job'
