@@ -12,8 +12,8 @@ class TestBIM360(TestCase):
         self.bim360 = BIM360(self.token)
         self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
         self.project_id = "b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d"
-        self.folder_id = "urn:adsk.wipprod:fs.folder:co.sSH-pxrUR8CoAAJHS5kYIA"
-        self.item_id = "urn:adsk.wipprod:dm.lineage:wGXA2ljoSQaXtGOEepawIg"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co.2yCTHGmWSvSCzlaIzdrFKA"
+        self.item_id = "urn:adsk.wipprod:dm.lineage:-wv2uodvSgaXmUZ4O0oYkw"
 
     def test_parse_url(self):
         url = "https://acc.autodesk.com/docs/files/projects/ca790fb5-141d-4ad5-b411-0461af2e9748?folderUrn=urn%3Aadsk.wipprod%3Afs.folder%3Aco.uX9MsdjjSraK_3p5qXyE_A&entityId=urn%3Aadsk.wipprod%3Adm.lineage%3AwGXA2ljoSQaXtGOEepawIg&viewModel=detail&moduleId=folders"
@@ -131,7 +131,7 @@ class TestBIM360(TestCase):
             error = "Another object with the same name already exists in this container"
             if error in str(e):
                 print("File already exists")
-                item_id = self.bim360.get_item_id(self.project_id, self.folder_id, object_name)
+                item_id = self.bim360._get_item_id(self.project_id, self.folder_id, object_name)
                 file_version = self.bim360.create_new_file_version(self.project_id, item_id, object_name, id)
 
         self.assertNotEquals(result, 0)
@@ -140,6 +140,11 @@ class TestBIM360(TestCase):
         path = r"./test/resources/Test.dwg"
         full_path = os.path.abspath(path)
         result = self.bim360.upload_file_item(self.project_id, self.folder_id, full_path)
+        self.assertNotEquals(result, 0)
+
+    def test_rename_file_item(self):
+        new_name = "Test3.dwg"
+        result = self.bim360.rename_file_item(self.project_id, self.item_id, new_name)
         self.assertNotEquals(result, 0)
 
     def test_upload_file_item_stream(self):

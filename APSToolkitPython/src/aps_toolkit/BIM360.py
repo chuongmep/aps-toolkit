@@ -21,7 +21,6 @@ from .Token import Token
 import os
 import re
 from urllib.parse import urlparse, parse_qs
-import json
 from io import BytesIO
 
 
@@ -853,6 +852,39 @@ class BIM360:
                             "id": object_id
                         }
                     }
+                }
+            }
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code != 201:
+            raise Exception(response.reason)
+        return response.json()
+
+
+    def rename_file_item(self, projectId:str, item_id, newName:str):
+        """
+        Rename a file in BIM 360 Docs or Autodesk Construction Cloud
+        :param projectId:  :class:`str` the unique identifier of a project
+        :param item_id:  :class:`str` the unique identifier of an item
+        :param newName:  :class:`str` the new name of item e.g: new_name.rvt
+        :return: :class:`bytes` response content
+        # API : https://aps.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-versions-POST/
+        """
+        item_info = self.get_item_info(projectId, item_id)
+        version_id = item_info['data']['relationships']['tip']['data']['id']
+        url = f"{self.host}/data/v1/projects/{projectId}/versions?copyFrom={version_id}"
+        headers = {
+            'Authorization': 'Bearer ' + self.token.access_token,
+            'Content-Type': 'application/vnd.api+json'
+        }
+        data = {
+            "jsonapi": {
+                "version": "1.0"
+            },
+            "data": {
+                "type": "versions",
+                "attributes": {
+                    "name": newName
                 }
             }
         }
