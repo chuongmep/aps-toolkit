@@ -37,10 +37,17 @@ class TestBIM360(TestCase):
         result = bim360.publish_model_without_links(self.project_id, item_id)
         self.assertNotEquals(result, 0)
     def test_get_publish_model_job(self):
-        item_id = "urn:adsk.wipprod:dm.lineage:Od8txDbKSSelToVg1oc1VA"
+        item_id = "urn:adsk.wipprod:dm.lineage:teA94QcqTrG-PMI5kQRMWg"
         token = Auth().auth3leg()
         bim360 = BIM360(token)
         result = bim360.get_publish_model_job(self.project_id, item_id)
+
+    def test_patch_publish_revit_model(self):
+        folder_id = "urn:adsk.wipprod:fs.folder:co.2yCTHGmWSvSCzlaIzdrFKA"
+        token = Auth().auth3leg()
+        bim360 = BIM360(token)
+        result = bim360.patch_publish_revit_model(self.project_id, folder_id)
+
         self.assertNotEquals(result, 0)
     def test_get_hubs(self):
         hubs = self.bim360.get_hubs()
@@ -143,7 +150,7 @@ class TestBIM360(TestCase):
         self.assertNotEquals(result, 0)
 
     def test_rename_file_item(self):
-        new_name = "Test3.dwg"
+        new_name = "myhouse.rvt"
         result = self.bim360.rename_file_item(self.project_id, self.item_id, new_name)
         self.assertNotEquals(result, 0)
 

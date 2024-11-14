@@ -133,7 +133,31 @@ class BIM360:
         response = requests.post(url, headers=headers, json=payload)
         return response.json() if response.status_code == 200 else response.text
 
-    def get_publish_model_job(self, project_id: str, item_id: str):
+    def batch_publish_revit_model(self, project_id: str, folder_id: str,is_sub_folder: bool = False):
+        """
+        Patch publish Revit model in Autodesk Construction Cloud (ACC)
+        :param project_id: the unique identifier of a project
+        :param folder_id:  the unique identifier of a folder
+        :param is_sub_folder:  the flag to check if the folder is sub folder
+        :return:  :class:`pandas.DataFrame` the dataframe of all items that able to publish
+        """
+        df_items = self.batch_report_items(project_id, folder_id,[".rvt"], is_sub_folder)
+        df_report = pd.DataFrame()
+        for index,item in df_items.iterrows():
+            item_id = item["relationships.item.data.id"]
+            result = self.get_publish_model_job(project_id, item_id)
+            if result.status_code != 200:
+                raise Exception(result.reason)
+            if "data" not in result.json():
+                continue
+            content = result.json()["data"]
+            if content is not None:
+                continue
+            self.publish_model(project_id, item_id)
+            df_report = pd.concat([df_report, item], ignore_index=True)
+        return df_report
+
+    def get_publish_model_job(self, project_id: str, item_id: str)-> requests.Response:
         """
         Get the publish job for a model in Autodesk Construction Cloud (ACC)
         :param project_id: the unique identifier of a project
@@ -172,7 +196,7 @@ class BIM360:
         }
 
         response = requests.post(url, headers=headers, json=payload)
-        return response.json() if response.status_code == 200 else response.text
+        return response
 
     def get_hubs(self) -> dict:
         """
