@@ -11,9 +11,10 @@ class TestBIM360(TestCase):
         self.token = Auth().auth2leg()
         self.bim360 = BIM360(self.token)
         self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
-        self.project_id = "b.ec0f8261-aeca-4ab9-a1a5-5845f952b17d"
-        self.folder_id = "urn:adsk.wipprod:fs.folder:co.2yCTHGmWSvSCzlaIzdrFKA"
-        self.item_id = "urn:adsk.wipprod:dm.lineage:-wv2uodvSgaXmUZ4O0oYkw"
+        self.project_id = "b.ca790fb5-141d-4ad5-b411-0461af2e9748"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co.kHlWc1ajSHSxey-_bGjKwg"
+        self.item_id = "urn:adsk.wipprod:dm.lineage:aK6QZ3gUQPGI63FxRBA3tQ"
+        self.version_id = "urn:adsk.wipprod:fs.file:vf.aK6QZ3gUQPGI63FxRBA3tQ?version=4"
 
     def test_parse_url(self):
         url = "https://acc.autodesk.com/docs/files/projects/ca790fb5-141d-4ad5-b411-0461af2e9748?folderUrn=urn%3Aadsk.wipprod%3Afs.folder%3Aco.uX9MsdjjSraK_3p5qXyE_A&entityId=urn%3Aadsk.wipprod%3Adm.lineage%3AwGXA2ljoSQaXtGOEepawIg&viewModel=detail&moduleId=folders"
@@ -78,6 +79,14 @@ class TestBIM360(TestCase):
     def test_get_item_info(self):
         item_info = self.bim360.get_item_info(self.project_id, self.item_id)
         self.assertNotEquals(item_info, 0)
+
+    def test_get_version_info(self):
+        version_info = self.bim360.get_version_info(self.project_id, self.version_id)
+        self.assertNotEquals(version_info, 0)
+
+    def test_get_item_from_version(self):
+        item = self.bim360.get_item_from_version(self.project_id, self.version_id)
+        self.assertNotEquals(item, 0)
 
     def test_get_latest_derivative_urn(self):
         urn = self.bim360.get_latest_derivative_urn(self.project_id, self.item_id)

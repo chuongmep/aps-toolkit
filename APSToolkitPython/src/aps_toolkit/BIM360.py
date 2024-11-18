@@ -22,7 +22,7 @@ import os
 import re
 from urllib.parse import urlparse, parse_qs
 from io import BytesIO
-
+import urllib.parse
 
 class BIM360:
     def __init__(self, token: Token = None):
@@ -359,6 +359,40 @@ class BIM360:
         """
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        return response.json()
+
+    def get_version_info(self, project_id: str, version_id: str):
+        """
+        Returns the version with the given version_id.
+        https://aps.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-versions-version_id-GET/
+        :param project_id: :class:`str` The unique identifier of a project.
+        :param version_id: :class:`str` The unique identifier of a version.
+        :return: :class:`dict` all information of version
+        """
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        # encoder version_id
+        version_id = urllib.parse.quote(version_id)
+        url = f"{self.host}/data/v1/projects/{project_id}/versions/{version_id}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        return response.json()
+
+    def get_item_from_version(self, project_id: str, version_id: str):
+        """
+        Returns the item the given version is associated with.
+        https://aps.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-versions-version_id-item-GET/
+        :param project_id: :class:`str` The unique identifier of a project.
+        :param version_id: :class:`str` The unique identifier of a version.
+        :return: :class:`dict` all information of version
+        """
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        # encoder version_id
+        version_id = urllib.parse.quote(version_id)
+        url = f"{self.host}/data/v1/projects/{project_id}/versions/{version_id}/item"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
             raise Exception(response.reason)
