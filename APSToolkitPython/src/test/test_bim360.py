@@ -17,7 +17,7 @@ class TestBIM360(TestCase):
         self.version_id = "urn:adsk.wipprod:fs.file:vf.aK6QZ3gUQPGI63FxRBA3tQ?version=4"
 
     def test_parse_url(self):
-        url = "https://acc.autodesk.com/docs/files/projects/ca790fb5-141d-4ad5-b411-0461af2e9748?folderUrn=urn%3Aadsk.wipprod%3Afs.folder%3Aco.uX9MsdjjSraK_3p5qXyE_A&entityId=urn%3Aadsk.wipprod%3Adm.lineage%3AwGXA2ljoSQaXtGOEepawIg&viewModel=detail&moduleId=folders"
+        url = "https://acc.autodesk.com/docs/files/projects/ca790fb5-141d-4ad5-b411-0461af2e9748?folderUrn=urn%3Aadsk.wipprod%3Afs.folder%3Aco.kHlWc1ajSHSxey-_bGjKwg&entityId=urn%3Aadsk.wipprod%3Afs.file%3Avf.QOFE_uOpSmaK-5JWkn3yYQ%3Fversion%3D5&viewModel=detail&moduleId=folders&viewableGuid=517b8739-48df-bcb2-be30-dda4b1eee186"
         result = self.bim360.parse_url(url)
         # check projectid
         self.assertEqual(result['project_id'], "b." + "ca790fb5-141d-4ad5-b411-0461af2e9748")

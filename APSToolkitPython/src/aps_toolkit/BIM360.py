@@ -35,22 +35,26 @@ class BIM360:
     @staticmethod
     def parse_url(url: str) -> dict:
         """
-        Parse url to get project_id, folder_urn, entity_id, model_guid
+        Parse url to get project_id, folder_urn, version_id, viewable_guid
         :param url: the url from bim360 or autodesk construction cloud (ACC)
-        :return: :class:`dict` project_id, folder_urn, entity_id, model_guid
+        :return: :class:`dict` project_id, folder_urn, version_id, viewable_guid
         """
         project_id_match = re.search(r'projects/([^\/?#]+)', url)
         project_id = 'b.' + project_id_match.group(1) if project_id_match else ''
         query_params = parse_qs(urlparse(url).query)
         folder_urn = query_params.get('folderUrn', [''])[0]
-        entity_id = query_params.get('entityId', [''])[0]
-        model_guid = query_params.get('viewableGuid', [''])[0]
+        version_id = query_params.get('entityId', [''])[0]
+        item_id = None
+        if version_id is not None or version_id != '':
+            item_id =version_id.split("?")[0]
+        viewable_guid = query_params.get('viewable_guid', [''])[0]
 
         return {
             'project_id': project_id,
             'folder_urn': folder_urn,
-            'entity_id': entity_id,
-            'model_guid': model_guid,
+            'item_id': item_id,
+            'version_id': version_id,
+            'viewable_guid': viewable_guid,
         }
 
     def publish_model(self, project_id: str, item_id: str):
