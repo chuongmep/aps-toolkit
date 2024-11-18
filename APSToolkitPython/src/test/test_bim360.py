@@ -19,10 +19,13 @@ class TestBIM360(TestCase):
     def test_parse_url(self):
         url = "https://acc.autodesk.com/docs/files/projects/ca790fb5-141d-4ad5-b411-0461af2e9748?folderUrn=urn%3Aadsk.wipprod%3Afs.folder%3Aco.kHlWc1ajSHSxey-_bGjKwg&entityId=urn%3Aadsk.wipprod%3Afs.file%3Avf.QOFE_uOpSmaK-5JWkn3yYQ%3Fversion%3D5&viewModel=detail&moduleId=folders&viewableGuid=517b8739-48df-bcb2-be30-dda4b1eee186"
         result = self.bim360.parse_url(url)
-        # check projectid
-        self.assertEqual(result['project_id'], "b." + "ca790fb5-141d-4ad5-b411-0461af2e9748")
-        self.assertEqual(result['folder_urn'], "urn:adsk.wipprod:fs.folder:co.uX9MsdjjSraK_3p5qXyE_A")
-        self.assertEqual(result['entity_id'], "urn:adsk.wipprod:dm.lineage:wGXA2ljoSQaXtGOEepawIg")
+        project_id = result.project_id
+        self.assertEqual(project_id, "b.ca790fb5-141d-4ad5-b411-0461af2e9748")
+        self.assertEqual(result.folder_urn, "urn:adsk.wipprod:fs.folder:co.kHlWc1ajSHSxey-_bGjKwg")
+        self.assertEqual(result.item_id, "urn:adsk.wipprod:fs.file:vf.QOFE_uOpSmaK-5JWkn3yYQ")
+        self.assertEqual(result.version_id, "urn:adsk.wipprod:fs.file:vf.QOFE_uOpSmaK-5JWkn3yYQ?version=5")
+        self.assertEqual(result.version_encoder,'urn%3Aadsk.wipprod%3Afs.file%3Avf.QOFE_uOpSmaK-5JWkn3yYQ%3Fversion%3D5')
+
 
     def test_publish_model(self):
         item_id = "urn:adsk.wipprod:dm.lineage:Od8txDbKSSelToVg1oc1VA"

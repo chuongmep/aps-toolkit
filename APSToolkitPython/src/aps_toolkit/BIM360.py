@@ -33,29 +33,37 @@ class BIM360:
         self.host = "https://developer.api.autodesk.com"
 
     @staticmethod
-    def parse_url(url: str) -> dict:
+    def parse_url(url: str) -> pd.Series:
         """
         Parse url to get project_id, folder_urn, version_id, viewable_guid
         :param url: the url from bim360 or autodesk construction cloud (ACC)
         :return: :class:`dict` project_id, folder_urn, version_id, viewable_guid
         """
+        if url is None:
+            raise Exception("url is required")
+        if not str.__contains__(url, "autodesk.com"):
+            raise Exception("url is not valid")
         project_id_match = re.search(r'projects/([^\/?#]+)', url)
         project_id = 'b.' + project_id_match.group(1) if project_id_match else ''
         query_params = parse_qs(urlparse(url).query)
         folder_urn = query_params.get('folderUrn', [''])[0]
         version_id = query_params.get('entityId', [''])[0]
+        version_encoder = urllib.parse.quote(version_id)
         item_id = None
         if version_id is not None or version_id != '':
             item_id =version_id.split("?")[0]
         viewable_guid = query_params.get('viewable_guid', [''])[0]
 
-        return {
+        data = {
             'project_id': project_id,
             'folder_urn': folder_urn,
             'item_id': item_id,
             'version_id': version_id,
+            'version_encoder': version_encoder,
             'viewable_guid': viewable_guid,
         }
+        series = pd.Series(data)
+        return series
 
     def publish_model(self, project_id: str, item_id: str):
         """
@@ -377,7 +385,7 @@ class BIM360:
         :return: :class:`dict` all information of version
         """
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
-        # encoder version_id
+        # URL-encode the version_id
         version_id = urllib.parse.quote(version_id)
         url = f"{self.host}/data/v1/projects/{project_id}/versions/{version_id}"
         response = requests.get(url, headers=headers)
