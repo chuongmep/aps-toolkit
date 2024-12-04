@@ -70,6 +70,15 @@ class Webhooks:
         else:
             raise Exception(response.reason)
 
+    def batch_report_all_app_hooks(self) -> pd.DataFrame:
+        """
+        Return all hooks in a pandas DataFrame, include all the properties of the hooks
+        :return: :class:`pd.DataFrame` - A pandas DataFrame with all the hooks
+        """
+        data = self.get_all_app_hooks()["data"]
+        return pd.json_normalize(data)
+
+
     def get_hook_by_id(self, hook_id: str, event: str = "dm.version.added", system: str = "data") -> dict:
         """
         Get details of a webhook based on its webhook ID
@@ -82,7 +91,8 @@ class Webhooks:
         url = f"{self.host}/webhooks/v1/systems/{system}/events/{event}/hooks/{hook_id}"
         headers = {
             "Authorization": f"{self.token.token_type} {self.token.access_token}",
-            "x-ads-region": self.region
+            "x-ads-region": self.region,
+            "Content-Type": "application/json"
         }
         response = requests.get(url, headers=headers)
         return response.json()
@@ -99,7 +109,8 @@ class Webhooks:
         url = f"{self.host}/webhooks/v1/systems/{system}/events/{event}/hooks/{hook_id}"
         headers = {
             "Authorization": f"{self.token.token_type} {self.token.access_token}",
-            "x-ads-region": self.region
+            "x-ads-region": self.region,
+            "Content-Type": "application/json"
         }
         return requests.delete(url, headers=headers)
 

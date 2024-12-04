@@ -45,21 +45,25 @@ class Auth:
         self.expires_in = None
         self.refresh_token = None
 
-    def auth2leg(self) -> Token:
+    def auth2leg(self, scopes=None) -> Token:
         """
         This method is used to authenticate an application using the 2-legged OAuth flow.
         https://aps.autodesk.com/en/docs/oauth/v2/tutorials/get-2-legged-token/
+        :param scopes: The scope of the access request.
+        The scope is a list of space-delimited strings. If not provided, it defaults to
+        'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete code:all account:write account:read'.
        :return: :class:`Token`: An instance of the Token class containing the access token, token type, and expiration time.
         """
         Host = "https://developer.api.autodesk.com"
         url = "/authentication/v2/token"
-
+        if not scopes:
+            scopes = "data:read data:write data:search data:create bucket:read bucket:create user:read bucket:update bucket:delete code:all account:write account:read"
         # body
         body = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
             "grant_type": "client_credentials",
-            "scope": "data:read data:write data:search data:create bucket:read bucket:create user:read bucket:update bucket:delete code:all"
+            "scope": scopes
         }
         response = requests.post(Host + url, data=body)
         if response.status_code != 200:
@@ -78,8 +82,12 @@ class Auth:
         """
         This method is used to authenticate a user using the 3-legged OAuth flow.
         https://aps.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token/
-        :param callback_url: This is the URL-encoded callback URL you want the user redirected to after they grant consent. In this example, that URL is http://localhost:8080/oauth/callback/. Replace the value here with the appropriate URL for your web app. Note that it must match the pattern specified for the callback URL in your app’s registration in the APS developer portal.
-        :param scopes: This requests the data:read scope. You can leave this value as it is for the purpose of this example, but in your own app, you should request one or more scopes you actually need. If you need to include multiple scopes, you can include them all as space-delimited items. For example: scope=data:create%20data:read%20data:write includes data:read, data:write, and data:create scopes.
+        :param callback_url: This is the URL-encoded callback URL you want the user redirected to after they grant consent.
+        In this example, that URL is http://localhost:8080/oauth/callback/.
+        Replace the value here with the appropriate URL for your web app.
+        Note that it must match the pattern specified for the callback URL in your app’s registration in the APS developer portal.
+        :param scopes: This requests the data:read scope.
+        You can leave this value as it is for the purpose of this example, but in your own app, you should request one or more scopes you actually need. If you need to include multiple scopes, you can include them all as space-delimited items. For example: scope=data:create%20data:read%20data:write includes data:read, data:write, and data:create scopes.
         :return: :class:`Token`:  An instance of the Token class containing the access token, token type, expiration time, and refresh token (if available).
         """
         if not scopes:

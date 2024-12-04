@@ -353,6 +353,7 @@ class BIM360:
         :param project_id: :class:`str` The unique identifier of a project.
         :param item_id: :class:`str` The unique identifier of an item.
         :return: :class:`dict` all information of item versions
+        # Note : Need to use Authentication 3-legged
         """
         headers = {'Authorization': 'Bearer ' + self.token.access_token}
         url = f"{self.host}/data/v1/projects/{project_id}/items/{item_id}/versions"
@@ -360,6 +361,34 @@ class BIM360:
         if response.status_code != 200:
             raise Exception(response.reason)
         return response.json()
+
+    def get_version_info(self, project_id: str, version_id: str):
+        """
+        Retrieves metadata for a specified version. Versions represent iterations of items.
+        https://aps.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-versions-version_id-GET/
+        :param project_id: :class:`str` The unique identifier of a project.
+        For BIM 360 Docs, the project ID in the Data Management API corresponds to the project ID in the BIM 360 API.
+        To convert a project ID in the BIM 360 API into a project ID in the Data Management API you need to add a “b." prefix.
+        For example, a project ID of c8b0c73d-3ae9 translates to a project ID of b.c8b0c73d-3ae9.
+        :param version_id: :class:`str` The unique identifier of a version.
+        :return: :class:`dict` all information of version
+        """
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{project_id}/versions/{version_id}"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        return response.json()
+
+    def get_item_id(self,project_id:str,version_id:str):
+        """
+        Get item id from version id
+        :param project_id: :class:`str` The unique identifier of a project.
+        :param version_id: :class:`str` The unique identifier of a version.
+        :return: :class:`str` item id
+        """
+        version_info = self.get_version_info(project_id,version_id)
+        return version_info['data']['relationships']['item']['data']['id']
 
     def get_item_info(self, project_id: str, item_id: str):
         """

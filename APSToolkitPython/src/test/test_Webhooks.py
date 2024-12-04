@@ -1,12 +1,13 @@
 ﻿from unittest import TestCase
 import os
 from .context import Webhooks
-
+from .context import Auth
 
 class TestWebhooks(TestCase):
 
     def setUp(self):
-        self.hooks = Webhooks()
+        token = Auth().auth2leg()
+        self.hooks = Webhooks(token)
 
     def test_get_all_hooks(self):
         result = self.hooks.get_all_hooks()
@@ -20,15 +21,19 @@ class TestWebhooks(TestCase):
         result = self.hooks.get_all_app_hooks()
         self.assertIsNotNone(result)
 
-    def test_get_hook_by_id(self):
-        hook_id = "d7ead216-08ec-4bee-ab60-5ca4f137d946"
-        result = self.hooks.get_hook_by_id(hook_id)
+    def test_batch_report_all_app_hooks(self):
+        result = self.hooks.batch_report_all_app_hooks()
         self.assertIsNotNone(result)
 
-    def test_delete_hook_by_ida(self):
-        hook_id = '72c5818e-2ce7-4d71-aec5-183d2c9ff925'
-        event = 'dm.folder.copied.out'
-        result = self.hooks.delete_hook_by_id(hook_id, event)
+    def test_get_hook_by_id(self):
+        hook_id = "1c7844f5-adcd-4225-b8a6-d7a47cca05e4"
+        result = self.hooks.get_hook_by_id(hook_id,"dm.version.added","data")
+        self.assertIsNotNone(result)
+
+    def test_delete_hook_by_id(self):
+        hook_id = '4e911371-dc48-4380-9ebb-e126bbb312b1'
+        event = 'dm.version.added'
+        result = self.hooks.delete_hook_by_id(hook_id, event,"data")
         print(result)
 
     def test_create_system_event_hook(self):
