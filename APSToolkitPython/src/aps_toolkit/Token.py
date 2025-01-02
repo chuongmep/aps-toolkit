@@ -89,7 +89,9 @@ class Token():
         if refresh_token is None:
             refresh_token = self.refresh_token
             if refresh_token is None:
-                raise Exception("refresh_token is not provided, please provide the refresh_token or use Auth3leg")
+                refresh_token = os.getenv("APS_REFRESH_TOKEN")
+                if refresh_token is None:
+                    raise Exception("refresh_token is not provided, please provide the refresh_token or use Auth3leg")
         # body
         body = {
             "client_id": client_id,

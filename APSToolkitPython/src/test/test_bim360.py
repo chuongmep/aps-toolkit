@@ -12,7 +12,7 @@ class TestBIM360(TestCase):
         self.bim360 = BIM360(self.token)
         self.hub_id = "b.1715cf2b-cc12-46fd-9279-11bbc47e72f6"
         self.project_id = "b.ca790fb5-141d-4ad5-b411-0461af2e9748"
-        self.folder_id = "urn:adsk.wipprod:fs.folder:co.kHlWc1ajSHSxey-_bGjKwg"
+        self.folder_id = "urn:adsk.wipprod:fs.folder:co._KH1cMpVQ1SMK0q64MumOw"
         self.item_id = "urn:adsk.wipprod:dm.lineage:aK6QZ3gUQPGI63FxRBA3tQ"
         self.version_id = "urn:adsk.wipprod:fs.file:vf.aK6QZ3gUQPGI63FxRBA3tQ?version=4"
 
@@ -128,6 +128,12 @@ class TestBIM360(TestCase):
         # df = self.bim360.batch_report_items(self.project_id, self.folder_id, None, True)
         # df = self.bim360.batch_report_items(self.project_id, self.folder_id, [".rvt"], True)
         df = self.bim360.batch_report_items(self.project_id, self.folder_id, ["rvt"], True)
+        self.assertNotEquals(df.empty, True)
+    def test_batch_report_items_deep_level(self):
+        self.bim360.token = Auth().auth2leg()
+        # df = self.bim360.batch_report_items(self.project_id, self.folder_id, None, True)
+        # df = self.bim360.batch_report_items(self.project_id, self.folder_id, [".rvt"], True)
+        df = self.bim360.batch_report_items_deep_level(self.project_id, self.folder_id, ["rvt"], 1)
         self.assertNotEquals(df.empty, True)
 
     def test_get_item__display_name(self):

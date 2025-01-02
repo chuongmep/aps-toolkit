@@ -31,7 +31,7 @@ class TestWebhooks(TestCase):
         self.assertIsNotNone(result)
 
     def test_delete_hook_by_id(self):
-        hook_id = '4e911371-dc48-4380-9ebb-e126bbb312b1'
+        hook_id = '00677529-badb-4c6e-af6b-e63241ffd752'
         event = 'dm.version.added'
         result = self.hooks.delete_hook_by_id(hook_id, event,"data")
         print(result)

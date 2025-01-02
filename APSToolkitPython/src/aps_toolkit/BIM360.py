@@ -586,6 +586,49 @@ class BIM360:
         item = response.json()
         return item['data']['attributes']['displayName']
 
+    def batch_report_items_deep_level(self, project_id: str, folder_id: str, extensions: list[str] = None,
+                           deep_level: int = 1) -> pd.DataFrame:
+        """
+        Get batch all items with general information by project_id and folder_id with deep level
+        :param project_id: :class:`str` the unique identifier of a project
+        :param folder_id:  :class:`str` the unique identifier of a folder
+        :param extensions:  :class:`list[str]` the extension of file. e.g: [.rvt,.dwg,.pdf]
+        :param deep_level:  :class:`int` the deep of recursive sub folders, default is 1
+        :return: :class:`pandas.DataFrame` all items with general information containing :
+        """
+        if extensions is None:
+            extensions = [""]
+        df = pd.DataFrame()
+        headers = {'Authorization': 'Bearer ' + self.token.access_token}
+        url = f"{self.host}/data/v1/projects/{project_id}/folders/{folder_id}/contents"
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            raise Exception(response.reason)
+        folder_contents = response.json()
+        if deep_level > 1:
+            for folder_content in folder_contents['data']:
+                if folder_content['type'] == "folders":
+                    df = pd.concat(
+                        [df, self.batch_report_items(project_id, folder_content['id'], extensions, deep_level - 1)],
+                        ignore_index=True)
+        # if included not include or null,pass
+        if 'included' in folder_contents:
+            for include_content in folder_contents['included']:
+                item_name = include_content['attributes']['displayName']
+                extension_format = item_name.split('.')[-1]
+                # remove all dot in extensions
+                extensions = [extension.replace(".", "") for extension in extensions]
+                if extension_format not in extensions:
+                    if extensions != [""]:
+                        continue
+                single_df = pd.json_normalize(include_content)
+                single_df.insert(0, 'project_id', project_id)
+                single_df.insert(1, 'folder_id', folder_id)
+                df = pd.concat([df, single_df], ignore_index=True)
+        # df.columns = ['project_id','folder_id','item_name', 'item_id', 'last_version', 'derivative_urn', 'last_modified_time']
+        return df
+
+
     def batch_report_items(self, project_id: str, folder_id: str, extensions: list[str] = None,
                            is_sub_folder: bool = False) -> pd.DataFrame:
         """
