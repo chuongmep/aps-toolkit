@@ -91,7 +91,7 @@ class Bucket:
             raise Exception(response.reason)
         return response.content
 
-    def get_objects(self, bucket_name: str) -> pd.DataFrame:
+    def get_objects(self, bucket_name: str, limit: int = 10) -> pd.DataFrame:
         """
           Retrieves all the objects in a specified bucket from the Autodesk OSS API.
 
@@ -106,12 +106,16 @@ class Bucket:
         headers = {
             "Authorization": f"Bearer {self.token.access_token}"
         }
-        url = f"{self.host}/{bucket_name}/objects"
-        response = requests.get(url, headers=headers)
-        if response.status_code != 200:
-            raise Exception(response.reason)
-        data = response.json()
-        df = pd.DataFrame(data["items"])
+        url = f"{self.host}/{bucket_name}/objects?limit={limit}"
+        fetched_objects = []
+        while url:
+            response = requests.get(url, headers=headers)
+            if response.status_code != 200:
+                raise Exception(response.reason)
+            data = response.json()
+            fetched_objects.extend(data["items"])
+            url = data.get("next")
+        df = pd.DataFrame(fetched_objects)
         return df
 
     def upload_object(self, bucket_name: str, file_path: str, object_name: str) -> dict:
