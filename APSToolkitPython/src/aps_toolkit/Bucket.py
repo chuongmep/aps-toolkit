@@ -36,6 +36,10 @@ class Bucket:
             raise Exception(response.content)
         data = response.json()
         df = pd.DataFrame(data["items"])
+
+        if df.empty:
+            return df
+        
         milliseconds_since_epoch = df["createdDate"]
         seconds_since_epoch = milliseconds_since_epoch // 1000
         real_date = pd.to_datetime(seconds_since_epoch, unit="s")
