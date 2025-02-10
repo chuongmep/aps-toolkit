@@ -144,26 +144,52 @@ class Bucket:
 
     def upload_object_stream(self, bucket_name: str, stream: bytes, object_name: str) -> dict:
         """
-           Uploads an object to a specified bucket in the Autodesk OSS API.
-
-           This method sends a PUT request to the Autodesk OSS API. It includes an Authorization header with a bearer token for authentication and a Content-Type header set to "application/octet-stream". The bucket name and object name are passed in the URL of the request, and the file to be uploaded is passed in the body of the request as binary data. If the response status code is not 200, it raises an exception with the response content.
-
-           Args:
-               bucket_name (str): The name of the bucket to which the object will be uploaded.
-               stream (bytes): The stream of the file to be uploaded.
-               object_name (str): The name of the object to be created in the bucket.
-
-           Returns:
-               dict: A dictionary containing the response from the Autodesk OSS API.
-           """
+        Uploads an object to a specified bucket in the Autodesk OSS API.
+        :param bucket_name:  The name of the bucket to which the object will be uploaded.
+        :param stream:  The stream of the file to be uploaded.
+        :param object_name:  The name of the object to be created in the bucket.
+        :return:  A dictionary containing the response from the Autodesk OSS API.
+        """
         headers = {
             "Authorization": f"Bearer {self.token.access_token}",
+            "Content-Type": "application/json"
+        }
+        url = f"{self.host}/{bucket_name}/objects/{object_name}/signeds3upload"
+
+        # First request to get the uploadKey
+        response = requests.get(url, headers=headers, json={})
+        if response.status_code != 200:
+            raise Exception(f"Error {response.status_code}: {response.text}")
+
+        data = response.json()
+        upload_key = data.get("uploadKey")
+        if not upload_key:
+            raise Exception("uploadKey not found in response")
+
+        # upload a file to a signed URL
+        url = data.get("urls")[0]
+        headers = {
             "Content-Type": "application/octet-stream"
         }
-        url = f"{self.host}/{bucket_name}/objects/{object_name}"
         response = requests.put(url, headers=headers, data=stream)
         if response.status_code != 200:
-            raise Exception(response.reason)
+            raise Exception(f"Error {response.status_code}: {response.text}")
+        # Second request to upload the stream
+        headers = {
+            "Authorization": f"Bearer {self.token.access_token}",
+            "Content-Type": "application/json",
+            "x-ads-meta-Content-Type": "application/octet-stream"
+        }
+        #--data-raw
+        data_row = {
+            "uploadKey": upload_key,
+        }
+        # post data raw
+        url = f"{self.host}/{bucket_name}/objects/{object_name}/signeds3upload"
+        response = requests.post(url, headers=headers,json=data_row)
+        if response.status_code != 200:
+            raise Exception(f"Error {response.status_code}: {response.text}")
+
         return response.json()
 
     def delete_object(self, bucket_name: str, object_name: str) -> dict:

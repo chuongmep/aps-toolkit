@@ -16,26 +16,26 @@ class TestBucket(unittest.TestCase):
 
     def test_create_bucket(self):
         bucket = Bucket(self.token)
-        bucket_name = "hello_world_23232"
+        bucket_name = "hello_world_22222"
         policy_key = PublicKey.transient
         response = bucket.create_bucket(bucket_name, policy_key)
         self.assertEqual(response["bucketKey"], bucket_name)
 
     def test_delete_bucket(self):
         bucket = Bucket(self.token)
-        bucket_name = "hello_world_23232"
+        bucket_name = "hello_world_22222"
         result = bucket.delete_bucket(bucket_name)
         self.assertEqual(result, b'')
 
     def test_get_objects(self):
         bucket = Bucket(self.token)
-        bucket_name = "hello_world_23232"
+        bucket_name = "hello_world_22222"
         objects = bucket.get_objects(bucket_name)
         self.assertNotEqual(len(objects), 0)
 
     def test_upload_object(self):
         bucket = Bucket(self.token)
-        bucket_name = "hello_world_23232"
+        bucket_name = "hello_world_22222"
         file_path = "./test/resources/Test.dwg"
         object_name = "Test.dwg"
         response = bucket.upload_object(bucket_name, file_path, object_name)
@@ -43,14 +43,14 @@ class TestBucket(unittest.TestCase):
 
     def test_delete_object(self):
         bucket = Bucket(self.token)
-        bucket_name = "hello_world_23232"
+        bucket_name = "hello_world_22222"
         object_name = "Test.dwg"
         result = bucket.delete_object(bucket_name, object_name)
         self.assertEqual(result, b'')
 
     def test_download_object(self):
         bucket = Bucket(self.token)
-        bucket_name = "hello_world_23232"
+        bucket_name = "hello_world_22222"
         object_name = "Test.dwg"
         file_path = "./test/resources/Test2.dwg"
         bucket.download_object(bucket_name, object_name, file_path)
