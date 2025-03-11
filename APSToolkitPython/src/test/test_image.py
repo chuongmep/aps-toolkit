@@ -11,10 +11,10 @@ class TestImage(TestCase):
 
     def test_parse_images_from_urn(self):
         images = SVFImage.parse_images_from_urn(self.urn, self.token)
-        self.assertNotEquals(len(images), 0)
+        self.assertNotEqual(len(images), 0)
 
     def test_parse_images_from_derivative(self):
         derivative = Derivative(self.urn, self.token)
         manifest_items = derivative.read_svf_manifest_items()
         images = SVFImage.parse_images_from_derivative(derivative, manifest_items[0])
-        self.assertNotEquals(len(images), 0)
+        self.assertNotEqual(len(images), 0)

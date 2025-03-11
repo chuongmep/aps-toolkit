@@ -11,8 +11,8 @@ class TestMesh(TestCase):
 
     def test_parse_mesh_from_file(self):
         mesh = SVFMesh.parse_mesh_from_file(self.file_path)
-        self.assertNotEquals(len(mesh), 0)
+        self.assertNotEqual(len(mesh), 0)
 
     def test_parse_mesh_from_urn(self):
         mesh = SVFMesh.parse_mesh_from_urn(self.urn, self.token)
-        self.assertNotEquals(len(mesh), 0)
+        self.assertNotEqual(len(mesh), 0)

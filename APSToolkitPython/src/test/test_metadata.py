@@ -12,4 +12,4 @@ class TestSVFMetadata(TestCase):
 
     def test_parse_metadata_from_urn(self):
         meta_datas = SVFMetadata.parse_metadata_from_urn(self.urn, self.token)
-        self.assertNotEquals(len(meta_datas), 0)
+        self.assertNotEqual(len(meta_datas), 0)

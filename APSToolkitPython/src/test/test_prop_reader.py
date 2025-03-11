@@ -23,52 +23,52 @@ class TestPropDbReader(TestCase):
         self.assertNotEqual(prop.ids, 0)
     def test_enumerate_properties(self):
         properties = self.prop_reader.enumerate_properties(14)
-        self.assertNotEquals(properties, 0)
+        self.assertNotEqual(properties, 0)
 
     def test_get_recursive_ids(self):
         ids = self.prop_reader.get_recursive_ids([14, 15])
-        self.assertNotEquals(len(ids), 0)
+        self.assertNotEqual(len(ids), 0)
 
     def test_get_all_properties_names(self):
         properties = self.prop_reader.get_all_properties_names()
-        self.assertNotEquals(len(properties), 0)
+        self.assertNotEqual(len(properties), 0)
 
     def test_get_properties(self):
         properties = self.prop_reader.get_properties(14)
-        self.assertNotEquals(properties, 0)
+        self.assertNotEqual(properties, 0)
 
     def test_get_all_properties(self):
         properties = self.prop_reader.get_all_properties(1)
-        self.assertNotEquals(properties, 0)
+        self.assertNotEqual(properties, 0)
 
     def test_get_entities_table(self):
         df = self.prop_reader.get_entities_table()
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)
 
     def test_get_values_table(self):
         df = self.prop_reader.get_values_table()
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)
 
     def test_get_attributes_table(self):
         df = self.prop_reader.get_attributes_table()
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)
 
     def test_get_avs_table(self):
         # TODO
         df = self.prop_reader.get_avs_table()
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)
 
     def test_get_offsets_table(self):
         df = self.prop_reader.get_offsets_table()
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)
 
     def test_get_property_values_by_names(self):
         values = self.prop_reader.get_property_values_by_names(["Comments", "name"])
-        self.assertNotEquals(len(values), 0)
+        self.assertNotEqual(len(values), 0)
 
     def test_get_property_values_by_display_names(self):
         values = self.prop_reader.get_property_values_by_display_names(["Category", "Name"])
-        self.assertNotEquals(len(values), 0)
+        self.assertNotEqual(len(values), 0)
 
     def test_get_instance(self):
         instance = self.prop_reader.get_instance(1)
@@ -76,7 +76,7 @@ class TestPropDbReader(TestCase):
 
     def test_get_children(self):
         children = self.prop_reader.get_children(1)
-        self.assertNotEquals(len(children), 0)
+        self.assertNotEqual(len(children), 0)
 
     def test_get_parent(self):
         parent = self.prop_reader.get_parent(1)

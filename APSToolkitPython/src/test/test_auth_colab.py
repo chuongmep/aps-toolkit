@@ -9,12 +9,12 @@ class TestAuth(TestCase):
         client_secret = os.environ['APS_CLIENT_SECRET']
         auth = AuthGoogleColab(client_id, client_secret)
         token = auth.auth2leg()
-        self.assertNotEquals(token.access_token, "")
+        self.assertNotEqual(token.access_token, "")
 
     def test_auth2leg(self):
         auth = AuthGoogleColab()
         token = auth.auth2leg()
-        self.assertNotEquals(token.access_token, "")
+        self.assertNotEqual(token.access_token, "")
 
     def test_auth3leg(self):
         auth = AuthGoogleColab()
@@ -23,7 +23,7 @@ class TestAuth(TestCase):
         scopes = 'data:read viewables:read'
         token = auth.auth3leg(redirect_uri, scopes)
         print(token.refresh_token)
-        self.assertNotEquals(token.access_token, "")
+        self.assertNotEqual(token.access_token, "")
 
     def test_auth3legPkce(self):
         auth = AuthGoogleColab()
@@ -33,4 +33,4 @@ class TestAuth(TestCase):
         client_id = os.environ['APS_CLIENT_PKCE_ID']
         token = auth.auth3legPkce(client_id, redirect_uri, scopes)
         print("Refresh Token:", token.refresh_token)
-        self.assertNotEquals(token.access_token, "")
+        self.assertNotEqual(token.access_token, "")

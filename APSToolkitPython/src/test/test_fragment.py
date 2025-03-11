@@ -15,15 +15,15 @@ class TestFragment(TestCase):
         with open(self.file_path, 'rb') as f:
             buffer = f.read()
         fragment = Fragments.parse_fragments(buffer)
-        self.assertNotEquals(len(fragment), 0)
+        self.assertNotEqual(len(fragment), 0)
 
     def test_parse_fragments_from_file(self):
         fragment = Fragments.parse_fragments_from_file(self.file_path)
-        self.assertNotEquals(len(fragment), 0)
+        self.assertNotEqual(len(fragment), 0)
 
     def test_parse_fragments_from_urn(self):
         fragment = Fragments.parse_fragments_from_urn(self.urn, self.token)
-        self.assertNotEquals(len(fragment), 0)
+        self.assertNotEqual(len(fragment), 0)
 
     def test_bbox_fragments(self):
         fragments = Fragments.parse_fragments_from_urn(self.urn, self.token)
@@ -36,4 +36,4 @@ class TestFragment(TestCase):
             for frag in frags:
                 if frag.dbID == dbid:
                     bboxs.append(frag.bbox)
-        self.assertNotEquals(len(bboxs), 0)
+        self.assertNotEqual(len(bboxs), 0)

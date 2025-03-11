@@ -16,11 +16,11 @@ class TestPropDbReader(TestCase):
 
     def test_get_all_layers(self):
         layers = self.prop_reader.get_all_layers()
-        self.assertNotEquals(len(layers), 0)
+        self.assertNotEqual(len(layers), 0)
 
     def test_get_all_categories(self):
         categories = self.prop_reader.get_all_categories()
-        self.assertNotEquals(len(categories), 0)
+        self.assertNotEqual(len(categories), 0)
 
     def test_get_all_data(self):
         data = self.prop_reader.get_all_data()
@@ -28,12 +28,12 @@ class TestPropDbReader(TestCase):
 
     def test_get_data_by_category(self):
         df = self.prop_reader.get_data_by_category("Lines")
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)
 
     def test_get_data_by_categories(self):
         df = self.prop_reader.get_data_by_categories(["Lines", "Circles"])
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)
 
     def test_get_data_by_categories_and_params(self):
         df = self.prop_reader.get_data_by_categories_and_params(["Lines", "Circles"], ["Name", "Layer", "Color", "type"])
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)

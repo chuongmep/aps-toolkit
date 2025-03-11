@@ -14,11 +14,11 @@ class TestDbReader(TestCase):
 
     def test_reader(self):
         db_reader = DbReader(self.urn, self.token)
-        self.assertNotEquals(db_reader, "")
+        self.assertNotEqual(db_reader, "")
 
     def test_execute_query(self):
         db_reader = DbReader(self.urn, self.token)
         print(db_reader.db_path)
         query = "SELECT * FROM _objects_id"
         df = db_reader.execute_query(query)
-        self.assertNotEquals(df.empty, True)
+        self.assertNotEqual(df.empty, True)

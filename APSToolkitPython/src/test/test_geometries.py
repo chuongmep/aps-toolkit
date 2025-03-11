@@ -14,8 +14,8 @@ class TestGeometries(TestCase):
         with open(self.file_path, 'rb') as f:
             buffer = f.read()
         geometries = SVFGeometries.parse_geometries(buffer)
-        self.assertNotEquals(len(geometries), 0)
+        self.assertNotEqual(len(geometries), 0)
 
     def test_parse_geometries_from_urn(self):
         geometries = SVFGeometries.parse_geometries_from_urn(self.urn, self.token)
-        self.assertNotEquals(len(geometries), 0)
+        self.assertNotEqual(len(geometries), 0)

@@ -16,15 +16,15 @@ class TestMaterial(TestCase):
 
     def test_parse_materials_from_urn(self):
         materials = SVFMaterials.parse_materials_from_urn(self.urn, self.token)
-        self.assertNotEquals(len(materials), 0)
+        self.assertNotEqual(len(materials), 0)
 
     def test_parse_materials_from_manifest_item(self):
         derivative = Derivative(self.urn, self.token)
         manifest_items = derivative.read_svf_manifest_items()
         materials = SVFMaterials.parse_materials_from_manifest_item(derivative, manifest_items[0])
-        self.assertNotEquals(len(materials), 0)
+        self.assertNotEqual(len(materials), 0)
 
     def test_read_from_file(self):
         self.assertTrue(os.path.exists(self.file_path))
         materials = SVFMaterials.parse_materials_from_file(self.file_path)
-        self.assertNotEquals(len(materials), 0)
+        self.assertNotEqual(len(materials), 0)
